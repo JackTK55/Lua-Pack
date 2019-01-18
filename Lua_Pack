@@ -104,11 +104,11 @@ local pressed = true
 function menus() if IsButtonPressed(gui_GetValue("msc_menutoggle")) then pressed = not pressed; end if pressed then if AB_Show:GetValue() then AB_W:SetActive(1); else AB_W:SetActive(0); end if ViewModelShown:GetValue() then VM_W:SetActive(1); else VM_W:SetActive(0); end if CC_Show:GetValue() then CC_W:SetActive(1); else CC_W:SetActive(0); end else AB_W:SetActive(0); VM_W:SetActive(0); CC_W:SetActive(0); end end
 cb_Register("Draw", "shows", menus)
 
--------------------- Auto Updater | copied straight from ShadyRetard
+-------------------- Auto Updater | copied from ShadyRetard
 local SCRIPT_FILE_NAME = "Lua_Pack.lua";
 local SCRIPT_FILE_ADDR = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack";
 local VERSION_FILE_ADDR = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version";
-local VERSION_NUMBER = "1.31";
+local VERSION_NUMBER = "1.32";
 local update_available, version_check_done, update_downloaded = false, false, false;
 function autoupdater()
 local allow_http = gui_GetValue("lua_allow_http")
