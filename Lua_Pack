@@ -109,7 +109,7 @@ cb_Register("Draw", "shows", menus)
 
 -------------------- Auto Updater | copied straight from ShadyRetard
 local SCRIPT_FILE_NAME = "Lua_Pack.lua";
-local SCRIPT_FILE_ADDR = "https://pastebin.com/raw/rbrNJ8Kw";
+local SCRIPT_FILE_ADDR = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack?token=AnpviEf_7MTPIjvLMFe8ZS09IZ-2hRnkks5cQlxowA%3D%3D";
 local VERSION_FILE_ADDR = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version?token=AnpviBKpViiz0klx_k1tOCfZM4mUXLwjks5cQlxMwA%3D%3D";
 local VERSION_NUMBER = "1.3";
 
