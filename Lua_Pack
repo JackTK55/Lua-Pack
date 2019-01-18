@@ -113,7 +113,17 @@ local update_available, version_check_done, update_downloaded = false, false, fa
 function autoupdater()
 local allow_http = gui_GetValue("lua_allow_http")
 
-	if (update_available and not update_downloaded) then 
+	if not version_check_done then 
+	local version = http_Get(VERSION_FILE_ADDR);
+	
+		if (version ~= VERSION_NUMBER) then 
+			update_available = true; 
+		end 
+		
+	version_check_done = true;
+	end
+
+	if update_available and not update_downloaded then 
 		if not allow_http then 
 		draw_Color(255, 255, 255, 255); draw_Text(0, 0, "Lua Pack: Update Available");
 		else 
@@ -126,19 +136,10 @@ local allow_http = gui_GetValue("lua_allow_http")
 		end 
 	end
 
-	if update_downloaded then 
+	if update_downloaded and version_check_done then 
 		draw_Color(255, 255, 255, 255); draw_Text(0, 0, "Lua Pack: Update Downloaded, reload the script"); 
 	end
-
-	if not version_check_done then 
-	local version = http_Get(VERSION_FILE_ADDR);
 	
-		if (version ~= VERSION_NUMBER) then 
-			update_available = true; 
-		end 
-		
-	version_check_done = true;
-	end 
 end
 cb_Register("Draw", "Auto Update", autoupdater)
 
