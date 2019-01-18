@@ -101,8 +101,7 @@ local function distance2D(x1, y1, x2, y2) return math_floor(math_sqrt((x2-x1)^2 
 local function distance3D(x1, y1, z1, x2, y2, z2) return math_floor(math_sqrt((x2-x1)^2 + (y2-y1)^2 + (z2-z1)^2)* 0.0833); end
 
 local pressed = true
-function menus() if IsButtonPressed(gui_GetValue("msc_menutoggle")) then pressed = not pressed; end if pressed then if AB_Show:GetValue() then AB_W:SetActive(1); else AB_W:SetActive(0); end if ViewModelShown:GetValue() then VM_W:SetActive(1); else VM_W:SetActive(0); end if CC_Show:GetValue() then CC_W:SetActive(1); else CC_W:SetActive(0); end else AB_W:SetActive(0); VM_W:SetActive(0); CC_W:SetActive(0); end end
-cb_Register("Draw", "shows", menus)
+function menus() if IsButtonPressed(gui_GetValue("msc_menutoggle")) then pressed = not pressed; end if pressed then if AB_Show:GetValue() then AB_W:SetActive(1); else AB_W:SetActive(0); end if ViewModelShown:GetValue() then VM_W:SetActive(1); else VM_W:SetActive(0); end if CC_Show:GetValue() then CC_W:SetActive(1); else CC_W:SetActive(0); end else AB_W:SetActive(0); VM_W:SetActive(0); CC_W:SetActive(0); end end cb_Register("Draw", "shows", menus)
 
 -------------------- Auto Updater | copied straight from ShadyRetard
 local SCRIPT_FILE_NAME = "Lua_Pack.lua";
