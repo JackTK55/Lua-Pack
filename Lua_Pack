@@ -109,7 +109,7 @@ local scriptName = "Lua_Pack.lua";
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack";
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version";
 local currentVersion = "1.3.1";
-local updateAvailable, newVersionCheck, updateDownloaded = false, true, false;
+local updateAvailable, newVersionChecked, updateDownloaded = false, false, false;
 
 function autoupdater()
 local allow_http = gui_GetValue("lua_allow_http")
@@ -133,13 +133,13 @@ local allow_cfg = gui_GetValue("lua_allow_cfg")
         return;
     end
 
-    if newVersionCheck then
+    if not newVersionChecked then
         if not allow_http then
 			draw_Color(255, 255, 255, 255); draw_Text(2, 0, "Lua Pack: HTTP Connections Required");
             return;
         end
 
-        newVersionCheck = false;
+        newVersionChecked = true;
         local newVersion = http_Get(versionFile);
         if currentVersion ~= newVersion then
             updateAvailable = true;
