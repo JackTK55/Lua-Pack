@@ -108,20 +108,20 @@ cb_Register("Draw", "shows", menus)
 local scriptName = "Lua_Pack.lua";
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack";
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version";
-local currentVersion = "1.3";
-local updateAvailable, newVersionChecked, updateDownloaded = false, false, false;
+local currentVersion = "1.3.1";
+local updateAvailable, newVersionCheck, updateDownloaded = false, true, false;
 
 function autoupdater()
 local allow_http = gui_GetValue("lua_allow_http")
 local allow_cfg = gui_GetValue("lua_allow_cfg")
 
-    if (updateAvailable and not updateDownloaded) then
-        if (allow_cfg == 0) then
+    if updateAvailable and not updateDownloaded then
+        if not allow_cfg then
             draw_Color(255, 255, 255, 255);
             draw_Text(2, 0, "Lua Pack: Update Available, Config editing is Required")
         else
-            local newScript = http.Get(scriptFile);
-            local oldScript = file.Open(scriptName, "w");
+            local newScript = http_Get(scriptFile);
+            local oldScript = file_Open(scriptName, "w");
             oldScript:Write(newScript);
             oldScript:Close();
             updateAvailable = false;
@@ -129,22 +129,20 @@ local allow_cfg = gui_GetValue("lua_allow_cfg")
         end
     end
 
-    if (updateDownloaded) then
+    if updateDownloaded then
         draw_Color(255, 255, 255, 255);
         draw_Text(2, 0, "Lua Pack: Update Downloaded, reload the script")
-        return;
     end
 
-    if (not newVersionChecked) then
-        if (allow_http == 0) then
+    if newVersionCheck then
+        if not allow_http then
             draw_Color(255, 255, 255, 255);
             draw_Text(2, 0, "Lua Pack: HTTP Connections Required")
-            return;
         end
 
-        newVersionChecked = true;
-        local version = http.Get(versionFile);
-        if (version ~= currentVersion) then
+        newVersionCheck = false;
+        local newVersion = http_Get(versionFile);
+        if currentVersion ~= newVersion then
             updateAvailable = true;
         end
     end
