@@ -1,1 +1,1 @@
-Just a way to auto update Lua Pack
+Just auto updates Lua Pack
