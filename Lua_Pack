@@ -131,6 +131,10 @@ local allow_http = gui_GetValue("lua_allow_http")
 		newVersionCheck = false; 
 	end
 
+if not updateAvailable then
+	return
+end
+	
 	if updateAvailable and not updateDownloaded then
 		if not allow_http then
 			draw_Color(255, 255, 255, 255); draw_Text(2, 0, "Lua Pack: Update Available");
@@ -148,7 +152,6 @@ local allow_http = gui_GetValue("lua_allow_http")
 
 	if updateDownloaded then
 		draw_Color(255, 255, 255, 255); draw_Text(2, 0, "Lua Pack: Update Downloaded, reload the script"); 
-		return;
 	end
 	
 end
