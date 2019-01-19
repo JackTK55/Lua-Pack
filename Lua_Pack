@@ -1,10 +1,5 @@
 -- stuff
 local draw_Line, draw_TextShadow, draw_Color, draw_Text, g_tickinterval, string_format, http_Get, file_Open, math_exp, math_rad, math_max, math_abs, math_tan, math_sin, math_cos, math_fmod, draw_GetTextSize, draw_FilledRect, draw_RoundedRect, draw_RoundedRectFill, draw_CreateFont, draw_SetFont, client_WorldToScreen, draw_GetScreenSize, client_GetConVar, client_SetConVar, client_exec, PlayerNameByUserID, PlayerIndexByUserID, GetLocalPlayer, gui_SetValue, gui_GetValue, LocalPlayerIndex, c_AllowListener, cb_Register, g_tickcount, g_realtime, g_curtime, g_absoluteframetime, math_floor, math_sqrt, GetPlayerResources, entities_FindByClass, IsButtonPressed, client_ChatSay, table_insert, table_remove = draw.Line, draw.TextShadow, draw.Color, draw.Text, globals.TickInterval, string.format, http.Get, file.Open, math.exp, math.rad, math.max, math.abs, math.tan, math.sin, math.cos, math.fmod, draw.GetTextSize, draw.FilledRect, draw.RoundedRect, draw_RoundedRectFill, draw.CreateFont, draw.SetFont, client.WorldToScreen, draw.GetScreenSize, client.GetConVar, client.SetConVar, client.Command, client.GetPlayerNameByUserID, client.GetPlayerIndexByUserID, entities.GetLocalPlayer, gui.SetValue, gui.GetValue, client.GetLocalPlayerIndex, client.AllowListener, callbacks.Register, globals.TickCount, globals.RealTime, globals.CurTime, globals.AbsoluteFrameTime, math.floor, math.sqrt, entities.GetPlayerResources, entities.FindByClass, input.IsButtonPressed, client.ChatSay, table.insert, table.remove
-local scriptName = "Lua_Pack.lua";
-local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack";
-local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version";
-local currentVersion = "1.3.1";
-local updateAvailable, newVersionCheck, updateDownloaded = false, true, false;
 -------------- References
 local L_RefE = gui.Reference("LEGIT", "Extra")
 local V_RefM = gui.Reference("VISUALS", "Shared")
@@ -110,6 +105,12 @@ function menus() if IsButtonPressed(gui_GetValue("msc_menutoggle")) then pressed
 cb_Register("Draw", "shows", menus)
 
 -------------------- Auto Updater
+local scriptName = "Lua_Pack.lua";
+local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack";
+local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version";
+local currentVersion = "1.3.2";
+local updateAvailable, newVersionCheck, updateDownloaded = false, true, false;
+
 function autoupdater()
 local allow_http = gui_GetValue("lua_allow_http")
 
@@ -118,7 +119,7 @@ local allow_http = gui_GetValue("lua_allow_http")
 			draw_Color(255, 255, 255, 255); draw_Text(2, 0, "Lua Pack: HTTP Connections Required");
 		else
 	
-			local newVersion = http.Get(versionFile);
+			local newVersion = http_Get(versionFile);
 
 			if currentVersion ~= newVersion then
 				updateAvailable = true; 
@@ -135,8 +136,8 @@ local allow_http = gui_GetValue("lua_allow_http")
 			draw_Color(255, 255, 255, 255); draw_Text(2, 0, "Lua Pack: Update Available");
 		else
 		
-			local newScript = http.Get(scriptFile); 
-			local oldScript = file.Open(scriptName, "w"); 
+			local newScript = http_Get(scriptFile); 
+			local oldScript = file_Open(scriptName, "w"); 
 			
 			oldScript:Write(newScript);
 			oldScript:Close();
@@ -147,6 +148,7 @@ local allow_http = gui_GetValue("lua_allow_http")
 
 	if updateDownloaded then
 		draw_Color(255, 255, 255, 255); draw_Text(2, 0, "Lua Pack: Update Downloaded, reload the script"); 
+		return;
 	end
 	
 end
