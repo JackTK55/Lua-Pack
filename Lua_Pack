@@ -108,7 +108,7 @@ cb_Register("Draw", "shows", menus)
 local scriptName = "Lua_Pack.lua";
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack";
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version";
-local currentVersion = "1.36";
+local currentVersion = "1.37";
 local updateAvailable, newVersionCheck, updateDownloaded, reloadScript = false, true, false, true;
 function autoupdater()
 local allow_http = gui_GetValue("lua_allow_http")
@@ -453,7 +453,7 @@ function speclistfix(E) if gui_GetValue("msc_showspec") == 1 then if E:GetName()
 -------------------- Recoil Crosshair | only recoil, doesn't account for spread
 function RCC()
 if not RecoilCrosshair:GetValue() then return end
-if GetLocalPlayer():GetProp("m_iHealth") <= 0 then return end
+if GetLocalPlayer() == nil or GetLocalPlayer():GetProp("m_iHealth") <= 0 then return end
 local screenX, screenY = draw_GetScreenSize(); local x = screenX/2; local y = screenY/2;
 local r, g, b, a = gui_GetValue("clr_esp_crosshair_recoil"); local recoil_scale = client_GetConVar("weapon_recoil_scale"); local fov = gui_GetValue("vis_view_fov"); 
 local weapon = GetLocalPlayer():GetPropEntity("m_hActiveWeapon"); local weapon_name = weapon:GetClass(); 
@@ -468,9 +468,9 @@ cb_Register("Draw", "Recoil Crosshair", RCC)
 -------------------- Name Steal fix
 local namesteal = gui_GetValue("msc_namestealer_enable")
 function StealFix(e)
-if entities.GetLocalPlayer() == nil then return; end
+if GetLocalPlayer() == nil then return; end
 if namesteal == 0 then return; end
-if entities.GetLocalPlayer():GetTeamNumber() == 1 then return; end
+if GetLocalPlayer():GetTeamNumber() == 1 then return; end
 if e:GetName() == "round_end" then gui_SetValue("msc_namestealer_enable", 0); end
 if e:GetName() == "round_start" then gui_SetValue("msc_namestealer_enable", 1); end	end
 c_AllowListener("round_end"); c_AllowListener("round_start"); 
