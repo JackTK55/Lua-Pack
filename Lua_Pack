@@ -104,40 +104,45 @@ local pressed = true
 function menus() if IsButtonPressed(gui_GetValue("msc_menutoggle")) then pressed = not pressed; end if pressed then if AB_Show:GetValue() then AB_W:SetActive(1); else AB_W:SetActive(0); end if ViewModelShown:GetValue() then VM_W:SetActive(1); else VM_W:SetActive(0); end if CC_Show:GetValue() then CC_W:SetActive(1); else CC_W:SetActive(0); end else AB_W:SetActive(0); VM_W:SetActive(0); CC_W:SetActive(0); end end
 cb_Register("Draw", "shows", menus)
 
--------------------- Auto Updater | copied from ShadyRetard
-local SCRIPT_FILE_NAME = "Lua_Pack.lua";
-local SCRIPT_FILE_ADDR = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack";
-local VERSION_FILE_ADDR = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version";
-local VERSION_NUMBER = "1.34";
-local update_available, version_check_done, update_downloaded = false, false, false;
+-------------------- Auto Updater
+local scriptName = "Lua_Pack.lua";
+local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack";
+local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version";
+local currentVersion = "1.35";
+local update_available, newVersion_check, update_downloaded = false, true, false;
 function autoupdater()
 local allow_http = gui_GetValue("lua_allow_http")
 
-	if not version_check_done then 
-	local version = http_Get(VERSION_FILE_ADDR);
-	
-		if (version ~= VERSION_NUMBER) then 
+	if newVersion_check then	
+		local newVersion = http_Get(versionFile);
+
+		if currentVersion ~= newVersion then
 			update_available = true; 
-		end 
+			update_downloaded = false; 
+		end
 		
-	version_check_done = true;
+		newVersion_check = false; 
 	end
 
-	if update_available and not update_downloaded then 
-		if not allow_http then 
-		draw_Color(255, 255, 255, 255); draw_Text(0, 0, "Lua Pack: Update Available");
-		else 
+	if update_available and not update_downloaded then
+		if not allow_http then
+			draw_Color(255, 255, 255, 255); draw_Text(0, 0, "Lua Pack: Update Available");
+		else
 		
-		local new_version_content = http_Get(SCRIPT_FILE_ADDR); 
-		local old_script = file_Open(SCRIPT_FILE_NAME, "w"); 
-		
-		old_script:Write(new_version_content); old_script:Close(); 
-		update_available = false; update_downloaded = true; 
-		end 
+			local newScript = http_Get(scriptFile); 
+			local oldScript = file_Open(scriptName, "w"); 
+			
+			oldScript:Write(newScript);
+			oldScript:Close();
+			update_available = false;
+			update_downloaded = true;
+			
+		end
 	end
 
-	if update_downloaded and version_check_done then 
+	if update_downloaded then
 		draw_Color(255, 255, 255, 255); draw_Text(0, 0, "Lua Pack: Update Downloaded, reload the script"); 
+		update_available = false;
 	end
 	
 end
