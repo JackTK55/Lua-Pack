@@ -108,7 +108,7 @@ cb_Register("Draw", "shows", menus)
 local scriptName = "Lua_Pack.lua";
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack";
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version";
-local currentVersion = "1.38";
+local currentVersion = "1.39";
 local updateAvailable, newVersionCheck, updateDownloaded, reloadScript = false, true, false, false;
 function autoupdater()
 local allow_http = gui_GetValue("lua_allow_http")
@@ -136,14 +136,14 @@ local allow_http = gui_GetValue("lua_allow_http")
 			oldScript:Close();
 			updateAvailable = false;
 			updateDownloaded = true;
-			reloadScript = true;
 			
 		end
+	elseif not updateAvailable and updateDownloaded then
+		reloadScript = true
 	end
 
 	if updateDownloaded and reloadScript then
 		draw_Color(255, 255, 255, 255); draw_Text(0, 0, "Lua Pack: Update Downloaded, reload the script"); 
-		updateAvailable = false;
 	end
 	
 end
