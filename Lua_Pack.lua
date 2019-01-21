@@ -111,9 +111,9 @@ cb_Register("Draw", "shows", menus)
 
 -------------------- Auto Updater
 local scriptName = "Lua_Pack.lua";
-local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack";
-local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version";
-local currentVersion = "1.3.5.8";
+local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua";
+local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt";
+local currentVersion = "1.3.5.9";
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false;
 function autoupdater()
 local allow_http = gui_GetValue("lua_allow_http"); local allow_cfg = gui_GetValue("lua_allow_cfg");
