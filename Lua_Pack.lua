@@ -113,7 +113,7 @@ cb_Register("Draw", "shows", menus)
 local scriptName = "Lua_Pack.lua";
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua";
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt";
-local currentVersion = "1.3.6.3";
+local currentVersion = "1.3.6.4";
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false;
 function autoupdater()
 local allow_http = gui_GetValue("lua_allow_http"); local allow_cfg = gui_GetValue("lua_allow_cfg");
@@ -362,7 +362,7 @@ function SpecList()
             
                 local tW, tH = draw_GetTextSize(playername.. " ➤ ".. SpectatorTargetName); 
                 draw_SetFont(fontSL);  
-                draw_TextShadow(specX-50-(tW/2), 10+inbetween-(tH*1.25), playername.. " ➤ ".. SpectatorTargetName); 
+                draw_TextShadow(specX-50-(tW/2), 10+inbetween+(tH*1.25), playername.. " ➤ ".. SpectatorTargetName); 
                 inbetween = inbetween + 15; 
             end 
         end 
