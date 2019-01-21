@@ -9,7 +9,7 @@ local VEO_Ref = gui.Reference("VISUALS", "ENEMIES", "Options")
 local VEF_Ref = gui.Reference("VISUALS", "ENEMIES", "Filter")
 local VTO_Ref = gui.Reference("VISUALS", "TEAMMATES", "Options")
 local M_Ref1 = gui.Reference("MISC", "GENERAL", "Main")
-local G_M1 = gui.Groupbox(M_Ref1, "Extra Features", 0, 206, 200, 269)
+local G_M1 = gui.Groupbox(M_Ref1, "Extra Features", 0, 206, 200, 311)
 -------------- Font
 local fontz = draw_CreateFont("Tahoma", 30);
 local fontS = draw_CreateFont("Tahoma", 20);
@@ -32,6 +32,7 @@ local Zeus = gui.Checkbox(AB_GB, "AB_Zeus", "Zeus", false);
 local Defuser = gui.Checkbox(AB_GB, "AB_Defuser", "Defuser", false);
 -------------- Spec List
 local SpectatorList = gui.Checkbox(G_M1, "msc_speclist", "Spectator List", false)
+local specplacement = gui.Combobox(G_M1, "msc_speclist_style", "Spectator List Placement", "Centered", "Aligned")
 -------------- Show Team Damage
 local TeamDamageShow = gui.Checkbox(G_M1, "msc_showteamdmg", "Show Team Damage", false)
 -------------- View Model Extender
@@ -113,7 +114,7 @@ cb_Register("Draw", "shows", menus)
 local scriptName = "Lua_Pack.lua";
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua";
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt";
-local currentVersion = "1.3.7";
+local currentVersion = "1.3.7.1";
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false;
 function autoupdater()
 local allow_http = gui_GetValue("lua_allow_http"); local allow_cfg = gui_GetValue("lua_allow_cfg");
