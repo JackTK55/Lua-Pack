@@ -9,11 +9,10 @@ local VEO_Ref = gui.Reference("VISUALS", "ENEMIES", "Options")
 local VEF_Ref = gui.Reference("VISUALS", "ENEMIES", "Filter")
 local VTO_Ref = gui.Reference("VISUALS", "TEAMMATES", "Options")
 local M_Ref1 = gui.Reference("MISC", "GENERAL", "Main")
-local G_M1 = gui.Groupbox(M_Ref1, "Extra Features", 0, 206, 200, 311)
+local G_M1 = gui.Groupbox(M_Ref1, "Extra Features", 0, 206, 200, 319)
 -------------- Font
 local fontz = draw_CreateFont("Tahoma", 30);
 local fontS = draw_CreateFont("Tahoma", 20);
-local fontSL = draw_CreateFont("Tahoma", 15);
 local ff = draw_CreateFont("Tahoma");
 -------------- Better Grenades
 local better_grenades = gui.Checkbox(VOO_Ref, "esp_other_better_grenades", "Better Grenades", false)
@@ -32,7 +31,6 @@ local Zeus = gui.Checkbox(AB_GB, "AB_Zeus", "Zeus", false);
 local Defuser = gui.Checkbox(AB_GB, "AB_Defuser", "Defuser", false);
 -------------- Spec List
 local SpectatorList = gui.Checkbox(G_M1, "msc_speclist", "Spectator List", false)
-local specplacement = gui.Combobox(G_M1, "msc_speclist_style", "Spectator List Placement", "Centered", "Aligned")
 -------------- Show Team Damage
 local TeamDamageShow = gui.Checkbox(G_M1, "msc_showteamdmg", "Show Team Damage", false)
 -------------- View Model Extender
@@ -114,7 +112,7 @@ cb_Register("Draw", "shows", menus)
 local scriptName = "Lua_Pack.lua";
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua";
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt";
-local currentVersion = "1.3.7.3";
+local currentVersion = "1.3.8";
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false;
 function autoupdater()
 local allow_http = gui_GetValue("lua_allow_http"); local allow_cfg = gui_GetValue("lua_allow_cfg");
@@ -350,10 +348,11 @@ function speclistfix(E) if gui_GetValue("msc_showspec") == 1 then if E:GetName()
 -------------------- Spectator list
 local inbetween = 0; 
 function SpecList()
-if not SpectatorList:GetValue() or GetLocalPlayer() == nil then return; end local specX, specY = draw_GetScreenSize(); local inbetween = 0; local players = entities_FindByClass("CCSPlayer"); for i = 1, #players do local player = players[i]; local playername = player:GetName();
+if not SpectatorList:GetValue() or GetLocalPlayer() == nil then return; end local specX, specY = draw_GetScreenSize(); local inbetween = -3; local players = entities_FindByClass("CCSPlayer"); for i = 1, #players do local player = players[i]; local playername = player:GetName();
 if player ~= GetLocalPlayer() and player:GetHealth() <= 0 and player:GetPropEntity("m_hObserverTarget") ~= nil and playername ~= "GOTV" then local SpectatorTargetIndex = player:GetPropEntity("m_hObserverTarget"):GetIndex(); 
-if SpectatorTargetIndex == LocalPlayerIndex() then if specplacement:GetValue() == 0 then placementX = specX-5-(tW*1); else placementX = specX-76-(tW/2); end local tW, tH = draw_GetTextSize(playername); draw_SetFont(fontSL); draw_Color(255,255,255,255); draw_TextShadow(placementX, inbetween+(tH*0.75)-5, playername); inbetween = inbetween + 10; end end end end  
+if SpectatorTargetIndex == LocalPlayerIndex() then local tW, tH = draw_GetTextSize(playername); draw_Color(255,255,255,255); draw_SetFont(ff); draw_TextShadow(specX-10-(tW*1), inbetween+(tH*.75), playername); inbetween = inbetween + 13; end end end end  
 cb_Register("Draw", SpecList)
+--[[ specX-10-(tW*1) --]] -- aligned on the right edge | --[[ specX-75-(tW/2) --]] -- aligned from center of text
 
 -------------------- Recoil Crosshair | doesn't account for spread
 function RCC()
