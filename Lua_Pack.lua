@@ -113,7 +113,7 @@ cb_Register("Draw", "shows", menus)
 local scriptName = "Lua_Pack.lua";
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua";
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt";
-local currentVersion = "1.3.6";
+local currentVersion = "1.3.6.1";
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false;
 function autoupdater()
 local allow_http = gui_GetValue("lua_allow_http"); local allow_cfg = gui_GetValue("lua_allow_cfg");
@@ -349,11 +349,24 @@ function speclistfix(E) if gui_GetValue("msc_showspec") == 1 then if E:GetName()
 -------------------- Spectator list
 local inbetween = 0; 
 function SpecList()
-if not SpectatorList:GetValue() or GetLocalPlayer() == nil then return; end local specX, specY = draw_GetScreenSize(); local inbetween = 0; local players = entities.FindByClass("CCSPlayer");
-for i = 1, #players do local player = players[i]; local playername = player:GetName();		
-if player ~= GetLocalPlayer() and player:GetHealth() <= 0 and player:GetPropEntity("m_hObserverTarget") ~= nil and playername ~= "GOTV" then
-local SpectatorTarget = player:GetPropEntity("m_hObserverTarget"); local SpectatorTargetIndex = SpectatorTarget:GetIndex(); local SpectatorTargetName = SpectatorTarget:GetName();
-if SpectatorTargetIndex == LocalPlayerIndex() then r,g,b,a = 255,50,50,255; else r,g,b,a = 255,255,255,255; end draw_Color(r,g,b,a); local tW, tH = draw_GetTextSize(playername.. " ➤ ".. SpectatorTargetName); draw_SetFont(fontSL);  draw_TextShadow(specX-50-tW/2, 0+inbetween-tH*1.25, playername.. " ➤ ".. SpectatorTargetName); inbetween = inbetween + 15; end end end  
+    if not SpectatorList:GetValue() or GetLocalPlayer() == nil then return; end 
+
+    local specX, specY = draw_GetScreenSize(); 
+    local inbetween = 0; 
+    local players = entities.FindByClass("CCSPlayer");
+
+        for i = 1, #players do local player = players[i]; local playername = player:GetName();		
+            if player ~= GetLocalPlayer() and player:GetHealth() <= 0 and player:GetPropEntity("m_hObserverTarget") ~= nil and playername ~= "GOTV" then
+                local SpectatorTarget = player:GetPropEntity("m_hObserverTarget"); local SpectatorTargetIndex = SpectatorTarget:GetIndex(); local SpectatorTargetName = SpectatorTarget:GetName();
+                if SpectatorTargetIndex == LocalPlayerIndex() then r,g,b,a = 255,50,50,255; else r,g,b,a = 255,255,255,255; end draw_Color(r,g,b,a); 
+            
+                local tW, tH = draw_GetTextSize(playername.. " ➤ ".. SpectatorTargetName); 
+                draw_SetFont(fontSL);  
+                draw_TextShadow(specX-50-(tW/2), 0+inbetween-(tH*1.25), playername.. " ➤ ".. SpectatorTargetName); 
+                inbetween = inbetween + 15; 
+            end 
+        end 
+end  
 cb_Register("Draw", SpecList)
 
 -------------------- Recoil Crosshair | doesn't account for spread
