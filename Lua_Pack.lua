@@ -111,11 +111,10 @@ cb_Register("Draw", "shows", menus)
 
 -------------------- Auto Updater
 local scriptName = "Lua_Pack.lua"
-local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
-local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
-function autoupdater()
-local currentVersion = "1.3.8.3" local allow_http = gui_GetValue("lua_allow_http") local allow_cfg = gui_GetValue("lua_allow_cfg")
+function autoupdater() 
+local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua" local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt" local currentVersion = "1.3.9" 
+local allow_http = gui_GetValue("lua_allow_http") local allow_cfg = gui_GetValue("lua_allow_cfg")
 if newVersionCheck then if not allow_http then draw_Color(255, 255, 255, 255) draw_Text(2, 0, "Lua Pack: HTTP Connections Required") end
 newVersionCheck = false local newVersion = http_Get(versionFile) if currentVersion ~= newVersion then updateAvailable = true end end 
 if updateAvailable and not updateDownloaded then if not allow_cfg then draw_Color(255, 255, 255, 255) draw_Text(2, 0, "Lua Pack: Update Available, Script/Config editing is Required") 
