@@ -113,10 +113,9 @@ cb_Register("Draw", "shows", menus)
 local scriptName = "Lua_Pack.lua"
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.3.8.2"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 function autoupdater()
-local allow_http = gui_GetValue("lua_allow_http") local allow_cfg = gui_GetValue("lua_allow_cfg")
+local currentVersion = "1.3.8.3" local allow_http = gui_GetValue("lua_allow_http") local allow_cfg = gui_GetValue("lua_allow_cfg")
 if newVersionCheck then if not allow_http then draw_Color(255, 255, 255, 255) draw_Text(2, 0, "Lua Pack: HTTP Connections Required") end
 newVersionCheck = false local newVersion = http_Get(versionFile) if currentVersion ~= newVersion then updateAvailable = true end end 
 if updateAvailable and not updateDownloaded then if not allow_cfg then draw_Color(255, 255, 255, 255) draw_Text(2, 0, "Lua Pack: Update Available, Script/Config editing is Required") 
@@ -187,7 +186,7 @@ if Defuser:GetValue() then client_exec('buy "defuser"', true) end PWb = false en
 cb_Register("FireGameEvent", buy)
 
 -------------------- View Model Extender
-function VM_E() if VM_e:GetValue() then client_SetConVar("viewmodel_offset_x", xS:GetValue(), true) client_SetConVar("viewmodel_offset_y", yS:GetValue(), true) client_SetConVar("viewmodel_offset_z", zS:GetValue(), true) client_SetConVar("viewmodel_fov", vfov:GetValue(), true) end end
+function VM_E() if VM_e:GetValue() then client_SetConVar("viewmodel_offset_x", xS:GetValue(), true) client_SetConVar("viewmodel_offset_y", yS:GetValue(), true) client_SetConVar("viewmodel_offset_z", zS:GetValue(), true) client_SetConVar("viewmodel_fov", vfov:GetValue(), true) else client_SetConVar("viewmodel_offset_x", xO, true) client_SetConVar("viewmodel_offset_y", yO, true) client_SetConVar("viewmodel_offset_z", zO, true) client_SetConVar("viewmodel_fov", fO, true) end end
 cb_Register("Draw", VM_E)
 
 -------------------- Scoped Fov Fix
