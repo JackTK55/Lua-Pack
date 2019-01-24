@@ -338,7 +338,7 @@ cb_Register("Draw", zeuslegit)
 -------------------- Spectator list fix | made by anue
 function speclistfix(E) if gui_GetValue("msc_showspec") == 1 then if E:GetName() == "round_start" then client_exec("cl_fullupdate", true) end end end cb_Register("FireGameEvent", speclistfix)
 
--------------------- Spectator list  | --[[ specX-10-(tW*1) --]] -- aligned on the right edge | --[[ specX-75-(tW/2) --]] -- aligned from center of text
+-------------------- Spectator list  | --[[ specX-10-tW --]] -- aligned on the right edge | --[[ specX-75-(tW/2) --]] -- aligned from center of text
 local inbetween = 0 
 function SpecList()
 if not SpectatorList:GetValue() or GetLocalPlayer() == nil then return end local specX, specY = draw_GetScreenSize() local inbetween = -3 local players = entities_FindByClass("CCSPlayer") for i = 1, #players do local player = players[i] local playername = player:GetName()
