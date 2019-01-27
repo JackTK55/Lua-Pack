@@ -110,10 +110,10 @@ function menus() if IsButtonPressed(gui_GetValue("msc_menutoggle")) then pressed
 cb_Register("Draw", "shows", menus)
 
 -------------------- Auto Updater
-local scriptName = "Lua_Pack.lua"
+local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.3.8.5"
+local currentVersion = "1.3.9"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 function autoupdater()
 local allow_http = gui_GetValue("lua_allow_http") local allow_cfg = gui_GetValue("lua_allow_cfg")
