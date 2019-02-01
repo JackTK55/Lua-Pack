@@ -113,7 +113,7 @@ cb_Register("Draw", "shows", menus)
 local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.3.9.1"
+local currentVersion = "1.3.9.2"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 function autoupdater()
 local allow_http = gui_GetValue("lua_allow_http") local allow_cfg = gui_GetValue("lua_allow_cfg")
@@ -215,7 +215,7 @@ draw_Color(255,255,255,255) draw_Line(scX, scY - 8, scX, scY + 8) --[[ line down
 cb_Register("Draw", ifCrosshair)
 
 -------------------- Bomb Timer & defuse timer
-local function mathfix() local screenX, screenY = draw_GetScreenSize() screenY3 = screenY/2 end cb_Register("Draw", "fix", mathfix)
+local function mathfix() local screenX, screenY = draw_GetScreenSize() screenY3 = screenY/2 end cb_Register("Draw", "fixes screenY3", mathfix)
 local function get_site_name(site) local a_x, a_y, a_z = GetPlayerResources():GetProp("m_bombsiteCenterA") local b_x, b_y, b_z = GetPlayerResources():GetProp("m_bombsiteCenterB") local site_x1, site_y1, site_z1 = site:GetMins() local site_x2, site_y2, site_z2 = site:GetMaxs() local site_x, site_y, site_z = lerp_pos(site_x1, site_y1, site_z1, site_x2, site_y2, site_z2, 0.5) local distance_a, distance_b = distance3D(site_x, site_y, site_z, a_x, a_y, a_z), distance3D(site_x, site_y, site_z, b_x, b_y, b_z) return distance_b > distance_a and "A" or "B" end
 colorchange, drawBar, drawDefuse, drawPlanting, plantedTime, plantedTime2, fill, fill2, fill3, plantingName, plantingStarted, plantingTime, plantingSite = 10, false, false, false, 0, 0, 0, screenY3, 0, "", 0, 3.125, ""
 function bomb(event)
@@ -301,11 +301,11 @@ cb_Register("Draw", Tracers)
 
 -------------------- Enemy & Team & Other Distance + visible help
 function Distance(builder)
-local ent = builder:GetEntity() local ppX, ppY, ppZ = ent:GetAbsOrigin() local lX, lY, lZ = GetLocalPlayer():GetAbsOrigin() local dist = distance3D(ppX, ppY, ppZ, lX, lY, lZ)
-if enemy_distance:GetValue() and ent:IsAlive() and ent:IsPlayer() and ent:GetTeamNumber() ~= GetLocalPlayer():GetTeamNumber() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end
-if team_distance:GetValue() and ent:IsAlive() and ent:IsPlayer() and ent:GetTeamNumber() == GetLocalPlayer():GetTeamNumber() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end
+local ent = builder:GetEntity() playerteam = builder:GetEntity():GetTeamNumber() local ppX, ppY, ppZ = ent:GetAbsOrigin() local lX, lY, lZ = GetLocalPlayer():GetAbsOrigin() local dist = distance3D(ppX, ppY, ppZ, lX, lY, lZ)
+if enemy_distance:GetValue() and ent:IsAlive() and ent:IsPlayer() and playerteam ~= GetLocalPlayer():GetTeamNumber() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end
+if team_distance:GetValue() and ent:IsAlive() and ent:IsPlayer() and playerteam == GetLocalPlayer():GetTeamNumber() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end
 if other_distance:GetValue() and not ent:IsPlayer() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end
-if enemy_visiblehelp:GetValue() and ent:IsAlive() and ent:IsPlayer() and ent:GetTeamNumber() ~= GetLocalPlayer():GetTeamNumber() then builder:Color(255, 255, 255, 255) builder:AddTextTop("VISIBLE") end end
+if enemy_visiblehelp:GetValue() and ent:IsAlive() and ent:IsPlayer() and playerteam ~= GetLocalPlayer():GetTeamNumber() then builder:Color(255, 255, 255, 255) builder:AddTextTop("VISIBLE") end end
 cb_Register("DrawESP", "Distance ESP", Distance)
 
 -------------------- full bright
@@ -369,7 +369,7 @@ function KillsAndDamage(e)
 if e:GetName() == "player_hurt" then if PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() and playerteam == GetLocalPlayer():GetTeamNumber() then damagedone = damagedone + e:GetInt("dmg_health") end end
 if e:GetName() == "player_death" then if PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() and playerteam == GetLocalPlayer():GetTeamNumber() then killed = killed + 1 end end
 if e:GetName() == "player_connect_full" then damagedone, killed = 0, 0 end end
-function DrawsTKsDMG() if entities_FindByClass("CCSPlayer") ~= nil then local players = entities_FindByClass("CCSPlayer") for i = 1, #players do local player = players[i] playerteam = player:GetTeamNumber() if not TeamDamageShow:GetValue() or GetLocalPlayer() == nil then return end local X, Y = draw_GetScreenSize() draw_Color(255,255,255,255) draw_TextShadow(10, Y/2-40, "Damage Done: ".. damagedone) draw_TextShadow(10, Y/2-30, "Teammates Killed: ".. killed) end end end
+function DrawsTKsDMG() if not TeamDamageShow:GetValue() or GetLocalPlayer() == nil then return end local X, Y = draw_GetScreenSize() draw_Color(255,255,255,255) draw_TextShadow(10, Y/2-40, "Damage Done: ".. damagedone) draw_TextShadow(10, Y/2-30, "Teammates Killed: ".. killed) end 
 cb_Register("FireGameEvent", KillsAndDamage) cb_Register("Draw", DrawsTKsDMG)
 
 c_AllowListener("round_end") c_AllowListener("round_start") c_AllowListener("bomb_beginplant") c_AllowListener("bomb_abortplant") c_AllowListener("bomb_planted") c_AllowListener("bomb_defused") c_AllowListener("bomb_begindefuse") c_AllowListener("bomb_abortdefuse")c_AllowListener("player_spawn") c_AllowListener("player_hurt") c_AllowListener("player_death") c_AllowListener("player_connect_full") c_AllowListener("inferno_expire") c_AllowListener("inferno_extinguish") c_AllowListener("molotov_detonate") c_AllowListener("hegrenade_detonate") c_AllowListener("flashbang_detonate") 
