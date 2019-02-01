@@ -162,7 +162,7 @@ cb_Register("Draw", "draws hits in top left", hitlog) cb_Register("FireGameEvent
 -------------------- Auto Buy 
 SecondaryWeapon, PrimaryWeapon, armor = "", "", ""
 function buy(Event)
-if GetLocalPlayer() == nil then return end
+if GetLocalPlayer() == nil or Event:GetName() == nil then return end
 if Event:GetName() == "player_spawn" then if PlayerIndexByUserID(Event:GetInt("userid")) == LocalPlayerIndex() then buy = true end end money = GetLocalPlayer():GetProp("m_iAccount")
 if AB_E:GetValue() then if buy == true then
 if (SecondaryWeapons:GetValue() == 0) then SecondaryWeapon = ""
