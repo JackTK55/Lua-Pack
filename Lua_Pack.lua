@@ -94,26 +94,18 @@ local RecoilCrosshair = gui.Checkbox(G_VM, "vis_recoilcrosshair", "Recoil Crossh
 -------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------- 
-local abs_frame_time = g_absoluteframetime
-local frame_rate = 0.0
-local function get_abs_fps()
-    frame_rate = 0.9 * frame_rate + (1.0 - 0.9) * abs_frame_time()
-    return math_floor((1.0 / frame_rate) + 0.5)
-end
-
+local frame_rate, pressed = 0.0, true
+local function get_abs_fps() frame_rate = 0.9 * frame_rate + (1.0 - 0.9) * g_absoluteframetime() return math_floor((1.0 / frame_rate) + 0.5) end
 local function lerp_pos(x1, y1, z1, x2, y2, z2, percentage) local x = (x2 - x1) * percentage + x1 local y = (y2 - y1) * percentage + y1 local z = (z2 - z1) * percentage + z1 return x, y, z end
 local function distance2D(x1, y1, x2, y2) return math_floor(math_sqrt((x2-x1)^2 + (y2-y1)^2) * 0.0833) end
 local function distance3D(x1, y1, z1, x2, y2, z2) return math_floor(math_sqrt((x2-x1)^2 + (y2-y1)^2 + (z2-z1)^2)* 0.0833) end
-
-local pressed = true
-function menus() if IsButtonPressed(gui_GetValue("msc_menutoggle")) then pressed = not pressed end if pressed then if AB_Show:GetValue() then AB_W:SetActive(1) else AB_W:SetActive(0) end if ViewModelShown:GetValue() then VM_W:SetActive(1) else VM_W:SetActive(0) end if CC_Show:GetValue() then CC_W:SetActive(1) else CC_W:SetActive(0) end else AB_W:SetActive(0) VM_W:SetActive(0) CC_W:SetActive(0) end end
-cb_Register("Draw", "shows", menus)
+local function menus() if IsButtonPressed(gui_GetValue("msc_menutoggle")) then pressed = not pressed end if pressed then if AB_Show:GetValue() then AB_W:SetActive(1) else AB_W:SetActive(0) end if ViewModelShown:GetValue() then VM_W:SetActive(1) else VM_W:SetActive(0) end if CC_Show:GetValue() then CC_W:SetActive(1) else CC_W:SetActive(0) end else AB_W:SetActive(0) VM_W:SetActive(0) CC_W:SetActive(0) end end cb_Register("Draw", "shows", menus)
 
 -------------------- Auto Updater
 local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.3.9.2"
+local currentVersion = "1.3.9.3"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 function autoupdater()
 local allow_http = gui_GetValue("lua_allow_http") local allow_cfg = gui_GetValue("lua_allow_cfg")
@@ -346,13 +338,13 @@ if player ~= GetLocalPlayer() and player:GetHealth() <= 0 and player:GetPropEnti
 if SpectatorTargetIndex == LocalPlayerIndex() then local tW, tH = draw_GetTextSize(playername) draw_Color(255,255,255,255) draw_SetFont(ff) draw_TextShadow(specX-10-(tW*1), inbetween+(tH*.75), playername) inbetween = inbetween + 15 end end end end  
 cb_Register("Draw", SpecList)
 
--------------------- Recoil Crosshair | doesn't account for spread
+-------------------- Recoil Crosshair
 function RCC()
 if not RecoilCrosshair:GetValue() or GetLocalPlayer() == nil or GetLocalPlayer():GetHealth() <= 0 then return end local screenX, screenY = draw_GetScreenSize() local x = screenX/2 local y = screenY/2
 local r, g, b, a = gui_GetValue("clr_esp_crosshair_recoil") local recoil_scale = client_GetConVar("weapon_recoil_scale") local fov = gui_GetValue("vis_view_fov") if fov == 0 then fov = 90 end local weapon = GetLocalPlayer():GetPropEntity("m_hActiveWeapon") local weapon_name = weapon:GetClass() 
-if weapon_name == "CWeaponAWP" or weapon_name == "CWeaponSSG08" then return end
-if weapon:GetProp("m_flRecoilIndex") == 0 then return end local aim_punch_angle_pitch, aim_punch_angle_yaw = GetLocalPlayer():GetPropVector("localdata", "m_Local", "m_aimPunchAngle")
-if -aim_punch_angle_pitch >= 0.05 and -aim_punch_angle_pitch >= 0.05 then local x = x - ((screenX/fov)* aim_punch_angle_yaw)*(recoil_scale/2) local y = y + ((screenY/fov)* aim_punch_angle_pitch)*(recoil_scale/2) draw_Color(r, g, b, a) draw_RoundedRect(x-3, y-3, x+3, y+3) end end
+if weapon_name == "CWeaponAWP" or weapon_name == "CWeaponSSG08" or weapon:GetProp("m_flRecoilIndex") == 0 or gui_GetValue("rbot_active") and gui_GetValue("rbot_antirecoil") then return end local aim_punch_angle_pitch, aim_punch_angle_yaw = GetLocalPlayer():GetPropVector("localdata", "m_Local", "m_aimPunchAngle") 
+if -aim_punch_angle_pitch >= 0.05 and -aim_punch_angle_pitch >= 0.05 then if gui_GetValue("vis_norecoil") then x = x - (((screenX/fov)* aim_punch_angle_yaw)*1.2)*(recoil_scale*0.5) y = y + (((screenY/fov)* aim_punch_angle_pitch)*2)*(recoil_scale*0.5) else x = x - (((screenX/fov)* aim_punch_angle_yaw)*0.6)*(recoil_scale*0.5) y = y + ((screenY/fov)* aim_punch_angle_pitch)*(recoil_scale*0.5) end 
+draw_Color(r, g, b, a) draw_RoundedRect(x-3, y-3, x+3, y+3) end end
 cb_Register("Draw", RCC)
 
 -------------------- Name Steal fix
