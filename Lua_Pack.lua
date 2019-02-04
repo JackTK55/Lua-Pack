@@ -335,7 +335,7 @@ local inbetween = 0
 function SpecList()
 if not SpectatorList:GetValue() or GetLocalPlayer() == nil then return end local specX, specY = draw_GetScreenSize() local inbetween = -3 local players = entities_FindByClass("CCSPlayer") for i = 1, #players do local player = players[i] local playername = player:GetName()
 if player ~= GetLocalPlayer() and player:GetHealth() <= 0 and player:GetPropEntity("m_hObserverTarget") ~= nil and playername ~= "GOTV" then local SpectatorTargetIndex = player:GetPropEntity("m_hObserverTarget"):GetIndex() 
-if SpectatorTargetIndex == LocalPlayerIndex() then local tW, tH = draw_GetTextSize(playername) draw_Color(255,255,255,255) draw_SetFont(ff) draw_TextShadow(specX-10-(tW*1), inbetween+(tH*.75), playername) inbetween = inbetween + 15 end end end end  
+if SpectatorTargetIndex == LocalPlayerIndex() then local tW, tH = draw_GetTextSize(playername) draw_Color(255,255,255,255) draw_SetFont(ff) draw_TextShadow((specX-10)-tW, inbetween+tH, playername) inbetween = inbetween + 15 end end end end  
 cb_Register("Draw", SpecList)
 
 -------------------- Recoil Crosshair
