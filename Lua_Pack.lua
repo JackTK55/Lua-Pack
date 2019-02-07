@@ -9,7 +9,7 @@ local G_M1 = gui.Groupbox(gui.Reference("MISC", "GENERAL", "Main"), "Extra Featu
 -------------- Font
 local fontz = draw_CreateFont("Tahoma", 30) 
 local fontS = draw_CreateFont("Tahoma", 20) 
-local ff = draw_CreateFont("Tahoma")
+local ff = draw_CreateFont("Tahoma", 11)
 -------------- Better Grenades
 local better_grenades = gui.Checkbox(VOO_Ref, "esp_other_better_grenades", "Better Grenades", false)
 -------------- Hit Log 
@@ -93,18 +93,19 @@ local RecoilCrosshair = gui.Checkbox(G_VM, "vis_recoilcrosshair", "Recoil Crossh
 local frame_rate, pressed = 0.0, true
 local function get_abs_fps() frame_rate = 0.9 * frame_rate + (1.0 - 0.9) * g_absoluteframetime() return math_floor((1.0 / frame_rate) + 0.5) end
 local function lerp_pos(x1, y1, z1, x2, y2, z2, percentage) local x = (x2 - x1) * percentage + x1 local y = (y2 - y1) * percentage + y1 local z = (z2 - z1) * percentage + z1 return x, y, z end
-local function distance2D(x1, y1, x2, y2) return math_floor(math_sqrt((x2-x1)^2 + (y2-y1)^2) * 0.0833) end
 local function distance3D(x1, y1, z1, x2, y2, z2) return math_floor(vector_Distance({x1, y1, z1}, {x2, y2, z2})* 0.0833) end
 local function menus() if IsButtonPressed(gui_GetValue("msc_menutoggle")) then pressed = not pressed end if pressed then if AB_Show:GetValue() then AB_W:SetActive(1) else AB_W:SetActive(0) end if ViewModelShown:GetValue() then VM_W:SetActive(1) else VM_W:SetActive(0) end if CC_Show:GetValue() then CC_W:SetActive(1) else CC_W:SetActive(0) end else AB_W:SetActive(0) VM_W:SetActive(0) CC_W:SetActive(0) end end cb_Register("Draw", "shows", menus)
 
 -------------------- Auto Updater
+--if not gui_GetValue("lua_allow_http") then AutoUpdate = false else AutoUpdate = true end
 local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.3.9.5"
+local currentVersion = "1.3.9.6"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 function autoupdater()
-if newVersionCheck then if not gui_GetValue("lua_allow_http") then draw_Color(255, 255, 255, 255) draw_Text(2, 0, scriptName..": HTTP Connections Required") end
+--if not AutoUpdate then return end
+if newVersionCheck then if not gui_GetValue("lua_allow_http") then draw_Color(255, 255, 255, 255) draw_Text(2, 0, scriptName..": Internet Access Required") end
 newVersionCheck = false local newVersion = http_Get(versionFile) if currentVersion ~= newVersion then updateAvailable = true end end 
 if updateAvailable and not updateDownloaded then if not gui_GetValue("lua_allow_cfg") then draw_Color(255, 255, 255, 255) draw_Text(2, 0, scriptName..": Update Available, Script/Config editing is Required") 
 else local newScript = http_Get(scriptFile) local oldScript = file_Open(scriptName, "w") oldScript:Write(newScript)  oldScript:Close() updateAvailable = false updateDownloaded = true end end
@@ -140,10 +141,10 @@ local ind_Attacker = PlayerIndexByUserID(Event:GetInt("attacker")) local ind_Vic
 response = string_format("Hit %s in the %s for %s damage (%s health remaining)\n", n_Victim, HitGroup(i_hitgroup), i_dmg, i_health)
 if ind_Attacker == LocalPlayerIndex() and ind_Victim ~= LocalPlayerIndex() then print(response)
 table_insert(draw_hitsay, {g_realtime(), response}) end end end
-local On_Screen_Time, pixels_between_each_line, ScreenX, ScreenY = 10, 10, 10, 10
+local On_Screen_Time, pixels_between_each_line, ScreenX, ScreenY, Max_On_Screen = 8, 10, 10, 10, 10
 function hitlog()
-if HitLog:GetValue() then local things_on_screen = 0 for k, l in pairs(draw_hitsay) do
-if g_realtime() > l[1] + On_Screen_Time then table_remove(draw_hitsay, k) else draw_Color(255,255,255,255) draw_SetFont(ff) draw_TextShadow(ScreenX, things_on_screen * pixels_between_each_line + ScreenY, l[2]) things_on_screen = things_on_screen + 1 end end end end
+if not HitLog:GetValue() or GetLocalPlayer() == nil then return end local things_on_screen = 0 for k, l in pairs(draw_hitsay) do
+if g_realtime() > l[1] + On_Screen_Time then table_remove(draw_hitsay, k) else draw_Color(255,255,255,255) draw_SetFont(ff) draw_TextShadow(ScreenX, things_on_screen * pixels_between_each_line + ScreenY, l[2]) things_on_screen = things_on_screen + 1 end if things_on_screen > Max_On_Screen then things_on_screen = 0 On_Screen_Time = 0 else On_Screen_Time = 8 end end end
 cb_Register("Draw", "draws hits in top left", hitlog) cb_Register("FireGameEvent", ChatLogger)  
 
 -------------------- Auto Buy 
@@ -251,7 +252,7 @@ if CC_Spams:GetValue() == 0 then return
 elseif CC_Spams:GetValue() == 1 and g_realtime() >= c_spammedlast then client_ChatSay(ChatSpam1:GetValue()) c_spammedlast = g_realtime() + CC_Spam_spd:GetValue()/100
 elseif CC_Spams:GetValue() == 2 and g_realtime() >= c_spammedlast then client_ChatSay(ChatSpam2:GetValue()) c_spammedlast = g_realtime() + CC_Spam_spd:GetValue()/100
 elseif CC_Spams:GetValue() == 3 and g_realtime() >= c_spammedlast then client_ChatSay(ChatSpam3:GetValue()) c_spammedlast = g_realtime() + CC_Spam_spd:GetValue()/100
-elseif CC_Spams:GetValue() == 4 and g_realtime() >= c_spammedlast then client_ChatSay("\n ﷽﷽ ﷽﷽﷽ ﷽﷽﷽ ﷽﷽﷽ ﷽﷽﷽ ﷽﷽﷽ ﷽﷽﷽ ﷽﷽﷽ ﷽﷽ \n") c_spammedlast = g_realtime() + CC_Spam_spd:GetValue()/100 end end
+elseif CC_Spams:GetValue() == 4 and g_realtime() >= c_spammedlast then client_ChatSay("﷽﷽﷽ ﷽﷽﷽ ﷽﷽﷽ ﷽﷽﷽ ﷽﷽﷽ ﷽﷽﷽ ﷽﷽﷽ ﷽﷽﷽ ﷽﷽﷽ ﷽﷽﷽ ﷽﷽﷽ ﷽﷽﷽ ﷽﷽﷽ ﷽﷽﷽ ﷽﷽﷽ ﷽﷽﷽\n") c_spammedlast = g_realtime() + CC_Spam_spd:GetValue()/100 end end
 cb_Register("Draw", custom_chat)
  
 -------------------- Aspect Ratio Changer
@@ -281,16 +282,16 @@ function engineradar() if ERadar:GetValue() then ERval = 1 else ERval = 0 end fo
 -------------------- Enemy & Team Tracers
 function Tracers()
 if GetLocalPlayer() == nil then return end local sX, sY = draw_GetScreenSize() local lpTeamNum = GetLocalPlayer():GetTeamNumber() local players = entities_FindByClass("CCSPlayer") for i = 1, #players do local player = players[i] local pX, pY, pZ = client_WorldToScreen(player:GetAbsOrigin()) playerteam = player:GetTeamNumber()
-if playerteam == lpTeamNum then r,g,b,z = 0,0,255,255 else r,g,b,a = 255,0,0,255 end
+if playerteam == lpTeamNum then r,g,b,z = 0,0,255,255 else r,g,b,a = 255,0,0,255 end 
 if tracersEnemy:GetValue() then if player:GetTeamNumber() ~= lpTeamNum and player:IsAlive() and pX ~= nil and pY ~= nil then draw_Color(r,g,b,a) draw_Line(sX/2, sY, pX, pY) end end
-if tracersTeam:GetValue() then if player:GetTeamNumber() == lpTeamNum and player:IsAlive() and pX ~= nil and pY ~= nil then draw_Color(r,g,b,a) draw_Line(sX/2, sY, pX, pY) end end end end
+if tracersTeam:GetValue() then if player:GetTeamNumber() == lpTeamNum and player:IsAlive() and pX ~= nil and pY ~= nil and player:GetIndex() ~= LocalPlayerIndex() then draw_Color(r,g,b,a) draw_Line(sX/2, sY, pX, pY) end end end end
 cb_Register("Draw", Tracers)
 
 -------------------- Enemy & Team & Other Distance + visible help
 function Distance(builder)
 local ent = builder:GetEntity() playerteam = builder:GetEntity():GetTeamNumber() local ppX, ppY, ppZ = ent:GetAbsOrigin() local lX, lY, lZ = GetLocalPlayer():GetAbsOrigin() local dist = distance3D(ppX, ppY, ppZ, lX, lY, lZ)
 if enemy_distance:GetValue() and ent:IsAlive() and ent:IsPlayer() and playerteam ~= GetLocalPlayer():GetTeamNumber() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end
-if team_distance:GetValue() and ent:IsAlive() and ent:IsPlayer() and playerteam == GetLocalPlayer():GetTeamNumber() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end
+if team_distance:GetValue() and ent:IsAlive() and ent:IsPlayer() and playerteam == GetLocalPlayer():GetTeamNumber() and ent:GetIndex() ~= LocalPlayerIndex() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end
 if other_distance:GetValue() and not ent:IsPlayer() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end
 if enemy_visiblehelp:GetValue() and ent:IsAlive() and ent:IsPlayer() and playerteam ~= GetLocalPlayer():GetTeamNumber() then builder:Color(255, 255, 255, 255) builder:AddTextTop("VISIBLE") end end
 cb_Register("DrawESP", "Distance ESP", Distance)
@@ -323,14 +324,17 @@ else gui_SetValue("lbot_trg_enable", 0) gui_SetValue("lbot_trg_mode", trigm) gui
 cb_Register("Draw", zeuslegit)
 
 -------------------- Spectator list fix | made by anue
-function speclistfix(E) if gui_GetValue("msc_showspec") == 1 then if E:GetName() == "round_start" then client_exec("cl_fullupdate", true) end end end cb_Register("FireGameEvent", speclistfix)
+function speclistfix(E) if gui_GetValue("msc_showspec") then if E:GetName() == "round_start" then client_exec("cl_fullupdate", true) end end end cb_Register("FireGameEvent", speclistfix)
 
 -------------------- Spectator list  | --[[ specX-10-tW --]] -- aligned on the right edge | --[[ specX-75-(tW/2) --]] -- aligned from center of text
-local inbetween = 0 
+local inbetween = 0
 function SpecList()
-if not SpectatorList:GetValue() or GetLocalPlayer() == nil then return end local specX, specY = draw_GetScreenSize() local inbetween = -3 local players = entities_FindByClass("CCSPlayer") for i = 1, #players do local player = players[i] local playername = player:GetName()
-if player ~= GetLocalPlayer() and player:GetHealth() <= 0 and player:GetPropEntity("m_hObserverTarget") ~= nil and playername ~= "GOTV" then local SpectatorTargetIndex = player:GetPropEntity("m_hObserverTarget"):GetIndex() 
-if SpectatorTargetIndex == LocalPlayerIndex() then local tW, tH = draw_GetTextSize(playername) draw_Color(255,255,255,255) draw_SetFont(ff) draw_TextShadow((specX-10)-tW, inbetween+tH, playername) inbetween = inbetween + 15 end end end end  
+if not SpectatorList:GetValue() or GetLocalPlayer() == nil then return end local specX, specY = draw_GetScreenSize() local inbetween = 0 local players = entities_FindByClass("CCSPlayer") for i = 1, #players do local player = players[i] local playername = player:GetName() local playerindex = player:GetIndex() local tW, tH = draw_GetTextSize(playername)
+if player:GetHealth() <= 0 and player:GetPropEntity("m_hObserverTarget") ~= nil and playername ~= "GOTV" and playername ~= GetLocalPlayer():GetName() then 
+local SpecTargetIndex = player:GetPropEntity("m_hObserverTarget"):GetIndex() local SpecTargetName = player:GetPropEntity("m_hObserverTarget"):GetName() 
+if GetLocalPlayer():GetHealth() > 0 then if SpecTargetIndex == LocalPlayerIndex() then draw_Color(255,255,255,255) draw_SetFont(ff) draw_TextShadow((specX-10)-tW, inbetween+(tH*0.5), playername) inbetween = inbetween + 15 end
+elseif GetLocalPlayer():GetHealth() <= 0 then if GetLocalPlayer():GetPropEntity("m_hObserverTarget") ~= nil then local imSpeccing = GetLocalPlayer():GetPropEntity("m_hObserverTarget"):GetIndex()
+if SpecTargetIndex == imSpeccing then draw_Color(255,255,255,255) draw_SetFont(ff) draw_TextShadow((specX-10)-tW, inbetween+(tH*0.5), playername) inbetween = inbetween + 15 end end end end end end 
 cb_Register("Draw", SpecList)
 
 -------------------- Recoil Crosshair
@@ -344,11 +348,10 @@ cb_Register("Draw", RCC)
 
 -------------------- Name Steal fix
 local namesteal = gui_GetValue("msc_namestealer_enable")
-function StealFix(e)
+cb_Register("FireGameEvent", function(e)
 if GetLocalPlayer() == nil or namesteal == 0 or GetLocalPlayer():GetTeamNumber() == 1 then return end
 if e:GetName() == "round_end" then gui_SetValue("msc_namestealer_enable", 0) end
-if e:GetName() == "round_start" then gui_SetValue("msc_namestealer_enable", 1) end end
-cb_Register("FireGameEvent", StealFix) 
+if e:GetName() == "round_start" then gui_SetValue("msc_namestealer_enable", 1) end end)
 
 -------------------- Show Team Damage
 local damagedone, killed = 0, 0
