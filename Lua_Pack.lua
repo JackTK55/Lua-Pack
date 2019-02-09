@@ -1,5 +1,5 @@
 -- stuff
-local draw_Line, draw_TextShadow, draw_Color, draw_Text, g_tickinterval, string_format, http_Get, file_Open, math_exp, math_rad, math_max, math_abs, math_tan, math_sin, math_cos, math_fmod, draw_GetTextSize, draw_FilledRect, draw_RoundedRect, draw_RoundedRectFill, draw_CreateFont, draw_SetFont, client_WorldToScreen, draw_GetScreenSize, client_GetConVar, client_SetConVar, client_exec, PlayerNameByUserID, PlayerIndexByUserID, entities_GetByIndex, GetLocalPlayer, gui_SetValue, gui_GetValue, LocalPlayerIndex, c_AllowListener, cb_Register, g_tickcount, g_realtime, g_curtime, g_absoluteframetime, math_floor, math_sqrt, GetPlayerResources, entities_FindByClass, IsButtonPressed, client_ChatSay, table_insert, table_remove, vector_Distance = draw.Line, draw.TextShadow, draw.Color, draw.Text, globals.TickInterval, string.format, http.Get, file.Open, math.exp, math.rad, math.max, math.abs, math.tan, math.sin, math.cos, math.fmod, draw.GetTextSize, draw.FilledRect, draw.RoundedRect, draw.RoundedRectFill, draw.CreateFont, draw.SetFont, client.WorldToScreen, draw.GetScreenSize, client.GetConVar, client.SetConVar, client.Command, client.GetPlayerNameByUserID, client.GetPlayerIndexByUserID, entities.GetByIndex, entities.GetLocalPlayer, gui.SetValue, gui.GetValue, client.GetLocalPlayerIndex, client.AllowListener, callbacks.Register, globals.TickCount, globals.RealTime, globals.CurTime, globals.AbsoluteFrameTime, math.floor, math.sqrt, entities.GetPlayerResources, entities.FindByClass, input.IsButtonPressed, client.ChatSay, table.insert, table.remove, vector.Distance
+local draw_Line, draw_TextShadow, draw_Color, draw_Text, g_tickinterval, string_format, http_Get, string_gsub, file_Open, math_exp, math_rad, math_max, math_abs, math_tan, math_sin, math_cos, math_fmod, draw_GetTextSize, draw_FilledRect, draw_RoundedRect, draw_RoundedRectFill, draw_CreateFont, draw_SetFont, client_WorldToScreen, draw_GetScreenSize, client_GetConVar, client_SetConVar, client_exec, PlayerNameByUserID, PlayerIndexByUserID, entities_GetByIndex, GetLocalPlayer, gui_SetValue, gui_GetValue, LocalPlayerIndex, c_AllowListener, cb_Register, g_tickcount, g_realtime, g_curtime, g_absoluteframetime, math_floor, math_sqrt, GetPlayerResources, entities_FindByClass, IsButtonPressed, client_ChatSay, table_insert, table_remove, vector_Distance = draw.Line, draw.TextShadow, draw.Color, draw.Text, globals.TickInterval, string.format, http.Get, string.gsub, file.Open, math.exp, math.rad, math.max, math.abs, math.tan, math.sin, math.cos, math.fmod, draw.GetTextSize, draw.FilledRect, draw.RoundedRect, draw.RoundedRectFill, draw.CreateFont, draw.SetFont, client.WorldToScreen, draw.GetScreenSize, client.GetConVar, client.SetConVar, client.Command, client.GetPlayerNameByUserID, client.GetPlayerIndexByUserID, entities.GetByIndex, entities.GetLocalPlayer, gui.SetValue, gui.GetValue, client.GetLocalPlayerIndex, client.AllowListener, callbacks.Register, globals.TickCount, globals.RealTime, globals.CurTime, globals.AbsoluteFrameTime, math.floor, math.sqrt, entities.GetPlayerResources, entities.FindByClass, input.IsButtonPressed, client.ChatSay, table.insert, table.remove, vector.Distance
 -------------- References
 local G_VM = gui.Groupbox(gui.Reference("VISUALS", "Shared"), "Extra Features", 0, 397, 200, 221)
 local VOO_Ref = gui.Reference("VISUALS", "OTHER", "Options")
@@ -97,24 +97,22 @@ local function distance3D(x1, y1, z1, x2, y2, z2) return math_floor(vector_Dista
 local function menus() if IsButtonPressed(gui_GetValue("msc_menutoggle")) then pressed = not pressed end if pressed then if AB_Show:GetValue() then AB_W:SetActive(1) else AB_W:SetActive(0) end if ViewModelShown:GetValue() then VM_W:SetActive(1) else VM_W:SetActive(0) end if CC_Show:GetValue() then CC_W:SetActive(1) else CC_W:SetActive(0) end else AB_W:SetActive(0) VM_W:SetActive(0) CC_W:SetActive(0) end end cb_Register("Draw", "shows", menus)
 
 -------------------- Auto Updater
---if not gui_GetValue("lua_allow_http") then AutoUpdate = false else AutoUpdate = true end
-local scriptName = GetScriptName()
+local scriptName = string_gsub(GetScriptName(), ".lua", "")
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.3.9.6"
+local currentVersion = "1.3.9.7"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 function autoupdater()
---if not AutoUpdate then return end
-if newVersionCheck then if not gui_GetValue("lua_allow_http") then draw_Color(255, 255, 255, 255) draw_Text(2, 0, scriptName..": Internet Access Required") end
-newVersionCheck = false local newVersion = http_Get(versionFile) if currentVersion ~= newVersion then updateAvailable = true end end 
-if updateAvailable and not updateDownloaded then if not gui_GetValue("lua_allow_cfg") then draw_Color(255, 255, 255, 255) draw_Text(2, 0, scriptName..": Update Available, Script/Config editing is Required") 
-else local newScript = http_Get(scriptFile) local oldScript = file_Open(scriptName, "w") oldScript:Write(newScript)  oldScript:Close() updateAvailable = false updateDownloaded = true end end
+if not gui_GetValue("lua_allow_http") then return end
+if newVersionCheck then local newVersion = http_Get(versionFile) if currentVersion ~= newVersion then updateAvailable = true end newVersionCheck = false end 
+if updateAvailable and not updateDownloaded then if not gui_GetValue("lua_allow_cfg") then draw_Color(255, 255, 255, 255) draw_Text(2, 0, scriptName..": Update Available, Script/Config editing is Required") else local newScript = http_Get(scriptFile) local oldScript = file_Open(GetScriptName(), "w") oldScript:Write(newScript) oldScript:Close() updateAvailable = false updateDownloaded = true end end
 if updateDownloaded then draw_Color(255, 255, 255, 255) draw_Text(2, 0, scriptName..": Update Downloaded, reload the script") end end
 cb_Register("Draw", "Auto Update", autoupdater)
 
 -------------------- Grenade Timers
 local updatetick = 0 local grenades = {}
 function EventHook(Event)
+if not better_grenades:GetValue() then return end
 if Event:GetName() == "round_prestart" then grenades = {} end
 if Event:GetName() == "hegrenade_detonate" or Event:GetName() == "flashbang_detonate" or Event:GetName() == "inferno_expire" or Event:GetName() == "inferno_extinguish" then updatetick = g_tickcount() for index,value in pairs(grenades) do if value[1] == Event:GetInt("entityid") then table_remove(grenades, index) end end end end
 function ESPHook(Builder)
@@ -131,7 +129,7 @@ local w,h = draw_GetTextSize("MOLLY") draw_SetFont(ff) draw_TextShadow(x - w/2, 
 cb_Register("Draw", DrawingHook) cb_Register("DrawESP", ESPHook) cb_Register("FireGameEvent", EventHook) 
 
 -------------------- Hit Log
-function HitGroup(hitgroup) if hitgroup == 0 then return "body" elseif hitgroup == 1 then return "head" elseif hitgroup == 2 then return "chest" elseif hitgroup == 3 then return "stomach" elseif hitgroup == 4 then return "left arm" elseif hitgroup == 5 then return "right arm"  elseif hitgroup == 6 then return "left leg" elseif hitgroup == 7 then return "right leg" elseif hitgroup == 10 then return "body" end end
+local function HitGroup(hitgroup) if hitgroup == 0 then return "body" elseif hitgroup == 1 then return "head" elseif hitgroup == 2 then return "chest" elseif hitgroup == 3 then return "stomach" elseif hitgroup == 4 then return "left arm" elseif hitgroup == 5 then return "right arm"  elseif hitgroup == 6 then return "left leg" elseif hitgroup == 7 then return "right leg" elseif hitgroup == 10 then return "body" end end
 local draw_hitsay = {}
 function ChatLogger(Event)
 if not HitLog:GetValue() then return end
@@ -145,23 +143,19 @@ local On_Screen_Time, pixels_between_each_line, ScreenX, ScreenY, Max_On_Screen 
 function hitlog()
 if not HitLog:GetValue() or GetLocalPlayer() == nil then return end local things_on_screen = 0 for k, l in pairs(draw_hitsay) do
 if g_realtime() > l[1] + On_Screen_Time then table_remove(draw_hitsay, k) else draw_Color(255,255,255,255) draw_SetFont(ff) draw_TextShadow(ScreenX, things_on_screen * pixels_between_each_line + ScreenY, l[2]) things_on_screen = things_on_screen + 1 end if things_on_screen > Max_On_Screen then things_on_screen = 0 On_Screen_Time = 0 else On_Screen_Time = 8 end end end
-cb_Register("Draw", "draws hits in top left", hitlog) cb_Register("FireGameEvent", ChatLogger)  
+cb_Register("Draw", hitlog) cb_Register("FireGameEvent", ChatLogger)  
 
 -------------------- Auto Buy 
-SecondaryWeapon, PrimaryWeapon, armor = "", "", ""
 function buy(Event)
 if not AB_E:GetValue() or GetLocalPlayer() == nil or Event:GetName() == nil then return end
 if Event:GetName() == "player_spawn" then if PlayerIndexByUserID(Event:GetInt("userid")) == LocalPlayerIndex() then buy = true end end money = GetLocalPlayer():GetProp("m_iAccount")
-if buy then
-if (SecondaryWeapons:GetValue() == 0) then SecondaryWeapon = ""
+if buy then if (SecondaryWeapons:GetValue() == 0) then SecondaryWeapon = ""
 elseif (SecondaryWeapons:GetValue() == 1) then SecondaryWeapon = 'buy "elite"; '
 elseif (SecondaryWeapons:GetValue() == 2) then SecondaryWeapon = 'buy "p250"; '
 elseif (SecondaryWeapons:GetValue() == 3) then SecondaryWeapon = 'buy "tec9"; '
 elseif (SecondaryWeapons:GetValue() == 4) then SecondaryWeapon = 'buy "deagle"; ' end
-if money >= 200 or money < 1 then if Zeus:GetValue() then client_exec('buy "taser"', true) end end
-if money >= 2200 or money < 1 then PWb = true end
-if PWb then
-if (PrimaryWeapons:GetValue() == 0) then PrimaryWeapon = ""
+if money >= 3000 or money < 1 then PWb = true end
+if PWb then if (PrimaryWeapons:GetValue() == 0) then PrimaryWeapon = ""
 elseif (PrimaryWeapons:GetValue() == 1) then PrimaryWeapon = 'buy "ak47"; '
 elseif (PrimaryWeapons:GetValue() == 2) then PrimaryWeapon = 'buy "ssg08"; '
 elseif (PrimaryWeapons:GetValue() == 3) then PrimaryWeapon = 'buy "sg556"; '
@@ -171,18 +165,23 @@ if Armor:GetValue() == 0 then armor = ""
 elseif Armor:GetValue() == 1 then armor = 'buy "vest"; '
 elseif Armor:GetValue() == 2 then armor = 'buy "vest"; buy "vesthelm"' end
 if Nades:GetValue() then client_exec('buy "hegrenade"; buy "incgrenade"; buy "molotov"; buy "smokegrenade"; buy "flashbang"', true) end
+if Zeus:GetValue() then client_exec('buy "taser"', true) end
 if Defuser:GetValue() then client_exec('buy "defuser"', true) end PWb = false end current_buy = (PrimaryWeapon.. SecondaryWeapon.. armor) client_exec(current_buy, true) buy = false end end
 cb_Register("FireGameEvent", buy)
 
--------------------- View Model Extender
-function VM_E() if VM_e:GetValue() then client_SetConVar("viewmodel_offset_x", xS:GetValue(), true) client_SetConVar("viewmodel_offset_y", yS:GetValue(), true) client_SetConVar("viewmodel_offset_z", zS:GetValue(), true) client_SetConVar("viewmodel_fov", vfov:GetValue(), true) else client_SetConVar("viewmodel_offset_x", xO, true) client_SetConVar("viewmodel_offset_y", yO, true) client_SetConVar("viewmodel_offset_z", zO, true) client_SetConVar("viewmodel_fov", fO, true) end end
-cb_Register("Draw", VM_E)
+-------------------- View Model Extender | Spectator list fix / made by anue | 3rd person if you are dead | Disable Post Processing | full bright | Engine Radar
+function VM_E() if VM_e:GetValue() then client_SetConVar("viewmodel_offset_x", xS:GetValue(), true) client_SetConVar("viewmodel_offset_y", yS:GetValue(), true) client_SetConVar("viewmodel_offset_z", zS:GetValue(), true) client_SetConVar("viewmodel_fov", vfov:GetValue(), true) else client_SetConVar("viewmodel_offset_x", xO, true) client_SetConVar("viewmodel_offset_y", yO, true) client_SetConVar("viewmodel_offset_z", zO, true) client_SetConVar("viewmodel_fov", fO, true) end end cb_Register("Draw", VM_E)
+function speclistfix(E) if gui_GetValue("msc_showspec") then if E:GetName() == "round_start" then client_exec("cl_fullupdate", true) end end end cb_Register("FireGameEvent", speclistfix)
+function ifyoudead() if not thirdpersonondead:GetValue() then return end gui_SetValue("vis_thirdperson_mode", 1) if GetLocalPlayer():GetHealth() <= 0 then gui_SetValue("vis_thirdperson_dist", 150) else gui_SetValue("vis_thirdperson_dist", 0) end end cb_Register("Draw", ifyoudead)
+function Dis_PP() if DPP:GetValue() then client_SetConVar("mat_postprocess_enable", 0, true) else client_SetConVar("mat_postprocess_enable", 1, true) end end cb_Register("Draw", Dis_PP)
+function full_bright() if fBright:GetValue() then client_SetConVar("mat_fullbright", 1, true) else client_SetConVar("mat_fullbright", 0, true) end end cb_Register("Draw", full_bright)
+function engineradar() if ERadar:GetValue() then ERval = 1 else ERval = 0 end for a, b in pairs(entities_FindByClass("CCSPlayer")) do b:SetProp("m_bSpotted", ERval) end end cb_Register("Draw", engineradar)
 
 -------------------- Scoped Fov Fix
 function scopefov()
+if not s_fovfix:GetValue() or GetLocalPlayer() == nil then return end
 local view_fov = gui_GetValue("vis_view_fov") local view_model_fov = gui_GetValue("vis_view_model_fov")
 if view_fov ~= 0 then fov_value = gui_GetValue("vis_view_fov") end if view_model_fov ~= 0 then vm_fov_value = gui_GetValue("vis_view_model_fov") end
-if not s_fovfix:GetValue() or GetLocalPlayer() == nil then return end
 if GetLocalPlayer():GetProp("m_bIsScoped") == 1 or GetLocalPlayer():GetProp("m_bIsScoped") == 257 then gui_SetValue("vis_view_fov", 0) gui_SetValue("vis_view_model_fov", 0) 
 elseif view_fov == 0 then gui_SetValue("vis_view_fov", fov_value) gui_SetValue("vis_view_model_fov", vm_fov_value) end end
 cb_Register("Draw", "fixes scoped fov", scopefov)
@@ -198,15 +197,15 @@ elseif drawCrosshair == true and ComboCrosshair:GetValue() == 1 then gui_SetValu
 elseif drawCrosshair == true and ComboCrosshair:GetValue() == 2 then gui_SetValue("esp_crosshair", false) client_SetConVar("weapon_debug_spread_show", 3, true)
 elseif drawCrosshair == true and ComboCrosshair:GetValue() == 3 then if Scoped then gui_SetValue("esp_crosshair", false) else client_SetConVar("weapon_debug_spread_show", 0, true) gui_SetValue("esp_crosshair", true) end 
 elseif drawCrosshair == false and ComboCrosshair:GetValue() == 3 then gui_SetValue("esp_crosshair", false)
-elseif drawCrosshair == true and ComboCrosshair:GetValue() == 4 then client_SetConVar("weapon_debug_spread_show", 0, true) gui_SetValue("esp_crosshair", false)
-draw_Color(255,255,255,255) draw_Line(scX, scY - 8, scX, scY + 8) --[[ line down ]] draw_Line(scX - 8, scY, scX + 8, scY) --[[ line across ]] end end
+elseif drawCrosshair == true and ComboCrosshair:GetValue() == 4 then client_SetConVar("weapon_debug_spread_show", 0, true) gui_SetValue("esp_crosshair", false) draw_Color(255,255,255,255) draw_Line(scX, scY - 8, scX, scY + 8) --[[ line down ]] draw_Line(scX - 8, scY, scX + 8, scY) --[[ line across ]] end end
 cb_Register("Draw", ifCrosshair)
 
 -------------------- Bomb Timer & defuse timer
 local function mathfix() local screenX, screenY = draw_GetScreenSize() screenY3 = screenY/2 end cb_Register("Draw", "fixes screenY3", mathfix)
 local function get_site_name(site) local a_x, a_y, a_z = GetPlayerResources():GetProp("m_bombsiteCenterA") local b_x, b_y, b_z = GetPlayerResources():GetProp("m_bombsiteCenterB") local site_x1, site_y1, site_z1 = site:GetMins() local site_x2, site_y2, site_z2 = site:GetMaxs() local site_x, site_y, site_z = lerp_pos(site_x1, site_y1, site_z1, site_x2, site_y2, site_z2, 0.5) local distance_a, distance_b = vector_Distance(site_x, site_y, site_z, a_x, a_y, a_z), vector_Distance(site_x, site_y, site_z, b_x, b_y, b_z) return distance_b > distance_a and "A" or "B" end
-colorchange, drawBar, drawDefuse, drawPlanting, plantedTime, plantedTime2, fill, fill2, fill3, plantingName, plantingStarted, plantingTime, plantingSite = 10, false, false, false, 0, 0, 0, screenY3, 0, "", 0, 3.125, ""
+local colorchange, drawBar, drawDefuse, drawPlanting, plantedTime, plantedTime2, fill, fill2, fill3, plantingName, plantingStarted, plantingTime, plantingSite = 10, false, false, false, 0, 0, 0, screenY3, 0, "", 0, 3.125, ""
 function bomb(event)
+if not BombTimer:GetValue() then return end
 if event:GetName() == "bomb_beginplant" then drawPlanting = true plantingName = PlayerNameByUserID(event:GetInt("userid")) plantingStarted = g_curtime() plantingSite = get_site_name(entities_GetByIndex(event:GetInt("site"))) end
 if event:GetName() == "bomb_abortplant" then drawPlanting = false end
 if event:GetName() == "bomb_planted" then plantedTime = g_curtime() drawBar = true drawPlanting = false end
@@ -214,36 +213,34 @@ if event:GetName() == "bomb_begindefuse" then defusingName = PlayerNameByUserID(
 if event:GetName() == "bomb_abortdefuse" then drawDefuse = false fill2 = screenY3 fill3 = 0 end
 if event:GetName() == "round_end" then drawBar = false drawDefuse = false drawPlanting = false fill = 0 fill2 = screenY3 fill3 = 0 end end
 function drawProgress()
-if BombTimer:GetValue() then local screenX, screenY = draw_GetScreenSize()
+if not BombTimer:GetValue() then return end local screenX, screenY = draw_GetScreenSize() local Player = GetLocalPlayer()
 if drawBar then local ToExplode = entities_FindByClass("CPlantedC4") for i=1, #ToExplode do c4time = math_floor(ToExplode[i]:GetProp("m_flTimerLength")) 
 if math_floor((plantedTime - g_curtime()) + c4time) > -1  then local godownby = (screenY / c4time) / get_abs_fps() C4time = string_format("%.1f", ((plantedTime - g_curtime()) + c4time))
+if Player:GetTeamNumber() == 3 and Player:GetProp("m_bHasDefuser") == 0 then if (plantedTime - g_curtime()) + c4time <= 10.05 then r, g, b, a = 255,13,13,255 else r, g, b, a = 255,255,255,255 end
+elseif Player:GetTeamNumber() == 3 and Player:GetProp("m_bHasDefuser") == 1 then if (plantedTime - g_curtime()) + c4time <= 5.05 then r, g, b, a = 255,13,13,255 else r, g, b, a = 255,255,255,255 end else r, g, b, a = 255,255,255,255 end
+local bombsite = ToExplode[i]:GetProp("m_nBombSite") == 0 and "A" or "B" draw_SetFont(fontz) draw_Color(r, g, b, a) draw_Text(15, 0, bombsite.. " - ".. C4time.."s")
 if math_floor((plantedTime - g_curtime()) + c4time) <= colorchange then draw_Color(255,0,0,255) else draw_Color(0,255,0,255) end  draw_FilledRect(0, fill, 10, screenY) draw_Color(0,0,0,100) draw_FilledRect(0, 0, 10, screenY) fill = fill + godownby end end end
 if drawPlanting then local plant_percentage = (g_curtime() - plantingStarted) / plantingTime local planttime = string_format("%.1fs", (plantingStarted - g_curtime()) + plantingTime) 
 if plant_percentage > 0 and 1 > plant_percentage then local remove_from_Y = screenY * (1 - plant_percentage) draw_SetFont(fontz) draw_Color(255,255,255,255) draw_Text(15, 0, plantingSite.." - Planting") draw_Color(255,255,255,255) draw_Text(15, 25, plantingName.. " - ".. planttime) draw_Color(0,255,0,255) draw_FilledRect(0, 0+remove_from_Y, 10, screenY+remove_from_Y) draw_Color(0,0,0,100) draw_FilledRect(0, 0, 10, screenY) end end
 if drawDefuse then local ToDefuse = entities_FindByClass("CPlantedC4") DefuseTime = math_floor(ToDefuse[1]:GetProp("m_flDefuseLength")) DefuseT = string_format("%.1fs", (plantedTime2 - g_curtime()) + DefuseTime) draw_SetFont(fontz) draw_Color(255,255,255,255) draw_Text(15, 50, defusingName.." - ".. DefuseT)
 if DefuseTime == 10 then local godownby3 = (screenY / DefuseTime) / get_abs_fps() draw_Color(0,0,255,255) draw_FilledRect(0, fill3, 10, screenY) draw_Color(0,0,0,100) draw_FilledRect(0, 0, 10, screenY) fill3 = fill3 + godownby3
-elseif DefuseTime == 5 then screenY3 = screenY/2 local godownby2 = (screenY3 / DefuseTime) / get_abs_fps() draw_Color(0,0,255,255) draw_FilledRect(0, fill2, 10, screenY) draw_Color(0,0,0,100) draw_FilledRect(0, screenY3, 10, screenY) fill2 = fill2 + godownby2 end end end end
+elseif DefuseTime == 5 then screenY3 = screenY/2 local godownby2 = (screenY3 / DefuseTime) / get_abs_fps() draw_Color(0,0,255,255) draw_FilledRect(0, fill2, 10, screenY) draw_Color(0,0,0,100) draw_FilledRect(0, screenY3, 10, screenY) fill2 = fill2 + godownby2 end end end 
 
 -------------------- Bomb Damage
 function DrawDamage()
-if not Bomb_Damage:GetValue() then return end
-if entities_FindByClass("CPlantedC4")[1] == nil then return end local Bomb = entities_FindByClass("CPlantedC4")[1]
-if C4time == nil or c4time == nil then return end
+if not Bomb_Damage:GetValue() or entities_FindByClass("CPlantedC4")[1] == nil then return end local Bomb = entities_FindByClass("CPlantedC4")[1]
 if Bomb:GetProp("m_bBombTicking") and Bomb:GetProp("m_bBombDefused") == 0 and g_curtime() < Bomb:GetProp("m_flC4Blow") then local Player = GetLocalPlayer() HealthToTake = string_format("%.0f", (DamagefromDomb(Bomb, Player)))
-if Player:GetTeamNumber() == 3 and Player:GetProp("m_bHasDefuser") == 0 then if (plantedTime - g_curtime()) + c4time <= 10.05 then r, g, b, a = 255,13,13,255 else r, g, b, a = 255,255,255,255 end
-elseif Player:GetTeamNumber() == 3 and Player:GetProp("m_bHasDefuser") == 1 then if (plantedTime - g_curtime()) + c4time <= 5.05 then r, g, b, a = 255,13,13,255 else r, g, b, a = 255,255,255,255 end else r, g, b, a = 255,255,255,255 end
-local bombsite = Bomb:GetProp("m_nBombSite") == 0 and "A" or "B" draw_SetFont(fontz) draw_Color(r, g, b, a) draw_Text(15, 0, bombsite.. " - ".. C4time.."s")
 if g_curtime() < Bomb:GetProp("m_flC4Blow") then
-if HealthToTake + 0.95 < Player:GetHealth() and HealthToTake - 0 > 0 then draw_Color(255,255,255,255) draw_Text(15, 25, "-"..math_floor(HealthToTake+1))
-elseif HealthToTake + 1 >= Player:GetHealth() then draw_Color(255,0,0,255) draw_Text(15, 25, "FATAL") end end end end
-cb_Register("Draw", "draws bomb damage", DrawDamage)
+if HealthToTake + 0.95 < Player:GetHealth() and HealthToTake - 0 > 0 then draw_SetFont(fontz) draw_Color(255,255,255,255) draw_Text(15, 25, "-"..math_floor(HealthToTake+1))
+elseif HealthToTake + 1 >= Player:GetHealth() then draw_SetFont(fontz) draw_Color(255,0,0,255) draw_Text(15, 25, "FATAL") end end end end
 function DamagefromDomb(Bomb, Player)
+if not Bomb_Damage:GetValue() then return end
 local C4Distance = math_sqrt((select(1,Bomb:GetAbsOrigin()) - select(1,Player:GetAbsOrigin())) ^ 2 + (select(2,Bomb:GetAbsOrigin()) - select(2,Player:GetAbsOrigin())) ^ 2 + (select(3,Bomb:GetAbsOrigin()) - select(3,Player:GetAbsOrigin())) ^ 2) local Gauss = (C4Distance - 75.68) / 789.2 local flDamage = 450.7 * math_exp(-Gauss * Gauss)
 if Player:GetProp("m_ArmorValue") > 0 then local flArmorRatio = 0.5 local flArmorBonus = 0.5
 if Player:GetProp("m_ArmorValue") > 0 then local flNew = flDamage * flArmorRatio local flArmor = (flDamage - flNew) * flArmorBonus
 if flArmor > Player:GetProp("m_ArmorValue") then flArmor = Player:GetProp("m_ArmorValue") * (1 / flArmorBonus) flNew = flDamage - flArmor end flDamage = flNew end end
 return math_max(flDamage, 0) end 
-cb_Register("Draw", "draws bomb stuff", drawProgress) cb_Register("FireGameEvent", "just event stuff", bomb)
+cb_Register("Draw", drawProgress) cb_Register("Draw", "draws bomb damage", DrawDamage) cb_Register("FireGameEvent", bomb)
 
 -------------------- Chat Spams
 local c_spammedlast = g_realtime() + CC_Spam_spd:GetValue()/100
@@ -276,11 +273,9 @@ else
 	gui_SetValue("esp_enemy_skeleton", false) gui_SetValue("esp_enemy_name", false) end end
 cb_Register("Draw", ESP_Always_OnDead)
 
--------------------- Engine Radar
-function engineradar() if ERadar:GetValue() then ERval = 1 else ERval = 0 end for a, b in pairs(entities_FindByClass("CCSPlayer")) do b:SetProp("m_bSpotted", ERval) end end cb_Register("Draw", engineradar)
-
 -------------------- Enemy & Team Tracers
 function Tracers()
+if not tracersEnemy:GetValue() and not tracersTeam:GetValue() then return end
 if GetLocalPlayer() == nil then return end local sX, sY = draw_GetScreenSize() local lpTeamNum = GetLocalPlayer():GetTeamNumber() local players = entities_FindByClass("CCSPlayer") for i = 1, #players do local player = players[i] local pX, pY, pZ = client_WorldToScreen(player:GetAbsOrigin()) playerteam = player:GetTeamNumber()
 if playerteam == lpTeamNum then r,g,b,z = 0,0,255,255 else r,g,b,a = 255,0,0,255 end 
 if tracersEnemy:GetValue() then if player:GetTeamNumber() ~= lpTeamNum and player:IsAlive() and pX ~= nil and pY ~= nil then draw_Color(r,g,b,a) draw_Line(sX/2, sY, pX, pY) end end
@@ -289,20 +284,13 @@ cb_Register("Draw", Tracers)
 
 -------------------- Enemy & Team & Other Distance + visible help
 function Distance(builder)
+if not enemy_distance:GetValue() and not team_distance:GetValue() and not other_distance:GetValue() and not enemy_visiblehelp:GetValue() then return end
 local ent = builder:GetEntity() playerteam = builder:GetEntity():GetTeamNumber() local ppX, ppY, ppZ = ent:GetAbsOrigin() local lX, lY, lZ = GetLocalPlayer():GetAbsOrigin() local dist = distance3D(ppX, ppY, ppZ, lX, lY, lZ)
 if enemy_distance:GetValue() and ent:IsAlive() and ent:IsPlayer() and playerteam ~= GetLocalPlayer():GetTeamNumber() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end
 if team_distance:GetValue() and ent:IsAlive() and ent:IsPlayer() and playerteam == GetLocalPlayer():GetTeamNumber() and ent:GetIndex() ~= LocalPlayerIndex() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end
 if other_distance:GetValue() and not ent:IsPlayer() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end
 if enemy_visiblehelp:GetValue() and ent:IsAlive() and ent:IsPlayer() and playerteam ~= GetLocalPlayer():GetTeamNumber() then builder:Color(255, 255, 255, 255) builder:AddTextTop("VISIBLE") end end
 cb_Register("DrawESP", "Distance ESP", Distance)
-
--------------------- full bright
-function full_bright() if fBright:GetValue() then client_SetConVar("mat_fullbright", 1, true) else client_SetConVar("mat_fullbright", 0, true) end end
-cb_Register("Draw", full_bright)
-
--------------------- Disable Post Processing
-function Dis_PP() if DPP:GetValue() then client_SetConVar("mat_postprocess_enable", 0, true) else client_SetConVar("mat_postprocess_enable", 1, true) end end
-cb_Register("Draw", Dis_PP)
 
 -------------------- Knife on Left Hand
 function on_knife_righthand()
@@ -311,10 +299,6 @@ local wep = GetLocalPlayer():GetPropEntity("m_hActiveWeapon") if wep == nil then
 if cwep == "CKnife" then client_exec("cl_righthand 0", true) else client_exec("cl_righthand 1", true) end end
 cb_Register("Draw", on_knife_righthand) 
 
--------------------- 3rd person if you are dead
-function ifyoudead() if thirdpersonondead:GetValue() then gui_SetValue("vis_thirdperson_mode", 1) if GetLocalPlayer():GetHealth() <= 0 then gui_SetValue("vis_thirdperson_dist", 150) else gui_SetValue("vis_thirdperson_dist", 0) end  return end end 
-cb_Register("Draw", ifyoudead)
-
 -------------------- Zeusbot
 function zeuslegit()
 if not zeusbot:GetValue() or GetLocalPlayer() == nil then return end local Weapon = GetLocalPlayer():GetPropEntity("m_hActiveWeapon") 
@@ -322,9 +306,6 @@ if Weapon == nil then return end local CWeapon = Weapon:GetClass()
 if CWeapon == "CWeaponTaser" then gui_SetValue("lbot_trg_enable", 1) gui_SetValue("lbot_trg_mode", 0) gui_SetValue("lbot_trg_autofire", 1) gui_SetValue("lbot_trg_hitchance", gui_GetValue("rbot_taser_hitchance"))
 else gui_SetValue("lbot_trg_enable", 0) gui_SetValue("lbot_trg_mode", trigm) gui_SetValue("lbot_trg_autofire", trigaf) gui_SetValue("lbot_trg_hitchance", trighc) end end
 cb_Register("Draw", zeuslegit)
-
--------------------- Spectator list fix | made by anue
-function speclistfix(E) if gui_GetValue("msc_showspec") then if E:GetName() == "round_start" then client_exec("cl_fullupdate", true) end end end cb_Register("FireGameEvent", speclistfix)
 
 -------------------- Spectator list  | --[[ specX-10-tW --]] -- aligned on the right edge | --[[ specX-75-(tW/2) --]] -- aligned from center of text
 local inbetween = 0
@@ -356,6 +337,7 @@ if e:GetName() == "round_start" then gui_SetValue("msc_namestealer_enable", 1) e
 -------------------- Show Team Damage
 local damagedone, killed = 0, 0
 function KillsAndDamage(e)
+if not TeamDamageShow:GetValue() then return end
 if e:GetName() == "player_hurt" then if PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() and playerteam == GetLocalPlayer():GetTeamNumber() then damagedone = damagedone + e:GetInt("dmg_health") end end
 if e:GetName() == "player_death" then if PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() and playerteam == GetLocalPlayer():GetTeamNumber() then killed = killed + 1 end end
 if e:GetName() == "player_connect_full" then damagedone, killed = 0, 0 end end
