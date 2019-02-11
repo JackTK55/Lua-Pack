@@ -43,8 +43,7 @@ local vfov = gui.Slider(VMStuff, "VM_fov", "Viewmodel FOV", fO, 0, 120)
 local ComboCrosshair = gui.Combobox(G_VM, "vis_sniper_crosshair", "Sniper Crosshair", "Off", "Engine Crosshair", "Engine Crosshair (+scoped)", "Aimware Crosshair", "Draw Crosshair")
 -------------- Scoped FOV Fix
 local s_fovfix = gui.Checkbox(G_VM, "vis_fixfov", "Fix Scoped FOV", false)
-local fov_value = gui_GetValue("vis_view_fov")
-local vm_fov_value = gui_GetValue("vis_view_model_fov")
+local fov_value, vm_fov_value = gui_GetValue("vis_view_fov"), gui_GetValue("vis_view_model_fov")
 -------------- Knife On Left Hand
 local K_O_L_H = gui.Checkbox(G_M1, "msc_knifelefthand", "Knife On Left Hand", false)
 -------------- Bomb Timer
@@ -73,7 +72,6 @@ local tracersEnemy = gui.Checkbox(VEO_Ref, "esp_enemy_tracer", "Tracers", false)
 local tracersTeam = gui.Checkbox(VTO_Ref, "esp_team_tracer", "Tracers", false)
 -------------- Team & Enemy & Other Distance + visible help 
 local enemy_distance = gui.Checkbox(VEO_Ref, "esp_enemy_distance", "Distance", false)
-local enemy_visiblehelp = gui.Checkbox(VEO_Ref, "esp_enemy_vishelp", "Visible Help", false)
 local team_distance = gui.Checkbox(VTO_Ref, "esp_team_distance", "Distance", false)
 local other_distance = gui.Checkbox(VOO_Ref, "esp_other_distance", "Distance", false)
 -------------- Full Bright
@@ -84,7 +82,7 @@ local DPP = gui.Checkbox(G_VM, "vis_disable_post", "Disable Post Processing", fa
 local thirdpersonondead = gui.Checkbox(G_VM, "vis_thirdperson_ondead", "3rd Person While Dead", false)
 -------------- Zeusbot
 local zeusbot = gui.Checkbox(gui.Reference("LEGIT", "Extra"), "lbot_zeusbot_enable", "Zeusbot", false)
-local trigm, trigaf, trighc = gui_GetValue("lbot_trg_mode"), gui_GetValue("lbot_trg_autofire"), gui_GetValue("lbot_trg_hitchance")
+local trige, trigm, trigaf, trighc = gui_GetValue("lbot_trg_enable"), gui_GetValue("lbot_trg_mode"), gui_GetValue("lbot_trg_autofire"), gui_GetValue("lbot_trg_hitchance")
 -------------- Recoil Crosshair
 local RecoilCrosshair = gui.Checkbox(G_VM, "vis_recoilcrosshair", "Recoil Crosshair", false)
 -------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -97,16 +95,16 @@ local function distance3D(x1, y1, z1, x2, y2, z2) return math_floor(vector_Dista
 local function menus() if IsButtonPressed(gui_GetValue("msc_menutoggle")) then pressed = not pressed end if pressed then if AB_Show:GetValue() then AB_W:SetActive(1) else AB_W:SetActive(0) end if ViewModelShown:GetValue() then VM_W:SetActive(1) else VM_W:SetActive(0) end if CC_Show:GetValue() then CC_W:SetActive(1) else CC_W:SetActive(0) end else AB_W:SetActive(0) VM_W:SetActive(0) CC_W:SetActive(0) end end cb_Register("Draw", "shows", menus)
 
 -------------------- Auto Updater
-local scriptName = string_gsub(GetScriptName(), ".lua", "")
+local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.3.9.7"
+local currentVersion = "1.3.9.8"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 function autoupdater()
 if not gui_GetValue("lua_allow_http") then return end
 if newVersionCheck then local newVersion = http_Get(versionFile) if currentVersion ~= newVersion then updateAvailable = true end newVersionCheck = false end 
-if updateAvailable and not updateDownloaded then if not gui_GetValue("lua_allow_cfg") then draw_Color(255, 255, 255, 255) draw_Text(2, 0, scriptName..": Update Available, Script/Config editing is Required") else local newScript = http_Get(scriptFile) local oldScript = file_Open(GetScriptName(), "w") oldScript:Write(newScript) oldScript:Close() updateAvailable = false updateDownloaded = true end end
-if updateDownloaded then draw_Color(255, 255, 255, 255) draw_Text(2, 0, scriptName..": Update Downloaded, reload the script") end end
+if updateAvailable and not updateDownloaded then if not gui_GetValue("lua_allow_cfg") then draw_Color(255, 255, 255, 255) draw_Text(2, 0, string_gsub(scriptName, ".lua", "")..": Update Available, Script/Config editing is Required") else local newScript = http_Get(scriptFile) local oldScript = file_Open(scriptName, "w") oldScript:Write(newScript) oldScript:Close() updateAvailable = false updateDownloaded = true end end
+if updateDownloaded then draw_Color(255, 255, 255, 255) draw_Text(2, 0, string_gsub(scriptName, ".lua", "")..": Update Downloaded, reload the script") end end
 cb_Register("Draw", "Auto Update", autoupdater)
 
 -------------------- Grenade Timers
@@ -284,12 +282,11 @@ cb_Register("Draw", Tracers)
 
 -------------------- Enemy & Team & Other Distance + visible help
 function Distance(builder)
-if not enemy_distance:GetValue() and not team_distance:GetValue() and not other_distance:GetValue() and not enemy_visiblehelp:GetValue() then return end
+if not enemy_distance:GetValue() and not team_distance:GetValue() and not other_distance:GetValue() then return end
 local ent = builder:GetEntity() playerteam = builder:GetEntity():GetTeamNumber() local ppX, ppY, ppZ = ent:GetAbsOrigin() local lX, lY, lZ = GetLocalPlayer():GetAbsOrigin() local dist = distance3D(ppX, ppY, ppZ, lX, lY, lZ)
 if enemy_distance:GetValue() and ent:IsAlive() and ent:IsPlayer() and playerteam ~= GetLocalPlayer():GetTeamNumber() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end
 if team_distance:GetValue() and ent:IsAlive() and ent:IsPlayer() and playerteam == GetLocalPlayer():GetTeamNumber() and ent:GetIndex() ~= LocalPlayerIndex() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end
-if other_distance:GetValue() and not ent:IsPlayer() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end
-if enemy_visiblehelp:GetValue() and ent:IsAlive() and ent:IsPlayer() and playerteam ~= GetLocalPlayer():GetTeamNumber() then builder:Color(255, 255, 255, 255) builder:AddTextTop("VISIBLE") end end
+if other_distance:GetValue() and not ent:IsPlayer() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end end
 cb_Register("DrawESP", "Distance ESP", Distance)
 
 -------------------- Knife on Left Hand
@@ -301,13 +298,14 @@ cb_Register("Draw", on_knife_righthand)
 
 -------------------- Zeusbot
 function zeuslegit()
-if not zeusbot:GetValue() or GetLocalPlayer() == nil then return end local Weapon = GetLocalPlayer():GetPropEntity("m_hActiveWeapon") 
-if Weapon == nil then return end local CWeapon = Weapon:GetClass() 
+if not zeusbot:GetValue() or GetLocalPlayer() == nil then return end local Weapon = GetLocalPlayer():GetPropEntity("m_hActiveWeapon") if Weapon == nil then return end local CWeapon = Weapon:GetClass() 
+local trige, trigm, trigaf, trighc = gui_GetValue("lbot_trg_enable"), gui_GetValue("lbot_trg_mode"), gui_GetValue("lbot_trg_autofire"), gui_GetValue("lbot_trg_hitchance")
+if trige ~= 1 and trigm ~= 0 and trigaf ~= 1 and trighc ~= gui_GetValue("rbot_taser_hitchance") then trige2, trigm2, trigaf2, trighc2 = gui_GetValue("lbot_trg_enable"), gui_GetValue("lbot_trg_mode"), gui_GetValue("lbot_trg_autofire"), gui_GetValue("lbot_trg_hitchance") end
 if CWeapon == "CWeaponTaser" then gui_SetValue("lbot_trg_enable", 1) gui_SetValue("lbot_trg_mode", 0) gui_SetValue("lbot_trg_autofire", 1) gui_SetValue("lbot_trg_hitchance", gui_GetValue("rbot_taser_hitchance"))
-else gui_SetValue("lbot_trg_enable", 0) gui_SetValue("lbot_trg_mode", trigm) gui_SetValue("lbot_trg_autofire", trigaf) gui_SetValue("lbot_trg_hitchance", trighc) end end
+else gui_SetValue("lbot_trg_enable", trige2) gui_SetValue("lbot_trg_mode", trigm2) gui_SetValue("lbot_trg_autofire", trigaf2) gui_SetValue("lbot_trg_hitchance", trighc2) end end
 cb_Register("Draw", zeuslegit)
 
--------------------- Spectator list  | --[[ specX-10-tW --]] -- aligned on the right edge | --[[ specX-75-(tW/2) --]] -- aligned from center of text
+-------------------- Spectator list  | --[[ specX-10-tW ]]-- aligned on the right  | --[[ specX-75-(tW/2) ]]-- aligned from center of text
 local inbetween = 0
 function SpecList()
 if not SpectatorList:GetValue() or GetLocalPlayer() == nil then return end local specX, specY = draw_GetScreenSize() local inbetween = 0 local players = entities_FindByClass("CCSPlayer") for i = 1, #players do local player = players[i] local playername = player:GetName() local playerindex = player:GetIndex() local tW, tH = draw_GetTextSize(playername)
