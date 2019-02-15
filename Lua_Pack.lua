@@ -9,6 +9,7 @@ local G_M1 = gui.Groupbox(gui.Reference("MISC", "GENERAL", "Main"), "Extra Featu
 -------------- Font
 local fontz = draw_CreateFont("Tahoma", 30) 
 local fontS = draw_CreateFont("Tahoma", 20) 
+local fff = draw_CreateFont("Tahoma")
 local ff = draw_CreateFont("Tahoma", 11)
 -------------- Better Grenades
 local better_grenades = gui.Checkbox(VOO_Ref, "esp_other_better_grenades", "Better Grenades", false)
@@ -135,12 +136,11 @@ if Event:GetName() == "player_hurt" then
 local uid = Event:GetInt("userid") local i_dmg = Event:GetString("dmg_health") local i_health = Event:GetString("health") local i_hitgroup = Event:GetInt("hitgroup")
 local ind_Attacker = PlayerIndexByUserID(Event:GetInt("attacker")) local ind_Victim = PlayerIndexByUserID(uid) local n_Victim = PlayerNameByUserID(uid)
 response = string_format("Hit %s in the %s for %s damage (%s health remaining)\n", n_Victim, HitGroup(i_hitgroup), i_dmg, i_health)
-if ind_Attacker == LocalPlayerIndex() and ind_Victim ~= LocalPlayerIndex() then print(response)
-table_insert(draw_hitsay, {g_realtime(), response}) end end end
+if ind_Attacker == LocalPlayerIndex() and ind_Victim ~= LocalPlayerIndex() then table_insert(draw_hitsay, {g_realtime(), response}) end end end
 local On_Screen_Time, pixels_between_each_line, ScreenX, ScreenY, Max_On_Screen = 8, 10, 10, 10, 10
 function hitlog()
 if not HitLog:GetValue() or GetLocalPlayer() == nil then return end local things_on_screen = 0 for k, l in pairs(draw_hitsay) do
-if g_realtime() > l[1] + On_Screen_Time then table_remove(draw_hitsay, k) else draw_Color(255,255,255,255) draw_SetFont(ff) draw_TextShadow(ScreenX, things_on_screen * pixels_between_each_line + ScreenY, l[2]) things_on_screen = things_on_screen + 1 end if things_on_screen > Max_On_Screen then things_on_screen = 0 On_Screen_Time = 0 else On_Screen_Time = 8 end end end
+if g_realtime() > l[1] + On_Screen_Time then table_remove(draw_hitsay, k) else draw_Color(255,255,255,255) draw_SetFont(fff) draw_TextShadow(ScreenX, things_on_screen * pixels_between_each_line + ScreenY, l[2]) things_on_screen = things_on_screen + 1 end if things_on_screen > Max_On_Screen then things_on_screen = 0 On_Screen_Time = 0 else On_Screen_Time = 8 end end end
 cb_Register("Draw", hitlog) cb_Register("FireGameEvent", ChatLogger)  
 
 -------------------- Auto Buy 
@@ -282,8 +282,9 @@ cb_Register("Draw", Tracers)
 
 -------------------- Enemy & Team & Other Distance + visible help
 function Distance(builder)
+playerteam = builder:GetEntity():GetTeamNumber()
 if not enemy_distance:GetValue() and not team_distance:GetValue() and not other_distance:GetValue() then return end
-local ent = builder:GetEntity() playerteam = builder:GetEntity():GetTeamNumber() local ppX, ppY, ppZ = ent:GetAbsOrigin() local lX, lY, lZ = GetLocalPlayer():GetAbsOrigin() local dist = distance3D(ppX, ppY, ppZ, lX, lY, lZ)
+local ent = builder:GetEntity() local ppX, ppY, ppZ = ent:GetAbsOrigin() local lX, lY, lZ = GetLocalPlayer():GetAbsOrigin() local dist = distance3D(ppX, ppY, ppZ, lX, lY, lZ)
 if enemy_distance:GetValue() and ent:IsAlive() and ent:IsPlayer() and playerteam ~= GetLocalPlayer():GetTeamNumber() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end
 if team_distance:GetValue() and ent:IsAlive() and ent:IsPlayer() and playerteam == GetLocalPlayer():GetTeamNumber() and ent:GetIndex() ~= LocalPlayerIndex() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end
 if other_distance:GetValue() and not ent:IsPlayer() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end end
@@ -338,7 +339,7 @@ function KillsAndDamage(e)
 if e:GetName() == "player_hurt" then if PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() and playerteam == GetLocalPlayer():GetTeamNumber() then damagedone = damagedone + e:GetInt("dmg_health") end end
 if e:GetName() == "player_death" then if PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() and playerteam == GetLocalPlayer():GetTeamNumber() then killed = killed + 1 end end
 if e:GetName() == "player_connect_full" then damagedone, killed = 0, 0 end end
-function DrawsTKsDMG() if not TeamDamageShow:GetValue() or GetLocalPlayer() == nil then return end local X, Y = draw_GetScreenSize() draw_Color(255,255,255,255) draw_TextShadow(10, Y/2-40, "Damage Done: ".. damagedone) draw_TextShadow(10, Y/2-30, "Teammates Killed: ".. killed) end 
+function DrawsTKsDMG() if not TeamDamageShow:GetValue() or GetLocalPlayer() == nil then return end local X, Y = draw_GetScreenSize() draw_Color(255,255,255,255) draw_SetFont(fff) draw_TextShadow(10, Y/2-40, "Damage Done: ".. damagedone) draw_TextShadow(10, Y/2-30, "Teammates Killed: ".. killed) end 
 cb_Register("FireGameEvent", KillsAndDamage) cb_Register("Draw", DrawsTKsDMG)
 
 c_AllowListener("round_end") c_AllowListener("round_start") c_AllowListener("bomb_beginplant") c_AllowListener("bomb_abortplant") c_AllowListener("bomb_planted") c_AllowListener("bomb_defused") c_AllowListener("bomb_begindefuse") c_AllowListener("bomb_abortdefuse")c_AllowListener("player_spawn") c_AllowListener("player_hurt") c_AllowListener("player_death") c_AllowListener("player_connect_full") c_AllowListener("inferno_expire") c_AllowListener("inferno_extinguish") c_AllowListener("molotov_detonate") c_AllowListener("hegrenade_detonate") c_AllowListener("flashbang_detonate") 
