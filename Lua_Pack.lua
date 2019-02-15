@@ -335,7 +335,6 @@ if e:GetName() == "round_start" then gui_SetValue("msc_namestealer_enable", 1) e
 -------------------- Show Team Damage
 local damagedone, killed = 0, 0
 function KillsAndDamage(e)
-if not TeamDamageShow:GetValue() then return end
 if e:GetName() == "player_hurt" then if PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() and playerteam == GetLocalPlayer():GetTeamNumber() then damagedone = damagedone + e:GetInt("dmg_health") end end
 if e:GetName() == "player_death" then if PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() and playerteam == GetLocalPlayer():GetTeamNumber() then killed = killed + 1 end end
 if e:GetName() == "player_connect_full" then damagedone, killed = 0, 0 end end
