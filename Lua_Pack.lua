@@ -137,7 +137,7 @@ local uid = Event:GetInt("userid") local i_dmg = Event:GetString("dmg_health") l
 local ind_Attacker = PlayerIndexByUserID(Event:GetInt("attacker")) local ind_Victim = PlayerIndexByUserID(uid) local n_Victim = PlayerNameByUserID(uid)
 response = string_format("Hit %s in the %s for %s damage (%s health remaining)\n", n_Victim, HitGroup(i_hitgroup), i_dmg, i_health)
 if ind_Attacker == LocalPlayerIndex() and ind_Victim ~= LocalPlayerIndex() then table_insert(draw_hitsay, {g_realtime(), response}) end end end
-local On_Screen_Time, pixels_between_each_line, ScreenX, ScreenY, Max_On_Screen = 8, 10, 10, 10, 10
+local On_Screen_Time, pixels_between_each_line, ScreenX, ScreenY, Max_On_Screen = 3, 3, 10, 10, 10
 function hitlog()
 if not HitLog:GetValue() or GetLocalPlayer() == nil then return end local things_on_screen = 0 for k, l in pairs(draw_hitsay) do
 if g_realtime() > l[1] + On_Screen_Time then table_remove(draw_hitsay, k) else draw_Color(255,255,255,255) draw_SetFont(fff) draw_TextShadow(ScreenX, things_on_screen * pixels_between_each_line + ScreenY, l[2]) things_on_screen = things_on_screen + 1 end if things_on_screen > Max_On_Screen then things_on_screen = 0 On_Screen_Time = 0 else On_Screen_Time = 8 end end end
