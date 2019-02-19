@@ -124,7 +124,7 @@ if not better_grenades:GetValue() then return end
 for indexF,valueF in pairs(entities_FindByClass("CInferno")) do local found = false for indexT,valueT in pairs(grenades) do if valueT[1] ~= valueF:GetIndex() then return end
 x, y = client_WorldToScreen(valueF:GetAbsOrigin()) local mollysize = 25 if x == nil and y == nil then return end draw_Color(0, 0, 0, 255) draw_RoundedRectFill( x - mollysize, y, x + mollysize, y + 4 )
 local math = (((g_tickcount() - valueT[2]) * ((-1) - 1))/ ((valueT[2] + 7 / g_tickinterval()) - valueT[2])) + 1 draw_Color(227, 227, 227, 255) draw_RoundedRectFill(x - mollysize, y, x + mollysize * math, y + 4) draw_Color(255, 255, 255, 255) draw_RoundedRect(x - mollysize, y, x + mollysize, y + 4) 
-local w,h = draw_GetTextSize("MOLLY") draw_SetFont(ff) draw_TextShadow(x - w/2, y - h * 1.25 , "MOLLY") found = true end if found == false and g_tickcount() > updatetick then local gMatrix = {valueF:GetIndex(), g_tickcount()} table_insert(grenades, gMatrix) end end end
+draw_SetFont(ff) local w,h = draw_GetTextSize("MOLLY") draw_TextShadow(x - w/2, y - h * 1.25 , "MOLLY") found = true end if found == false and g_tickcount() > updatetick then local gMatrix = {valueF:GetIndex(), g_tickcount()} table_insert(grenades, gMatrix) end end end
 cb_Register("Draw", DrawingHook) cb_Register("DrawESP", ESPHook) cb_Register("FireGameEvent", EventHook) 
 
 -------------------- Hit Log
@@ -137,10 +137,10 @@ local uid = Event:GetInt("userid") local i_dmg = Event:GetString("dmg_health") l
 local ind_Attacker = PlayerIndexByUserID(Event:GetInt("attacker")) local ind_Victim = PlayerIndexByUserID(uid) local n_Victim = PlayerNameByUserID(uid)
 response = string_format("Hit %s in the %s for %s damage (%s health remaining)\n", n_Victim, HitGroup(i_hitgroup), i_dmg, i_health)
 if ind_Attacker == LocalPlayerIndex() and ind_Victim ~= LocalPlayerIndex() then table_insert(draw_hitsay, {g_realtime(), response}) end end end
-local On_Screen_Time, pixels_between_each_line, ScreenX, ScreenY, Max_On_Screen = 3, 3, 10, 10, 10
+local On_Screen_Time, pixels_between_each_line, ScreenX, ScreenY, Max_On_Screen = 10, 10, 3, 3, 10
 function hitlog()
 if not HitLog:GetValue() or GetLocalPlayer() == nil then return end local things_on_screen = 0 for k, l in pairs(draw_hitsay) do
-if g_realtime() > l[1] + On_Screen_Time then table_remove(draw_hitsay, k) else draw_Color(255,255,255,255) draw_SetFont(fff) draw_TextShadow(ScreenX, things_on_screen * pixels_between_each_line + ScreenY, l[2]) things_on_screen = things_on_screen + 1 end if things_on_screen > Max_On_Screen then things_on_screen = 0 On_Screen_Time = 0 else On_Screen_Time = 8 end end end
+if g_realtime() > l[1] + On_Screen_Time then table_remove(draw_hitsay, k) else draw_SetFont(fff) draw_Color(255,255,255,255) draw_TextShadow(ScreenX, things_on_screen * pixels_between_each_line + ScreenY, l[2]) things_on_screen = things_on_screen + 1 end if things_on_screen > Max_On_Screen then things_on_screen = 0 On_Screen_Time = 0 else On_Screen_Time = 8 end end end
 cb_Register("Draw", hitlog) cb_Register("FireGameEvent", ChatLogger)  
 
 -------------------- Auto Buy 
