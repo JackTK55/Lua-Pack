@@ -99,7 +99,7 @@ local function menus() if IsButtonPressed(gui_GetValue("msc_menutoggle")) then p
 local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.3.9.8"
+local currentVersion = "1.3.9.9"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 function autoupdater()
 if not gui_GetValue("lua_allow_http") then return end
@@ -144,6 +144,7 @@ if g_realtime() > l[1] + On_Screen_Time then table_remove(draw_hitsay, k) else d
 cb_Register("Draw", hitlog) cb_Register("FireGameEvent", ChatLogger)  
 
 -------------------- Auto Buy 
+local SecondaryWeapon, PrimaryWeapon, armor = "", "", ""
 function buy(Event)
 if not AB_E:GetValue() or GetLocalPlayer() == nil or Event:GetName() == nil then return end
 if Event:GetName() == "player_spawn" then if PlayerIndexByUserID(Event:GetInt("userid")) == LocalPlayerIndex() then buy = true end end money = GetLocalPlayer():GetProp("m_iAccount")
