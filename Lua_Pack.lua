@@ -99,7 +99,7 @@ local function menus() if IsButtonPressed(gui_GetValue("msc_menutoggle")) then p
 local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.3.9.9"
+local currentVersion = "1.4.0"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 function autoupdater()
 if not gui_GetValue("lua_allow_http") then return end
@@ -144,7 +144,7 @@ if g_realtime() > l[1] + On_Screen_Time then table_remove(draw_hitsay, k) else d
 cb_Register("Draw", hitlog) cb_Register("FireGameEvent", ChatLogger)  
 
 -------------------- Auto Buy 
-local SecondaryWeapon, PrimaryWeapon, armor = "", "", ""
+local SecondaryWeapon, PrimaryWeapon, buy_armor = "", "", ""
 function buy(Event)
 if not AB_E:GetValue() or GetLocalPlayer() == nil or Event:GetName() == nil then return end
 if Event:GetName() == "player_spawn" then if PlayerIndexByUserID(Event:GetInt("userid")) == LocalPlayerIndex() then buy = true end end money = GetLocalPlayer():GetProp("m_iAccount")
@@ -160,12 +160,12 @@ elseif (PrimaryWeapons:GetValue() == 2) then PrimaryWeapon = 'buy "ssg08"; '
 elseif (PrimaryWeapons:GetValue() == 3) then PrimaryWeapon = 'buy "sg556"; '
 elseif (PrimaryWeapons:GetValue() == 4) then PrimaryWeapon = 'buy "awp"; '
 elseif (PrimaryWeapons:GetValue() == 5) then PrimaryWeapon = 'buy "scar20"; ' end
-if Armor:GetValue() == 0 then armor = ""
-elseif Armor:GetValue() == 1 then armor = 'buy "vest"; '
-elseif Armor:GetValue() == 2 then armor = 'buy "vest"; buy "vesthelm"' end
+if Armor:GetValue() == 0 then buy_armor = ""
+elseif Armor:GetValue() == 1 then buy_armor = 'buy "vest"; '
+elseif Armor:GetValue() == 2 then buy_armor = 'buy "vest"; buy "vesthelm"' end
 if Nades:GetValue() then client_exec('buy "hegrenade"; buy "incgrenade"; buy "molotov"; buy "smokegrenade"; buy "flashbang"', true) end
 if Zeus:GetValue() then client_exec('buy "taser"', true) end
-if Defuser:GetValue() then client_exec('buy "defuser"', true) end PWb = false end current_buy = (PrimaryWeapon.. SecondaryWeapon.. armor) client_exec(current_buy, true) buy = false end end
+if Defuser:GetValue() then client_exec('buy "defuser"', true) end PWb = false end current_buy = (PrimaryWeapon.. SecondaryWeapon.. buy_armor) client_exec(current_buy, true) buy = false end end
 cb_Register("FireGameEvent", buy)
 
 -------------------- View Model Extender | Spectator list fix / made by anue | 3rd person if you are dead | Disable Post Processing | full bright | Engine Radar
@@ -230,8 +230,8 @@ function DrawDamage()
 if not Bomb_Damage:GetValue() or entities_FindByClass("CPlantedC4")[1] == nil then return end local Bomb = entities_FindByClass("CPlantedC4")[1]
 if Bomb:GetProp("m_bBombTicking") and Bomb:GetProp("m_bBombDefused") == 0 and g_curtime() < Bomb:GetProp("m_flC4Blow") then local Player = GetLocalPlayer() HealthToTake = string_format("%.0f", (DamagefromDomb(Bomb, Player)))
 if g_curtime() < Bomb:GetProp("m_flC4Blow") then
-if HealthToTake + 0.95 < Player:GetHealth() and HealthToTake - 0 > 0 then draw_SetFont(fontz) draw_Color(255,255,255,255) draw_Text(15, 25, "-"..math_floor(HealthToTake+1))
-elseif HealthToTake + 1 >= Player:GetHealth() then draw_SetFont(fontz) draw_Color(255,0,0,255) draw_Text(15, 25, "FATAL") end end end end
+if HealthToTake + 0 < Player:GetHealth() and HealthToTake + 0 > 0 then draw_SetFont(fontz) draw_Color(255,255,255,255) draw_Text(15, 25, "-"..math_floor(HealthToTake+1))
+elseif HealthToTake + 0 >= Player:GetHealth() then draw_SetFont(fontz) draw_Color(255,0,0,255) draw_Text(15, 25, "FATAL") end end end end
 function DamagefromDomb(Bomb, Player)
 if not Bomb_Damage:GetValue() then return end
 local C4Distance = math_sqrt((select(1,Bomb:GetAbsOrigin()) - select(1,Player:GetAbsOrigin())) ^ 2 + (select(2,Bomb:GetAbsOrigin()) - select(2,Player:GetAbsOrigin())) ^ 2 + (select(3,Bomb:GetAbsOrigin()) - select(3,Player:GetAbsOrigin())) ^ 2) local Gauss = (C4Distance - 75.68) / 789.2 local flDamage = 450.7 * math_exp(-Gauss * Gauss)
