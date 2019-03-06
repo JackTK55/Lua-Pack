@@ -98,7 +98,7 @@ local function menus() if IsButtonPressed(gui_GetValue("msc_menutoggle")) then m
 local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.4.1"
+local currentVersion = "1.4.2"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 
 function autoupdater()
@@ -308,13 +308,12 @@ cb_Register("Draw", zeuslegit)
 -------------------- Spectator list
 local inbetween = 0
 function SpecList()
-SpectatorList:SetValue(1)
-if not SpectatorList:GetValue() or GetLocalPlayer() == nil then return end local specX, specY = draw_GetScreenSize() local inbetween = 0 local players = entities_FindByClass("CCSPlayer") for i = 1, #players do local player = players[i] local playername = player:GetName() local playerindex = player:GetIndex()
+if not SpectatorList:GetValue() or GetLocalPlayer() == nil then return end local specX, specY = draw_GetScreenSize() local inbetween = 0 local players = entities_FindByClass("CCSPlayer") for i = 1, #players do local player = players[i] local playername = player:GetName() local tW, tH = draw_GetTextSize(playername) local playerindex = player:GetIndex()
 if player:GetHealth() <= 0 and player:GetPropEntity("m_hObserverTarget") ~= nil and playername ~= "GOTV" and playername ~= GetLocalPlayer():GetName() then
-local SpecTargetIndex = player:GetPropEntity("m_hObserverTarget"):GetIndex() local SpecTargetName = player:GetPropEntity("m_hObserverTarget"):GetName() local tW, tH = draw_GetTextSize(playername)
-if GetLocalPlayer():GetHealth() > 0 then if SpecTargetIndex == LocalPlayerIndex() then draw_Color(255,255,255,255) draw_SetFont(Tf) draw_TextShadow((specX-9)-tW, inbetween+(tH*0.5), playername) inbetween = inbetween + 15 end
+local SpecTargetIndex = player:GetPropEntity("m_hObserverTarget"):GetIndex() local SpecTargetName = player:GetPropEntity("m_hObserverTarget"):GetName()
+if GetLocalPlayer():GetHealth() > 0 then if SpecTargetIndex == LocalPlayerIndex() then draw_SetFont(Tf) draw_Color(255,255,255,255) draw_TextShadow((specX-9)-tW, inbetween+(tH*0.5), playername) inbetween = inbetween + 15 end
 elseif GetLocalPlayer():GetHealth() <= 0 then if GetLocalPlayer():GetPropEntity("m_hObserverTarget") ~= nil then local imSpeccing = GetLocalPlayer():GetPropEntity("m_hObserverTarget"):GetIndex()
-if SpecTargetIndex == imSpeccing then draw_Color(255,255,255,255) draw_SetFont(Tf) draw_TextShadow((specX-9)-tW, inbetween+(tH*0.5), playername) inbetween = inbetween + 15 end end end end end end 
+if SpecTargetIndex == imSpeccing then draw_SetFont(Tf) draw_Color(255,255,255,255) draw_TextShadow((specX-9)-tW, inbetween+(tH*0.5), playername) inbetween = inbetween + 15 end end end end end end 
 cb_Register("Draw", SpecList)
 
 -------------------- Recoil Crosshair
