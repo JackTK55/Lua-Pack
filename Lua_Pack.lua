@@ -85,6 +85,10 @@ local zeusbot = gui.Checkbox(gui.Reference("LEGIT", "Extra"), "lbot_zeusbot_enab
 local trige, trigm, trigaf, trighc = gui_GetValue("lbot_trg_enable"), gui_GetValue("lbot_trg_mode"), gui_GetValue("lbot_trg_autofire"), gui_GetValue("lbot_trg_hitchance")
 -------------- Recoil Crosshair
 local RecoilCrosshair = gui.Checkbox(G_VM, "vis_recoilcrosshair", "Recoil Crosshair", false)
+-------------- Disable Fake angle ghost while in air
+local fakeangleghost = gui.Checkbox(gui.Reference("VISUALS", "MISC", "Yourself Extra"), "vis_disable_fakeangleghost_inair", "Disable Fake Angle Ghost in air", false)
+-------------- Infinite Name Spam
+local infname = gui.Checkbox(gui.Reference("MISC", "ENHANCEMENT", "Appearance"), "msc_infinite_namespam_button", "Enable infinite namespam [BUTTON]", false)
 -------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------- 
@@ -98,13 +102,13 @@ local function menus() if IsButtonPressed(gui_GetValue("msc_menutoggle")) then m
 local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.4.2.2"
-local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
+local currentVersion = "1.4.2.3"
+local updateAvailable, newVersionCheck, updateDownloaded, details = false, true, false, true
 
 function autoupdater()
 if not gui_GetValue("lua_allow_http") then return end
 if newVersionCheck then local newVersion = http_Get(versionFile) if currentVersion ~= newVersion then updateAvailable = true end newVersionCheck = false end 
-if updateAvailable and not updateDownloaded then if not gui_GetValue("lua_allow_cfg") then draw_Color(255, 255, 255, 255) draw_Text(2, 0, string_gsub(scriptName, ".lua", "")..": Update Available, Script/Config editing is Required") else local newScript = http_Get(scriptFile) local oldScript = file_Open(scriptName, "w") oldScript:Write(newScript) oldScript:Close() updateAvailable = false updateDownloaded = true end end
+if updateAvailable and not updateDownloaded then if not gui_GetValue("lua_allow_cfg") then draw_Color(255, 255, 255, 255) draw_Text(2, 0, string_gsub(scriptName, ".lua", "")..": Update Available, Script/Config editing is Required") else local newScript = http_Get(scriptFile) local oldScript = file_Open(scriptName, "w") oldScript:Write(newScript) oldScript:Close() updateAvailable = false updateDownloaded = true print(string_gsub(scriptName, ".lua", " updated from"), currentVersion, "to", http_Get(versionFile)) end end
 if updateDownloaded then draw_Color(255, 255, 255, 255) draw_Text(2, 0, string_gsub(scriptName, ".lua", "")..": Update Downloaded, reload the script") end end
 cb_Register("Draw", "Auto Update", autoupdater)
 
@@ -136,7 +140,7 @@ local attacker, victim = PlayerIndexByUserID(Event:GetInt("attacker")), PlayerIn
 if attacker ~= LocalPlayerIndex() or victim == LocalPlayerIndex() then return end
 local victimName, dmg, health, hitGroup = PlayerNameByUserID(Event:GetInt("userid")), Event:GetString("dmg_health"), Event:GetString("health"), hitgroup_names[Event:GetInt("hitgroup")] or "body"
 response = string_format("Hit %s in the %s for %s damage (%s health remaining)", victimName, hitGroup, dmg, health) table_insert(draw_hitsay, {g_curtime(), response}) end
-local On_Screen_Time, pixels_between_each_line, ScreenX, ScreenY, lowestopacity = 15, 12, 3, 3, 65
+local On_Screen_Time, pixels_between_each_line, ScreenX, ScreenY, lowestopacity = 15, 12, 8, 3, 63.75
 function hitlog()
 if not HitLog:GetValue() or GetLocalPlayer() == nil then return end local things_on_screen = 0 for k, l in pairs(draw_hitsay) do local a = 1 
 a = (On_Screen_Time - (g_curtime() - l[1])) / On_Screen_Time
@@ -168,13 +172,13 @@ if Zeus:GetValue() then client_exec('buy "taser"', true) end
 if Defuser:GetValue() then client_exec('buy "defuser"', true) end PWb = false end current_buy = (PrimaryWeapon.. SecondaryWeapon.. buy_armor) client_exec(current_buy, true) buy = false end end
 cb_Register("FireGameEvent", buy)
 
--------------------- View Model Extender | Spectator list fix / made by anue | 3rd person if you are dead | Disable Post Processing | full bright | Engine Radar
+-------------------- View Model Extender | Spectator list fix / made by anue | 3rd person if you are dead | Disable Post Processing | full bright | Engine Radar | Disable Fake angle ghost while in air
 function VM_E() if VM_e:GetValue() then client_SetConVar("viewmodel_offset_x", xS:GetValue(), true) client_SetConVar("viewmodel_offset_y", yS:GetValue(), true) client_SetConVar("viewmodel_offset_z", zS:GetValue(), true) client_SetConVar("viewmodel_fov", vfov:GetValue(), true) else client_SetConVar("viewmodel_offset_x", xO, true) client_SetConVar("viewmodel_offset_y", yO, true) client_SetConVar("viewmodel_offset_z", zO, true) client_SetConVar("viewmodel_fov", fO, true) end end cb_Register("Draw", VM_E)
-function speclistfix(E) if gui_GetValue("msc_showspec") then if E:GetName() == "round_start" then client_exec("cl_fullupdate", true) end end end cb_Register("FireGameEvent", speclistfix)
-function ifyoudead() if not thirdpersonondead:GetValue() or GetLocalPlayer() == nil then return end if GetLocalPlayer():GetHealth() <= 0 then GetLocalPlayer():SetProp("m_iObserverMode", 5) end end cb_Register("Draw", ifyoudead)
+function speclistfix(E) if not gui_GetValue("msc_showspec") or E:GetName() ~= "round_start" then return end client_exec("cl_fullupdate", true) end cb_Register("FireGameEvent", speclistfix)
 function Dis_PP() if DPP:GetValue() then client_SetConVar("mat_postprocess_enable", 0, true) else client_SetConVar("mat_postprocess_enable", 1, true) end end cb_Register("Draw", Dis_PP)
 function full_bright() if fBright:GetValue() then client_SetConVar("mat_fullbright", 1, true) else client_SetConVar("mat_fullbright", 0, true) end end cb_Register("Draw", full_bright)
-function engineradar() if ERadar:GetValue() then ERval = 1 else ERval = 0 end for a, b in pairs(entities_FindByClass("CCSPlayer")) do b:SetProp("m_bSpotted", ERval) end end cb_Register("Draw", engineradar)
+function engineradar() if ERadar:GetValue() then ERval = 1 else ERval = 0 return end for a, player in pairs(entities_FindByClass("CCSPlayer")) do player:SetProp("m_bSpotted", ERval) end end cb_Register("Draw", engineradar)
+function Disable_FakeAAGhost(UserCMD) if not fakeangleghost:GetValue() then return end if gui.GetValue("vis_fakeghost") ~= 0 then fakeghostval = gui.GetValue("vis_fakeghost") end if GetLocalPlayer():GetProp("m_fFlags") == 256 then gui.SetValue("vis_fakeghost", 0) else gui.SetValue("vis_fakeghost", fakeghostval) end end cb_Register("CreateMove", Disable_FakeAAGhost)
 
 -------------------- Scoped Fov Fix
 function scopefov()
@@ -308,7 +312,7 @@ cb_Register("Draw", zeuslegit)
 -------------------- Spectator list
 function SpecList()
 if not SpectatorList:GetValue() or GetLocalPlayer() == nil then return end local specX, specY = draw_GetScreenSize() local inbetween = 8 local players = entities_FindByClass("CCSPlayer") for i = 1, #players do local player = players[i] local playername = player:GetName() local playerindex = player:GetIndex() local bot = GetPlayerResources():GetPropInt("m_iPing", playerindex) == 0
-if player:GetHealth() <= 0 and not bot and player:GetPropEntity("m_hObserverTarget") ~= nil and playername ~= "GOTV" and playername ~= GetLocalPlayer:GetName() then 
+if player:GetHealth() <= 0 and not bot and player:GetPropEntity("m_hObserverTarget") ~= nil and playername ~= "GOTV" and playername ~= GetLocalPlayer():GetName() then 
 local SpecTargetIndex = player:GetPropEntity("m_hObserverTarget"):GetIndex() 
 if GetLocalPlayer():GetHealth() > 0 then if SpecTargetIndex == LocalPlayerIndex() then draw_SetFont(Tf11) local tW, tH = draw_GetTextSize(playername) draw_Color(255,255,255,255) draw_TextShadow( specX - 9 - tW, inbetween, playername) inbetween = inbetween + tH + 5 end
 elseif GetLocalPlayer():GetHealth() <= 0 then if GetLocalPlayer():GetPropEntity("m_hObserverTarget") ~= nil then 
@@ -320,16 +324,18 @@ function RCC()
 if not RecoilCrosshair:GetValue() or GetLocalPlayer() == nil or GetLocalPlayer():GetHealth() <= 0 then return end local screenX, screenY = draw_GetScreenSize() local x = screenX/2 local y = screenY/2
 local r, g, b, a = gui_GetValue("clr_esp_crosshair_recoil") local recoil_scale = client_GetConVar("weapon_recoil_scale") local fov = gui_GetValue("vis_view_fov") if fov == 0 then fov = 90 end local weapon = GetLocalPlayer():GetPropEntity("m_hActiveWeapon") local weapon_name = weapon:GetClass() 
 if weapon_name == "CWeaponAWP" or weapon_name == "CWeaponSSG08" or weapon:GetProp("m_flRecoilIndex") == 0 or gui_GetValue("rbot_active") and gui_GetValue("rbot_antirecoil") then return end local aim_punch_angle_pitch, aim_punch_angle_yaw = GetLocalPlayer():GetPropVector("localdata", "m_Local", "m_aimPunchAngle") 
-if -aim_punch_angle_pitch >= 0.075 and -aim_punch_angle_pitch >= 0.075 then if gui_GetValue("vis_norecoil") then x = x - (((screenX/fov)* aim_punch_angle_yaw)*1.2)*(recoil_scale*0.5) y = y + (((screenY/fov)* aim_punch_angle_pitch)*2)*(recoil_scale*0.5) else x = x - (((screenX/fov)* aim_punch_angle_yaw)*0.6)*(recoil_scale*0.5) y = y + ((screenY/fov)* aim_punch_angle_pitch)*(recoil_scale*0.5) end 
+if -aim_punch_angle_pitch >= 0.07 and -aim_punch_angle_pitch >= 0.07 then if gui_GetValue("vis_norecoil") then x = x - (((screenX/fov)* aim_punch_angle_yaw)*1.2)*(recoil_scale*0.5) y = y + (((screenY/fov)* aim_punch_angle_pitch)*2)*(recoil_scale*0.5) else x = x - (((screenX/fov)* aim_punch_angle_yaw)*0.6)*(recoil_scale*0.5) y = y + ((screenY/fov)* aim_punch_angle_pitch)*(recoil_scale*0.5) end 
 draw_Color(r, g, b, a) draw_RoundedRect(x-3, y-3, x+3, y+3) end end
 cb_Register("Draw", RCC)
 
 -------------------- Name Steal fix
-local namesteal = gui_GetValue("msc_namestealer_enable")
-cb_Register("FireGameEvent", function(e)
-if GetLocalPlayer() == nil or namesteal == 0 or GetLocalPlayer():GetTeamNumber() == 1 then return end
+function infiniteNameSpam()
+if gui_GetValue("msc_namestealer_enable") ~= 0 then namesteal = gui_GetValue("msc_namestealer_enable") end
+if infname:GetValue() then client.SetConVar("name", "\n\xAD\xAD\xAD", false) infname:SetValue(0) end end cb_Register("Draw", infiniteNameSpam)
+function NameStealFix(e)
+if GetLocalPlayer() == nil or GetLocalPlayer():GetTeamNumber() == 1 then return end
 if e:GetName() == "round_end" then gui_SetValue("msc_namestealer_enable", 0) end
-if e:GetName() == "round_start" then gui_SetValue("msc_namestealer_enable", 1) end end)
+if e:GetName() == "round_start" then gui_SetValue("msc_namestealer_enable", namesteal) end end cb_Register("FireGameEvent", NameStealFix)
 
 -------------------- Show Team Damage
 local damagedone, killed = 0, 0
