@@ -306,14 +306,13 @@ else gui_SetValue("lbot_trg_enable", trige2) gui_SetValue("lbot_trg_mode", trigm
 cb_Register("Draw", zeuslegit)
 
 -------------------- Spectator list
-local inbetween = 0
 function SpecList()
-if not SpectatorList:GetValue() or GetLocalPlayer() == nil then return end local specX, specY = draw_GetScreenSize() local inbetween = 0 local players = entities_FindByClass("CCSPlayer") for i = 1, #players do local player = players[i] local playername = player:GetName() local tW, tH = draw_GetTextSize(playername) local playerindex = player:GetIndex()
-if player:GetHealth() <= 0 and player:GetPropEntity("m_hObserverTarget") ~= nil and playername ~= "GOTV" and playername ~= GetLocalPlayer():GetName() then
-local SpecTargetIndex = player:GetPropEntity("m_hObserverTarget"):GetIndex() local SpecTargetName = player:GetPropEntity("m_hObserverTarget"):GetName()
-if GetLocalPlayer():GetHealth() > 0 then if SpecTargetIndex == LocalPlayerIndex() then draw_SetFont(Tf) draw_Color(255,255,255,255) draw_TextShadow((specX-9)-tW, inbetween+(tH*0.5), playername) inbetween = inbetween + 15 end
-elseif GetLocalPlayer():GetHealth() <= 0 then if GetLocalPlayer():GetPropEntity("m_hObserverTarget") ~= nil then local imSpeccing = GetLocalPlayer():GetPropEntity("m_hObserverTarget"):GetIndex()
-if SpecTargetIndex == imSpeccing then draw_SetFont(Tf) draw_Color(255,255,255,255) draw_TextShadow((specX-9)-tW, inbetween+(tH*0.5), playername) inbetween = inbetween + 15 end end end end end end 
+if not SpectatorList:GetValue() or GetLocalPlayer() == nil then return end local specX, specY = draw_GetScreenSize() local specX2, inbetween = specX - 8, specY - 3 local players = entities_FindByClass("CCSPlayer") for i = 1, #players do local player = players[i] local playername = player:GetName() local playerindex = player:GetIndex()
+if player:GetHealth() <= 0 and player:GetPropEntity("m_hObserverTarget") ~= nil and GetPlayerResources():GetPropInt("m_iBotDifficulty", playerindex) > 0 and playername ~= "GOTV" and playername ~= GetLocalPlayer():GetName() then
+local SpecTargetIndex = player:GetPropEntity("m_hObserverTarget"):GetIndex() 
+if GetLocalPlayer():GetHealth() > 0 then if SpecTargetIndex == LocalPlayerIndex() then draw_SetFont(Tf) local tW, tH = draw_GetTextSize(playername) draw_Color(255,255,255,255) draw_TextShadow(specX2 - tW, inbetween, playername) inbetween = inbetween + tH end
+elseif GetLocalPlayer():GetHealth() <= 0 then if GetLocalPlayer():GetPropEntity("m_hObserverTarget") ~= nil then 
+local imSpeccing = GetLocalPlayer():GetPropEntity("m_hObserverTarget"):GetIndex() if SpecTargetIndex == imSpeccing then draw_SetFont(Tf) local tW, tH = draw_GetTextSize(playername) draw_Color(255,255,255,255) draw_TextShadow(specX - tW, inbetween, playername) inbetween = inbetween + tH end end end end end end
 cb_Register("Draw", SpecList)
 
 -------------------- Recoil Crosshair
