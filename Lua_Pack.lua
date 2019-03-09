@@ -98,7 +98,7 @@ local function menus() if IsButtonPressed(gui_GetValue("msc_menutoggle")) then m
 local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.4.2.1"
+local currentVersion = "1.4.2.2"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 
 function autoupdater()
@@ -136,7 +136,7 @@ local attacker, victim = PlayerIndexByUserID(Event:GetInt("attacker")), PlayerIn
 if attacker ~= LocalPlayerIndex() or victim == LocalPlayerIndex() then return end
 local victimName, dmg, health, hitGroup = PlayerNameByUserID(Event:GetInt("userid")), Event:GetString("dmg_health"), Event:GetString("health"), hitgroup_names[Event:GetInt("hitgroup")] or "body"
 response = string_format("Hit %s in the %s for %s damage (%s health remaining)", victimName, hitGroup, dmg, health) table_insert(draw_hitsay, {g_curtime(), response}) end
-local On_Screen_Time, pixels_between_each_line, ScreenX, ScreenY, lowestopacity = 16.25, 12, 3, 3, 50
+local On_Screen_Time, pixels_between_each_line, ScreenX, ScreenY, lowestopacity = 15, 12, 3, 3, 65
 function hitlog()
 if not HitLog:GetValue() or GetLocalPlayer() == nil then return end local things_on_screen = 0 for k, l in pairs(draw_hitsay) do local a = 1 
 a = (On_Screen_Time - (g_curtime() - l[1])) / On_Screen_Time
@@ -307,12 +307,12 @@ cb_Register("Draw", zeuslegit)
 
 -------------------- Spectator list
 function SpecList()
-if not SpectatorList:GetValue() or GetLocalPlayer() == nil then return end local specX, specY = draw_GetScreenSize() local specX2, inbetween = specX - 8, specY - 3 local players = entities_FindByClass("CCSPlayer") for i = 1, #players do local player = players[i] local playername = player:GetName() local playerindex = player:GetIndex()
-if player:GetHealth() <= 0 and player:GetPropEntity("m_hObserverTarget") ~= nil and GetPlayerResources():GetPropInt("m_iBotDifficulty", playerindex) > 0 and playername ~= "GOTV" and playername ~= GetLocalPlayer():GetName() then
+if not SpectatorList:GetValue() or GetLocalPlayer() == nil then return end local specX, specY = draw_GetScreenSize() local inbetween = 8 local players = entities_FindByClass("CCSPlayer") for i = 1, #players do local player = players[i] local playername = player:GetName() local playerindex = player:GetIndex() local bot = GetPlayerResources():GetPropInt("m_iPing", playerindex) == 0
+if player:GetHealth() <= 0 and not bot and player:GetPropEntity("m_hObserverTarget") ~= nil and playername ~= "GOTV" and playername ~= GetLocalPlayer:GetName() then 
 local SpecTargetIndex = player:GetPropEntity("m_hObserverTarget"):GetIndex() 
-if GetLocalPlayer():GetHealth() > 0 then if SpecTargetIndex == LocalPlayerIndex() then draw_SetFont(Tf) local tW, tH = draw_GetTextSize(playername) draw_Color(255,255,255,255) draw_TextShadow(specX2 - tW, inbetween, playername) inbetween = inbetween + tH end
+if GetLocalPlayer():GetHealth() > 0 then if SpecTargetIndex == LocalPlayerIndex() then draw_SetFont(Tf11) local tW, tH = draw_GetTextSize(playername) draw_Color(255,255,255,255) draw_TextShadow( specX - 9 - tW, inbetween, playername) inbetween = inbetween + tH + 5 end
 elseif GetLocalPlayer():GetHealth() <= 0 then if GetLocalPlayer():GetPropEntity("m_hObserverTarget") ~= nil then 
-local imSpeccing = GetLocalPlayer():GetPropEntity("m_hObserverTarget"):GetIndex() if SpecTargetIndex == imSpeccing then draw_SetFont(Tf) local tW, tH = draw_GetTextSize(playername) draw_Color(255,255,255,255) draw_TextShadow(specX - tW, inbetween, playername) inbetween = inbetween + tH end end end end end end
+local imSpeccing = GetLocalPlayer():GetPropEntity("m_hObserverTarget"):GetIndex() if SpecTargetIndex == imSpeccing then draw_SetFont(Tf11) local tW, tH = draw_GetTextSize(playername) draw_Color(255,255,255,255) draw_TextShadow(specX - 9 - tW, inbetween, playername) inbetween = inbetween + tH + 5 end end end end end end
 cb_Register("Draw", SpecList)
 
 -------------------- Recoil Crosshair
