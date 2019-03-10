@@ -1,16 +1,15 @@
 -- stuff
 local draw_Line, draw_TextShadow, draw_Color, draw_Text, g_tickinterval, string_format, http_Get, string_gsub, file_Open, math_exp, math_rad, math_max, math_abs, math_tan, math_sin, math_cos, math_fmod, draw_GetTextSize, draw_FilledRect, draw_RoundedRect, draw_RoundedRectFill, draw_CreateFont, draw_SetFont, client_WorldToScreen, draw_GetScreenSize, client_GetConVar, client_SetConVar, client_exec, PlayerNameByUserID, PlayerIndexByUserID, entities_GetByIndex, GetLocalPlayer, gui_SetValue, gui_GetValue, LocalPlayerIndex, c_AllowListener, cb_Register, g_tickcount, g_realtime, g_curtime, g_absoluteframetime, math_floor, math_sqrt, GetPlayerResources, entities_FindByClass, IsButtonPressed, client_ChatSay, table_insert, table_remove, vector_Distance = draw.Line, draw.TextShadow, draw.Color, draw.Text, globals.TickInterval, string.format, http.Get, string.gsub, file.Open, math.exp, math.rad, math.max, math.abs, math.tan, math.sin, math.cos, math.fmod, draw.GetTextSize, draw.FilledRect, draw.RoundedRect, draw.RoundedRectFill, draw.CreateFont, draw.SetFont, client.WorldToScreen, draw.GetScreenSize, client.GetConVar, client.SetConVar, client.Command, client.GetPlayerNameByUserID, client.GetPlayerIndexByUserID, entities.GetByIndex, entities.GetLocalPlayer, gui.SetValue, gui.GetValue, client.GetLocalPlayerIndex, client.AllowListener, callbacks.Register, globals.TickCount, globals.RealTime, globals.CurTime, globals.AbsoluteFrameTime, math.floor, math.sqrt, entities.GetPlayerResources, entities.FindByClass, input.IsButtonPressed, client.ChatSay, table.insert, table.remove, vector.Distance
 -------------- References
-local G_VM = gui.Groupbox(gui.Reference("VISUALS", "Shared"), "Extra Features", 0, 397, 200, 221)
+local G_VM = gui.Groupbox(gui.Reference("VISUALS", "Shared"), "Extra Features", 0, 397, 200, 200)
 local VOO_Ref = gui.Reference("VISUALS", "OTHER", "Options")
 local VEO_Ref = gui.Reference("VISUALS", "ENEMIES", "Options")
 local VTO_Ref = gui.Reference("VISUALS", "TEAMMATES", "Options")
 local G_M1 = gui.Groupbox(gui.Reference("MISC", "GENERAL", "Main"), "Extra Features", 0, 206, 200, 272)
 -------------- Font
 local Tf30 = draw_CreateFont("Tahoma", 30) 
-local Tf20 = draw_CreateFont("Tahoma", 20) 
-local Tf = draw_CreateFont("Tahoma")
 local Tf11 = draw_CreateFont("Tahoma", 11)
+local Tf = draw_CreateFont("Tahoma")
 -------------- Better Grenades
 local better_grenades = gui.Checkbox(VOO_Ref, "esp_other_better_grenades", "Better Grenades", false)
 -------------- Hit Log 
@@ -78,8 +77,6 @@ local other_distance = gui.Checkbox(VOO_Ref, "esp_other_distance", "Distance", f
 local fBright = gui.Checkbox(G_VM, "vis_fullbright", "Full Bright", false)
 -------------- Disable Post Processing
 local DPP = gui.Checkbox(G_VM, "vis_disable_post", "Disable Post Processing", false)
--------------- Third person on dead
-local thirdpersonondead = gui.Checkbox(G_VM, "vis_thirdperson_ondead", "3rd Person While Dead", false)
 -------------- Zeusbot
 local zeusbot = gui.Checkbox(gui.Reference("LEGIT", "Extra"), "lbot_zeusbot_enable", "Zeusbot", false)
 local trige, trigm, trigaf, trighc = gui_GetValue("lbot_trg_enable"), gui_GetValue("lbot_trg_mode"), gui_GetValue("lbot_trg_autofire"), gui_GetValue("lbot_trg_hitchance")
@@ -95,7 +92,7 @@ local infname = gui.Checkbox(gui.Reference("MISC", "ENHANCEMENT", "Appearance"),
 local frame_rate, menu_opened = 0.0, true
 local function get_abs_fps() frame_rate = 0.9 * frame_rate + (1.0 - 0.9) * g_absoluteframetime() return math_floor((1.0 / frame_rate) + 0.5) end
 local function lerp_pos(x1, y1, z1, x2, y2, z2, percentage) local x = (x2 - x1) * percentage + x1 local y = (y2 - y1) * percentage + y1 local z = (z2 - z1) * percentage + z1 return x, y, z end
-local function distance3D(x1, y1, z1, x2, y2, z2) return math_floor(vector_Distance({x1, y1, z1}, {x2, y2, z2})* 0.0833) end
+local function distance3D(x1, y1, z1, x2, y2, z2) return math_floor(vector_Distance({x1, y1, z1}, {x2, y2, z2})) end
 local function menus() if IsButtonPressed(gui_GetValue("msc_menutoggle")) then menu_opened = not menu_opened end if menu_opened then if AB_Show:GetValue() then AB_W:SetActive(1) else AB_W:SetActive(0) end if ViewModelShown:GetValue() then VM_W:SetActive(1) else VM_W:SetActive(0) end if CC_Show:GetValue() then CC_W:SetActive(1) else CC_W:SetActive(0) end else AB_W:SetActive(0) VM_W:SetActive(0) CC_W:SetActive(0) end end cb_Register("Draw", "shows", menus)
 
 -------------------- Auto Updater
@@ -103,10 +100,10 @@ local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
 local currentVersion = "1.4.2.3"
-local updateAvailable, newVersionCheck, updateDownloaded, details = false, true, false, true
+local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 
 function autoupdater()
-if not gui_GetValue("lua_allow_http") then return end
+if not gui_GetValue("lua_allow_http") or common.Time() > 60 then return end
 if newVersionCheck then local newVersion = http_Get(versionFile) if currentVersion ~= newVersion then updateAvailable = true end newVersionCheck = false end 
 if updateAvailable and not updateDownloaded then if not gui_GetValue("lua_allow_cfg") then draw_Color(255, 255, 255, 255) draw_Text(2, 0, string_gsub(scriptName, ".lua", "")..": Update Available, Script/Config editing is Required") else local newScript = http_Get(scriptFile) local oldScript = file_Open(scriptName, "w") oldScript:Write(newScript) oldScript:Close() updateAvailable = false updateDownloaded = true print(string_gsub(scriptName, ".lua", " updated from"), currentVersion, "to", http_Get(versionFile)) end end
 if updateDownloaded then draw_Color(255, 255, 255, 255) draw_Text(2, 0, string_gsub(scriptName, ".lua", "")..": Update Downloaded, reload the script") end end
@@ -140,7 +137,7 @@ local attacker, victim = PlayerIndexByUserID(Event:GetInt("attacker")), PlayerIn
 if attacker ~= LocalPlayerIndex() or victim == LocalPlayerIndex() then return end
 local victimName, dmg, health, hitGroup = PlayerNameByUserID(Event:GetInt("userid")), Event:GetString("dmg_health"), Event:GetString("health"), hitgroup_names[Event:GetInt("hitgroup")] or "body"
 response = string_format("Hit %s in the %s for %s damage (%s health remaining)", victimName, hitGroup, dmg, health) table_insert(draw_hitsay, {g_curtime(), response}) end
-local On_Screen_Time, pixels_between_each_line, ScreenX, ScreenY, lowestopacity = 15, 12, 8, 3, 63.75
+local On_Screen_Time, pixels_between_each_line, ScreenX, ScreenY, lowestopacity = 15, 12, 8, 3, 63.5
 function hitlog()
 if not HitLog:GetValue() or GetLocalPlayer() == nil then return end local things_on_screen = 0 for k, l in pairs(draw_hitsay) do local a = 1 
 a = (On_Screen_Time - (g_curtime() - l[1])) / On_Screen_Time
@@ -172,7 +169,7 @@ if Zeus:GetValue() then client_exec('buy "taser"', true) end
 if Defuser:GetValue() then client_exec('buy "defuser"', true) end PWb = false end current_buy = (PrimaryWeapon.. SecondaryWeapon.. buy_armor) client_exec(current_buy, true) buy = false end end
 cb_Register("FireGameEvent", buy)
 
--------------------- View Model Extender | Spectator list fix / made by anue | 3rd person if you are dead | Disable Post Processing | full bright | Engine Radar | Disable Fake angle ghost while in air
+-------------------- View Model Extender | Spectator list fix / made by anue | Disable Post Processing | full bright | Engine Radar | Disable Fake angle ghost while in air
 function VM_E() if VM_e:GetValue() then client_SetConVar("viewmodel_offset_x", xS:GetValue(), true) client_SetConVar("viewmodel_offset_y", yS:GetValue(), true) client_SetConVar("viewmodel_offset_z", zS:GetValue(), true) client_SetConVar("viewmodel_fov", vfov:GetValue(), true) else client_SetConVar("viewmodel_offset_x", xO, true) client_SetConVar("viewmodel_offset_y", yO, true) client_SetConVar("viewmodel_offset_z", zO, true) client_SetConVar("viewmodel_fov", fO, true) end end cb_Register("Draw", VM_E)
 function speclistfix(E) if not gui_GetValue("msc_showspec") or E:GetName() ~= "round_start" then return end client_exec("cl_fullupdate", true) end cb_Register("FireGameEvent", speclistfix)
 function Dis_PP() if DPP:GetValue() then client_SetConVar("mat_postprocess_enable", 0, true) else client_SetConVar("mat_postprocess_enable", 1, true) end end cb_Register("Draw", Dis_PP)
@@ -287,7 +284,7 @@ cb_Register("Draw", Tracers)
 function Distance(builder)
 playerteam = builder:GetEntity():GetTeamNumber()
 if not enemy_distance:GetValue() and not team_distance:GetValue() and not other_distance:GetValue() then return end
-local ent = builder:GetEntity() local ppX, ppY, ppZ = ent:GetAbsOrigin() local lX, lY, lZ = GetLocalPlayer():GetAbsOrigin() local dist = distance3D(ppX, ppY, ppZ, lX, lY, lZ)
+local ent = builder:GetEntity() local ppX, ppY, ppZ = ent:GetAbsOrigin() local lX, lY, lZ = GetLocalPlayer():GetAbsOrigin() local dist = distance3D(ppX, ppY, ppZ, lX, lY, lZ)* 0.0833
 if enemy_distance:GetValue() and ent:IsAlive() and ent:IsPlayer() and playerteam ~= GetLocalPlayer():GetTeamNumber() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end
 if team_distance:GetValue() and ent:IsAlive() and ent:IsPlayer() and playerteam == GetLocalPlayer():GetTeamNumber() and ent:GetIndex() ~= LocalPlayerIndex() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end
 if other_distance:GetValue() and not ent:IsPlayer() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end end
