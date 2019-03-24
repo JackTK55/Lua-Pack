@@ -7,8 +7,8 @@ local VEO_Ref = gui.Reference("VISUALS", "ENEMIES", "Options")
 local VTO_Ref = gui.Reference("VISUALS", "TEAMMATES", "Options")
 local G_M1 = gui.Groupbox(gui.Reference("MISC", "GENERAL", "Main"), "Extra Features", 0, 206, 200, 272)
 -------------- Font
-local Tf30 = draw_CreateFont("Tahoma", 30) 
-local Tf11 = draw_CreateFont("Tahoma", 11)
+local Vf30 = draw_CreateFont("Verdana", 30) 
+local Vf12 = draw_CreateFont("Verdana", 12) 
 local Tf = draw_CreateFont("Tahoma")
 -------------- Better Grenades
 local better_grenades = gui.Checkbox(VOO_Ref, "esp_other_better_grenades", "Better Grenades", false)
@@ -92,14 +92,14 @@ local infname = gui.Checkbox(gui.Reference("MISC", "ENHANCEMENT", "Appearance"),
 local frame_rate, menu_opened = 0.0, true
 local function get_abs_fps() frame_rate = 0.9 * frame_rate + (1.0 - 0.9) * g_absoluteframetime() return math_floor((1.0 / frame_rate) + 0.5) end
 local function lerp_pos(x1, y1, z1, x2, y2, z2, percentage) local x = (x2 - x1) * percentage + x1 local y = (y2 - y1) * percentage + y1 local z = (z2 - z1) * percentage + z1 return x, y, z end
-local function distance3D(x1, y1, z1, x2, y2, z2) return math_floor(vector_Distance({x1, y1, z1}, {x2, y2, z2})) end
+local function distance3D(x1, y1, z1, x2, y2, z2) return math_floor(vector_Distance(x1, y1, z1, x2, y2, z2)) end
 local function menus() if IsButtonPressed(gui_GetValue("msc_menutoggle")) then menu_opened = not menu_opened end if menu_opened then if AB_Show:GetValue() then AB_W:SetActive(1) else AB_W:SetActive(0) end if ViewModelShown:GetValue() then VM_W:SetActive(1) else VM_W:SetActive(0) end if CC_Show:GetValue() then CC_W:SetActive(1) else CC_W:SetActive(0) end else AB_W:SetActive(0) VM_W:SetActive(0) CC_W:SetActive(0) end end cb_Register("Draw", "shows", menus)
 
 -------------------- Auto Updater
 local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.4.2.3"
+local currentVersion = "1.4.2.4"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 
 function autoupdater()
@@ -125,7 +125,7 @@ if not better_grenades:GetValue() then return end
 for indexF,valueF in pairs(entities_FindByClass("CInferno")) do local found = false for indexT,valueT in pairs(grenades) do if valueT[1] ~= valueF:GetIndex() then return end
 x, y = client_WorldToScreen(valueF:GetAbsOrigin()) local mollysize = 25 if x == nil and y == nil then return end draw_Color(0, 0, 0, 255) draw_RoundedRectFill( x - mollysize, y, x + mollysize, y + 4 )
 local math = (((g_tickcount() - valueT[2]) * ((-1) - 1))/ ((valueT[2] + 7 / g_tickinterval()) - valueT[2])) + 1 draw_Color(227, 227, 227, 255) draw_RoundedRectFill(x - mollysize, y, x + mollysize * math, y + 4) draw_Color(255, 255, 255, 255) draw_RoundedRect(x - mollysize, y, x + mollysize, y + 4) 
-draw_SetFont(Tf11) local w,h = draw_GetTextSize("MOLLY") draw_TextShadow(x - w/2, y - h * 1.25 , "MOLLY") found = true end if found == false and g_tickcount() > updatetick then local gMatrix = {valueF:GetIndex(), g_tickcount()} table_insert(grenades, gMatrix) end end end
+draw_SetFont(Tf) local w,h = draw_GetTextSize("MOLLY") draw_TextShadow(x - w/2, y - h * 1.25 , "MOLLY") found = true end if found == false and g_tickcount() > updatetick then local gMatrix = {valueF:GetIndex(), g_tickcount()} table_insert(grenades, gMatrix) end end end
 cb_Register("Draw", DrawingHook) cb_Register("DrawESP", ESPHook) cb_Register("FireGameEvent", EventHook) 
 
 -------------------- Hit Log
@@ -206,40 +206,40 @@ local function get_site_name(site) local a_x, a_y, a_z = GetPlayerResources():Ge
 local colorchange, drawBar, drawDefuse, drawPlanting, plantedTime, plantedTime2, fill, fill2, fill3, plantingName, plantingStarted, plantingTime, plantingSite = 10, false, false, false, 0, 0, 0, screenY3, 0, "", 0, 3.125, ""
 function bomb(event)
 if not BombTimer:GetValue() then return end
-if event:GetName() == "bomb_beginplant" then fill = 0 fill2 = screenY3 fill3 = 0 drawPlanting = true plantingName = PlayerNameByUserID(event:GetInt("userid")) plantingStarted = g_curtime() plantingSite = get_site_name(entities_GetByIndex(event:GetInt("site"))) end
-if event:GetName() == "bomb_abortplant" then drawPlanting = false end
-if event:GetName() == "bomb_planted" then plantedTime = g_curtime() drawBar = true drawPlanting = false end
-if event:GetName() == "bomb_begindefuse" then defusingName = PlayerNameByUserID(event:GetInt("userid")) plantedTime2 = g_curtime() drawDefuse = true end
-if event:GetName() == "bomb_abortdefuse" then drawDefuse = false fill2 = screenY3 fill3 = 0 end
+if event:GetName() == "bomb_beginplant" then ScreenX = 20 ScreenY = 55 fill = 0 fill2 = screenY3 fill3 = 0 drawPlanting = true plantingName = PlayerNameByUserID(event:GetInt("userid")) plantingStarted = g_curtime() plantingSite = get_site_name(entities_GetByIndex(event:GetInt("site"))) end
+if event:GetName() == "bomb_abortplant" then ScreenX = 8 ScreenY = 3 drawPlanting = false end
+if event:GetName() == "bomb_planted" then ScreenX = 20 ScreenY = 55 plantedTime = g_curtime() drawBar = true drawPlanting = false end
+if event:GetName() == "bomb_begindefuse" then ScreenX = 20 ScreenY = 79 defusingName = PlayerNameByUserID(event:GetInt("userid")) plantedTime2 = g_curtime() drawDefuse = true end
+if event:GetName() == "bomb_abortdefuse" then ScreenX = 20 ScreenY = 55 drawDefuse = false fill2 = screenY3 fill3 = 0 end
 if event:GetName() == "bomb_defused" then drawBar = false drawDefuse = false end
-if event:GetName() == "round_officially_ended" then drawBar = false drawDefuse = false end end
+if event:GetName() == "round_officially_ended" then drawBar = false drawDefuse = false end 
+if event:GetName() == "round_start" then ScreenX = 8 ScreenY = 3 draw_hitsay = {} end end
 function drawProgress()
 if not BombTimer:GetValue() then return end local screenX, screenY = draw_GetScreenSize() local Player = GetLocalPlayer()
-if drawBar then local ToExplode = entities_FindByClass("CPlantedC4") for i=1, #ToExplode do c4time = math_floor(ToExplode[i]:GetProp("m_flTimerLength")) 
-if math_floor((plantedTime - g_curtime()) + c4time) > -1  then local godownby = (screenY / c4time) / get_abs_fps() C4time = string_format("%.1f", ((plantedTime - g_curtime()) + c4time))
-if Player:GetTeamNumber() == 3 and Player:GetProp("m_bHasDefuser") == 0 then if (plantedTime - g_curtime()) + c4time <= 10.05 then r, g, b, a = 255,13,13,255 else r, g, b, a = 255,255,255,255 end
-elseif Player:GetTeamNumber() == 3 and Player:GetProp("m_bHasDefuser") == 1 then if (plantedTime - g_curtime()) + c4time <= 5.05 then r, g, b, a = 255,13,13,255 else r, g, b, a = 255,255,255,255 end else r, g, b, a = 255,255,255,255 end
-local bombsite = ToExplode[i]:GetProp("m_nBombSite") == 0 and "A" or "B" draw_SetFont(Tf30) draw_Color(r, g, b, a) draw_Text(15, 0, bombsite.. " - ".. C4time.."s")
-if math_floor((plantedTime - g_curtime()) + c4time) <= colorchange then draw_Color(255,0,0,255) else draw_Color(0,255,0,255) end  draw_FilledRect(0, fill, 10, screenY) draw_Color(0,0,0,100) draw_FilledRect(0, 0, 10, screenY) fill = fill + godownby end end end
-if drawPlanting then local plant_percentage = (g_curtime() - plantingStarted) / plantingTime local planttime = string_format("%.1fs", (plantingStarted - g_curtime()) + plantingTime) 
-if plant_percentage > 0 and 1 > plant_percentage then local remove_from_Y = screenY * (1 - plant_percentage) draw_SetFont(Tf30) draw_Color(255,255,255,255) draw_Text(15, 0, plantingSite.." - Planting") draw_Color(255,255,255,255) draw_Text(15, 25, plantingName.. " - ".. planttime) draw_Color(0,255,0,255) draw_FilledRect(0, 0+remove_from_Y, 10, screenY+remove_from_Y) draw_Color(0,0,0,100) draw_FilledRect(0, 0, 10, screenY) end end
-if drawDefuse then local ToDefuse = entities_FindByClass("CPlantedC4") DefuseTime = math_floor(ToDefuse[1]:GetProp("m_flDefuseLength")) DefuseT = string_format("%.1fs", (plantedTime2 - g_curtime()) + DefuseTime) draw_SetFont(Tf30) draw_Color(255,255,255,255) draw_Text(15, 50, defusingName.." - ".. DefuseT)
-if DefuseTime == 10 then local godownby3 = (screenY / DefuseTime) / get_abs_fps() draw_Color(0,0,255,255) draw_FilledRect(0, fill3, 10, screenY) draw_Color(0,0,0,100) draw_FilledRect(0, 0, 10, screenY) fill3 = fill3 + godownby3
-elseif DefuseTime == 5 then screenY3 = screenY/2 local godownby2 = (screenY3 / DefuseTime) / get_abs_fps() draw_Color(0,0,255,255) draw_FilledRect(0, fill2, 10, screenY) draw_Color(0,0,0,100) draw_FilledRect(0, screenY3, 10, screenY) fill2 = fill2 + godownby2 end end end 
+if drawBar and entities_FindByClass("CPlantedC4")[1] ~= nil then local ToExplode = entities_FindByClass("CPlantedC4")[1] c4time = math_floor(ToExplode:GetProp("m_flTimerLength")) C4time = math_floor(((plantedTime - g_curtime()) + c4time))
+if C4time > -1  then local godownby = (screenY / c4time) / get_abs_fps() 
+if Player:GetTeamNumber() == 3 and Player:GetProp("m_bHasDefuser") == 0 and C4time <= 10.05 then r, g, b, a = 255,13,13,255 
+elseif Player:GetTeamNumber() == 3 and Player:GetProp("m_bHasDefuser") == 1 and C4time <= 5.05 then r, g, b, a = 255,13,13,255 else r, g, b, a = 255,255,255,255 end
+local bombsite = ToExplode:GetProp("m_nBombSite") == 0 and "A" or "B" siteinfo = string_format("%s - %.1fs", bombsite, ((plantedTime - g_curtime()) + c4time)) draw_SetFont(Vf30) draw_Color(r, g, b, a) draw_Text(20, 0, siteinfo)
+if C4time <= colorchange then draw_Color(255,0,0,255) else draw_Color(0,255,0,255) end draw_FilledRect(1, fill, 15, screenY) draw_Color(0,0,0,100) draw_FilledRect(0, 0, 16, screenY) fill = fill + godownby end end
+if drawPlanting then local plant_percentage = (g_curtime() - plantingStarted) / plantingTime local plantinfo = string_format("%s -%.1fs", plantingName, (plantingStarted - g_curtime()) + plantingTime) 
+if plant_percentage > 0 and 1 > plant_percentage then local remove_from_Y = screenY * (1 - plant_percentage) draw_SetFont(Vf30) draw_Color(255,255,255,255) draw_Text(20, 0, plantingSite.." - Planting") draw_Color(255,255,255,255) draw_Text(20, 25, plantinfo) draw_Color(0,255,0,255) draw_FilledRect(1, 0+remove_from_Y, 15, screenY+remove_from_Y) draw_Color(0,0,0,100) draw_FilledRect(0, 0, 16, screenY) end end
+if drawDefuse and entities_FindByClass("CPlantedC4")[1] ~= nil then local ToDefuse = entities_FindByClass("CPlantedC4")[1] DefuseTime = math_floor(ToDefuse:GetProp("m_flDefuseLength")) DefuseT = string_format("%.1fs", (plantedTime2 - g_curtime()) + DefuseTime) draw_SetFont(Vf30) draw_Color(255,255,255,255) draw_Text(20, 50, defusingName.." - ".. DefuseT)
+if DefuseTime == 10 then local godownby3 = (screenY / DefuseTime) / get_abs_fps() draw_Color(0,0,255,255) draw_FilledRect(1, fill3, 15, screenY) draw_Color(0,0,0,100) draw_FilledRect(0, 0, 16, screenY) fill3 = fill3 + godownby3
+elseif DefuseTime == 5 then local godownby2 = ((screenY/2) / DefuseTime) / get_abs_fps() draw_Color(0,0,255,255) draw_FilledRect(1, fill2, 15, screenY) draw_Color(0,0,0,100) draw_FilledRect(0, (screenY/2), 16, screenY) fill2 = fill2 + godownby2 end end end 
 
 -------------------- Bomb Damage
 function DrawDamage()
 if not Bomb_Damage:GetValue() or entities_FindByClass("CPlantedC4")[1] == nil then return end local Bomb = entities_FindByClass("CPlantedC4")[1]
-if Bomb:GetProp("m_bBombTicking") and Bomb:GetProp("m_bBombDefused") == 0 and g_curtime() < Bomb:GetProp("m_flC4Blow") then local Player = GetLocalPlayer() HealthToTake = string_format("%.0f", (DamagefromDomb(Bomb, Player)))
+if Bomb:GetProp("m_bBombTicking") and Bomb:GetProp("m_bBombDefused") == 0 and g_curtime() < Bomb:GetProp("m_flC4Blow") then local Player = GetLocalPlayer() local HealthToTake = math_floor(DamagefromDomb(Bomb, Player))
 if g_curtime() < Bomb:GetProp("m_flC4Blow") then
-if HealthToTake + 0 < Player:GetHealth() and HealthToTake + 0 > 0 then draw_SetFont(Tf30) draw_Color(255,255,255,255) draw_Text(15, 25, "-"..math_floor(HealthToTake+1))
-elseif HealthToTake + 0 >= Player:GetHealth() then draw_SetFont(Tf30) draw_Color(255,0,0,255) draw_Text(15, 25, "FATAL") end end end end
+if HealthToTake >= Player:GetHealth() then draw_SetFont(Vf30) draw_Color(255,0,0,255) draw_Text(20, 25, "FATAL") 
+elseif HealthToTake < Player:GetHealth() and HealthToTake > 0 then draw_SetFont(Vf30) draw_Color(255,255,255,255) draw_Text(20, 25, "-"..HealthToTake+1) end end end end
 function DamagefromDomb(Bomb, Player)
-if not Bomb_Damage:GetValue() then return end
+if not Bomb_Damage:GetValue() then return end local ArmorValue = Player:GetProp("m_ArmorValue")
 local C4Distance = math_sqrt((select(1,Bomb:GetAbsOrigin()) - select(1,Player:GetAbsOrigin())) ^ 2 + (select(2,Bomb:GetAbsOrigin()) - select(2,Player:GetAbsOrigin())) ^ 2 + (select(3,Bomb:GetAbsOrigin()) - select(3,Player:GetAbsOrigin())) ^ 2) local Gauss = (C4Distance - 75.68) / 789.2 local flDamage = 450.7 * math_exp(-Gauss * Gauss)
-if Player:GetProp("m_ArmorValue") > 0 then local flArmorRatio = 0.5 local flArmorBonus = 0.5
-if Player:GetProp("m_ArmorValue") > 0 then local flNew = flDamage * flArmorRatio local flArmor = (flDamage - flNew) * flArmorBonus
-if flArmor > Player:GetProp("m_ArmorValue") then flArmor = Player:GetProp("m_ArmorValue") * (1 / flArmorBonus) flNew = flDamage - flArmor end flDamage = flNew end end
+if ArmorValue > 0 then local flNew = flDamage * 0.5 local flArmor = (flDamage - flNew) * 0.5
+if flArmor > ArmorValue then flArmor = ArmorValue * 2 flNew = flDamage - flArmor end flDamage = flNew end
 return math_max(flDamage, 0) end 
 cb_Register("Draw", drawProgress) cb_Register("Draw", "draws bomb damage", DrawDamage) cb_Register("FireGameEvent", bomb)
 
@@ -280,11 +280,11 @@ if tracersEnemy:GetValue() then if player:GetTeamNumber() ~= lpTeamNum and playe
 if tracersTeam:GetValue() then if player:GetTeamNumber() == lpTeamNum and player:IsAlive() and pX ~= nil and pY ~= nil and player:GetIndex() ~= LocalPlayerIndex() then draw_Color(r,g,b,a) draw_Line(sX/2, sY, pX, pY) end end end end
 cb_Register("Draw", Tracers)
 
--------------------- Enemy & Team & Other Distance + visible help
+-------------------- Enemy & Team & Other Distance
 function Distance(builder)
 playerteam = builder:GetEntity():GetTeamNumber()
 if not enemy_distance:GetValue() and not team_distance:GetValue() and not other_distance:GetValue() then return end
-local ent = builder:GetEntity() local ppX, ppY, ppZ = ent:GetAbsOrigin() local lX, lY, lZ = GetLocalPlayer():GetAbsOrigin() local dist = distance3D(ppX, ppY, ppZ, lX, lY, lZ)* 0.0833
+local ent = builder:GetEntity() local ppX, ppY, ppZ = ent:GetAbsOrigin() local lX, lY, lZ = GetLocalPlayer():GetAbsOrigin() local dist = math_floor(distance3D(ppX, ppY, ppZ, lX, lY, lZ)* 0.0833)
 if enemy_distance:GetValue() and ent:IsAlive() and ent:IsPlayer() and playerteam ~= GetLocalPlayer():GetTeamNumber() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end
 if team_distance:GetValue() and ent:IsAlive() and ent:IsPlayer() and playerteam == GetLocalPlayer():GetTeamNumber() and ent:GetIndex() ~= LocalPlayerIndex() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end
 if other_distance:GetValue() and not ent:IsPlayer() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end end
@@ -308,12 +308,12 @@ cb_Register("Draw", zeuslegit)
 
 -------------------- Spectator list
 function SpecList()
-if not SpectatorList:GetValue() or GetLocalPlayer() == nil then return end local specX, specY = draw_GetScreenSize() local inbetween = 8 local players = entities_FindByClass("CCSPlayer") for i = 1, #players do local player = players[i] local playername = player:GetName() local playerindex = player:GetIndex() local bot = GetPlayerResources():GetPropInt("m_iPing", playerindex) == 0
+if not SpectatorList:GetValue() or GetLocalPlayer() == nil then return end local specX, specY = draw_GetScreenSize() local inbetween = 5 local players = entities_FindByClass("CCSPlayer") for i = 1, #players do local player = players[i] local playername = player:GetName() local playerindex = player:GetIndex() local bot = GetPlayerResources():GetPropInt("m_iPing", playerindex) == 0
 if player:GetHealth() <= 0 and not bot and player:GetPropEntity("m_hObserverTarget") ~= nil and playername ~= "GOTV" and playername ~= GetLocalPlayer():GetName() then 
 local SpecTargetIndex = player:GetPropEntity("m_hObserverTarget"):GetIndex() 
-if GetLocalPlayer():GetHealth() > 0 then if SpecTargetIndex == LocalPlayerIndex() then draw_SetFont(Tf11) local tW, tH = draw_GetTextSize(playername) draw_Color(255,255,255,255) draw_TextShadow( specX - 9 - tW, inbetween, playername) inbetween = inbetween + tH + 5 end
-elseif GetLocalPlayer():GetHealth() <= 0 then if GetLocalPlayer():GetPropEntity("m_hObserverTarget") ~= nil then 
-local imSpeccing = GetLocalPlayer():GetPropEntity("m_hObserverTarget"):GetIndex() if SpecTargetIndex == imSpeccing then draw_SetFont(Tf11) local tW, tH = draw_GetTextSize(playername) draw_Color(255,255,255,255) draw_TextShadow(specX - 9 - tW, inbetween, playername) inbetween = inbetween + tH + 5 end end end end end end
+if GetLocalPlayer():GetHealth() > 0 then if SpecTargetIndex == LocalPlayerIndex() then draw_SetFont(Vf12) local tW, tH = draw_GetTextSize(playername) draw_Color(255,255,255,255) draw_TextShadow( specX - 5 - tW, inbetween, playername) inbetween = inbetween + tH + 5 end
+elseif GetLocalPlayer():GetHealth() <= 0 then if GetLocalPlayer():GetPropEntity("m_hObserverTarget") ~= nil then local imSpeccing = GetLocalPlayer():GetPropEntity("m_hObserverTarget"):GetIndex() 
+if SpecTargetIndex == imSpeccing then draw_SetFont(Vf12) local tW, tH = draw_GetTextSize(playername) draw_Color(255,255,255,255) draw_TextShadow(specX - 5 - tW, inbetween, playername) inbetween = inbetween + tH + 5 end end end end end end
 cb_Register("Draw", SpecList)
 
 -------------------- Recoil Crosshair
