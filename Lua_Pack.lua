@@ -99,7 +99,7 @@ local function menus() if IsButtonPressed(gui_GetValue("msc_menutoggle")) then m
 local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.4.2.4"
+local currentVersion = "1.4.2.4.1"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 
 function autoupdater()
