@@ -82,8 +82,8 @@ local zeusbot = gui.Checkbox(gui.Reference("LEGIT", "Extra"), "lbot_zeusbot_enab
 local trige, trigm, trigaf, trighc = gui_GetValue("lbot_trg_enable"), gui_GetValue("lbot_trg_mode"), gui_GetValue("lbot_trg_autofire"), gui_GetValue("lbot_trg_hitchance")
 -------------- Recoil Crosshair
 local RecoilCrosshair = gui.Checkbox(G_VM, "vis_recoilcrosshair", "Recoil Crosshair", false)
--------------- Disable Fake angle ghost while in air
-local fakeangleghost = gui.Checkbox(gui.Reference("VISUALS", "MISC", "Yourself Extra"), "vis_disable_fakeangleghost_inair", "Disable Fake Angle Ghost in air", false)
+-------------- Disable Fake angle ghost while in air/freezetime
+local fakeangleghost = gui.Combobox(gui.Reference("VISUALS", "MISC", "Yourself Extra"), "vis_disable_fakeangleghost", "Disable Fake Angle Ghost", "Off", "In Air", "On Freeze Period")
 -------------- Infinite Name Spam
 local infname = gui.Checkbox(gui.Reference("MISC", "ENHANCEMENT", "Appearance"), "msc_infinite_namespam_button", "Enable infinite namespam [BUTTON]", false)
 -------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -100,6 +100,7 @@ local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
 local currentVersion = "1.4.2.4.1"
+local currentVersion = "1.4.2.4.2"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 
 function autoupdater()
@@ -169,13 +170,15 @@ if Zeus:GetValue() then client_exec('buy "taser"', true) end
 if Defuser:GetValue() then client_exec('buy "defuser"', true) end PWb = false end current_buy = (PrimaryWeapon.. SecondaryWeapon.. buy_armor) client_exec(current_buy, true) buy = false end end
 cb_Register("FireGameEvent", buy)
 
--------------------- View Model Extender | Spectator list fix / made by anue | Disable Post Processing | full bright | Engine Radar | Disable Fake angle ghost while in air
+-------------------- View Model Extender | Spectator list fix / made by anue | Disable Post Processing | full bright | Engine Radar | Disable Fake angle ghost while in air/freeze time
 function VM_E() if VM_e:GetValue() then client_SetConVar("viewmodel_offset_x", xS:GetValue(), true) client_SetConVar("viewmodel_offset_y", yS:GetValue(), true) client_SetConVar("viewmodel_offset_z", zS:GetValue(), true) client_SetConVar("viewmodel_fov", vfov:GetValue(), true) else client_SetConVar("viewmodel_offset_x", xO, true) client_SetConVar("viewmodel_offset_y", yO, true) client_SetConVar("viewmodel_offset_z", zO, true) client_SetConVar("viewmodel_fov", fO, true) end end cb_Register("Draw", VM_E)
 function speclistfix(E) if not gui_GetValue("msc_showspec") or E:GetName() ~= "round_start" then return end client_exec("cl_fullupdate", true) end cb_Register("FireGameEvent", speclistfix)
 function Dis_PP() if DPP:GetValue() then client_SetConVar("mat_postprocess_enable", 0, true) else client_SetConVar("mat_postprocess_enable", 1, true) end end cb_Register("Draw", Dis_PP)
 function full_bright() if fBright:GetValue() then client_SetConVar("mat_fullbright", 1, true) else client_SetConVar("mat_fullbright", 0, true) end end cb_Register("Draw", full_bright)
 function engineradar() if ERadar:GetValue() then ERval = 1 else ERval = 0 return end for a, player in pairs(entities_FindByClass("CCSPlayer")) do player:SetProp("m_bSpotted", ERval) end end cb_Register("Draw", engineradar)
-function Disable_FakeAAGhost(UserCMD) if not fakeangleghost:GetValue() then return end if gui.GetValue("vis_fakeghost") ~= 0 then fakeghostval = gui.GetValue("vis_fakeghost") end if GetLocalPlayer():GetProp("m_fFlags") == 256 then gui.SetValue("vis_fakeghost", 0) else gui.SetValue("vis_fakeghost", fakeghostval) end end cb_Register("CreateMove", Disable_FakeAAGhost)
+function fakeangleghostval() if fakeangleghost:GetValue() == 0 then fakeghost = "Off" elseif fakeangleghost:GetValue() == 1 then fakeghost = "in_air" elseif fakeangleghost:GetValue() == 2 then fakeghost = "in_freeze" end end cb_Register("Draw", fakeangleghostval)
+function Disable_FakeAAGhost(UserCMD) if gui.GetValue("vis_fakeghost") ~= 0 then fakeghostval = gui.GetValue("vis_fakeghost") end if fakeghost == "in_freeze" or fakeghost == "Off" then return end if GetLocalPlayer():GetProp("m_fFlags") == 256 then gui.SetValue("vis_fakeghost", 0) else gui.SetValue("vis_fakeghost", fakeghostval) end end cb_Register("CreateMove", Disable_FakeAAGhost)
+function Disable_FakeAAGhost2(event) if fakeghost == "in_air" or fakeghost == "Off" then return end if event:GetName() == "round_end" then gui.SetValue("vis_fakeghost", 0) end if event:GetName() == "round_freeze_end" then gui.SetValue("vis_fakeghost", fakeghostval) end end cb_Register("FireGameEvent", Disable_FakeAAGhost2)
 
 -------------------- Scoped Fov Fix
 function scopefov()
@@ -343,4 +346,4 @@ if e:GetName() == "player_connect_full" then damagedone, killed = 0, 0 end end
 function DrawsTKsDMG() if not TeamDamageShow:GetValue() or GetLocalPlayer() == nil then return end local X, Y = draw_GetScreenSize() draw_Color(255,255,255,255) draw_SetFont(Tf) draw_TextShadow(10, Y/2-40, "Damage Done: ".. damagedone) draw_TextShadow(10, Y/2-30, "Teammates Killed: ".. killed) end 
 cb_Register("FireGameEvent", KillsAndDamage) cb_Register("Draw", DrawsTKsDMG)
 
-c_AllowListener("round_end") c_AllowListener("round_start") c_AllowListener("bomb_beginplant") c_AllowListener("bomb_abortplant") c_AllowListener("bomb_planted") c_AllowListener("bomb_defused") c_AllowListener("bomb_begindefuse") c_AllowListener("bomb_abortdefuse") c_AllowListener("round_officially_ended") c_AllowListener("player_spawn") c_AllowListener("player_hurt") c_AllowListener("player_death") c_AllowListener("player_connect_full") c_AllowListener("inferno_expire") c_AllowListener("inferno_extinguish") c_AllowListener("molotov_detonate") c_AllowListener("hegrenade_detonate") c_AllowListener("flashbang_detonate") 
+c_AllowListener("round_freeze_end") c_AllowListener("round_end") c_AllowListener("round_start") c_AllowListener("bomb_beginplant") c_AllowListener("bomb_abortplant") c_AllowListener("bomb_planted") c_AllowListener("bomb_defused") c_AllowListener("bomb_begindefuse") c_AllowListener("bomb_abortdefuse") c_AllowListener("round_officially_ended") c_AllowListener("player_spawn") c_AllowListener("player_hurt") c_AllowListener("player_death") c_AllowListener("player_connect_full") c_AllowListener("inferno_expire") c_AllowListener("inferno_extinguish") c_AllowListener("molotov_detonate") c_AllowListener("hegrenade_detonate") c_AllowListener("flashbang_detonate") 
