@@ -86,6 +86,8 @@ local RecoilCrosshair = gui.Checkbox(G_VM, "vis_recoilcrosshair", "Recoil Crossh
 local fakeangleghost = gui.Combobox(gui.Reference("VISUALS", "MISC", "Yourself Extra"), "vis_disable_fakeangleghost", "Disable Fake Angle Ghost", "Off", "In Air", "On Freeze Period")
 -------------- Infinite Name Spam
 local infname = gui.Checkbox(gui.Reference("MISC", "ENHANCEMENT", "Appearance"), "msc_infinite_namespam_button", "Enable infinite namespam [BUTTON]", false)
+-------------- Name Steal fix
+local StealNameFix = gui.Checkbox(gui.Reference("MISC", "ENHANCEMENT", "Namestealer"), "msc_namestealer_fix", "Fix Name Steal", false)
 -------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------- 
@@ -99,7 +101,7 @@ local function menus() if IsButtonPressed(gui_GetValue("msc_menutoggle")) then m
 local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.4.2.4.2"
+local currentVersion = "1.4.2.4.3"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 
 function autoupdater()
@@ -213,7 +215,7 @@ if event:GetName() == "bomb_abortplant" then ScreenX = 8 ScreenY = 3 drawPlantin
 if event:GetName() == "bomb_planted" then ScreenX = 20 ScreenY = 55 plantedTime = g_curtime() drawBar = true drawPlanting = false end
 if event:GetName() == "bomb_begindefuse" then ScreenX = 20 ScreenY = 79 defusingName = PlayerNameByUserID(event:GetInt("userid")) plantedTime2 = g_curtime() drawDefuse = true end
 if event:GetName() == "bomb_abortdefuse" then ScreenX = 20 ScreenY = 55 drawDefuse = false fill2 = screenY3 fill3 = 0 end
-if event:GetName() == "bomb_defused" then drawBar = false drawDefuse = false end
+if event:GetName() == "bomb_defused" then drawBar = false drawDefuse = false ScreenX = 8 ScreenY = 3 end
 if event:GetName() == "round_officially_ended" then drawBar = false drawDefuse = false end 
 if event:GetName() == "round_start" then ScreenX = 8 ScreenY = 3 draw_hitsay = {} end end
 function drawProgress()
@@ -332,7 +334,7 @@ function infiniteNameSpam()
 if gui_GetValue("msc_namestealer_enable") ~= 0 then namesteal = gui_GetValue("msc_namestealer_enable") end
 if infname:GetValue() then client.SetConVar("name", "\n\xAD\xAD\xAD", false) infname:SetValue(0) end end cb_Register("Draw", infiniteNameSpam)
 function NameStealFix(e)
-if GetLocalPlayer() == nil or GetLocalPlayer():GetTeamNumber() == 1 then return end
+if not StealNameFix:GetValue() or GetLocalPlayer() == nil or GetLocalPlayer():GetTeamNumber() == 1 then return end
 if e:GetName() == "round_end" then gui_SetValue("msc_namestealer_enable", 0) end
 if e:GetName() == "round_start" then gui_SetValue("msc_namestealer_enable", namesteal) end end cb_Register("FireGameEvent", NameStealFix)
 
