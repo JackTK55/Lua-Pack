@@ -83,7 +83,7 @@ local trige, trigm, trigaf, trighc = gui_GetValue("lbot_trg_enable"), gui_GetVal
 -------------- Recoil Crosshair
 local RecoilCrosshair = gui.Checkbox(G_VM, "vis_recoilcrosshair", "Recoil Crosshair", false)
 -------------- Disable Fake angle ghost while in air/freezetime
-local fakeangleghost = gui.Combobox(gui.Reference("VISUALS", "MISC", "Yourself Extra"), "vis_disable_fakeangleghost", "Disable Fake Angle Ghost", "Off", "In Air", "On Freeze Period")
+local fakeangleghost = gui.Combobox(gui.Reference("VISUALS", "MISC", "Yourself Extra"), "vis_disable_fakeangleghost", "Disable Fake Angle Ghost", "Off", "In Air", "On Freeze Period", "Both")
 -------------- Infinite Name Spam
 local infname = gui.Checkbox(gui.Reference("MISC", "ENHANCEMENT", "Appearance"), "msc_infinite_namespam_button", "Enable infinite namespam [BUTTON]", false)
 -------------- Name Steal fix
@@ -101,7 +101,7 @@ local function menus() if IsButtonPressed(gui_GetValue("msc_menutoggle")) then m
 local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.4.2.5"
+local currentVersion = "1.4.2.5.1"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 
 function autoupdater()
@@ -177,9 +177,9 @@ function speclistfix(E) if not gui_GetValue("msc_showspec") or E:GetName() ~= "r
 function Dis_PP() if DPP:GetValue() then client_SetConVar("mat_postprocess_enable", 0, true) else client_SetConVar("mat_postprocess_enable", 1, true) end end cb_Register("Draw", Dis_PP)
 function full_bright() if fBright:GetValue() then client_SetConVar("mat_fullbright", 1, true) else client_SetConVar("mat_fullbright", 0, true) end end cb_Register("Draw", full_bright)
 function engineradar() if ERadar:GetValue() then ERval = 1 else ERval = 0 return end for a, player in pairs(entities_FindByClass("CCSPlayer")) do player:SetProp("m_bSpotted", ERval) end end cb_Register("Draw", engineradar)
-function fakeangleghostval() if fakeangleghost:GetValue() == 0 then fakeghost = "Off" elseif fakeangleghost:GetValue() == 1 then fakeghost = "in_air" elseif fakeangleghost:GetValue() == 2 then fakeghost = "in_freeze" end end cb_Register("Draw", fakeangleghostval)
-function Disable_FakeAAGhost(UserCMD) if gui.GetValue("vis_fakeghost") ~= 0 then fakeghostval = gui.GetValue("vis_fakeghost") end if fakeghost == "in_freeze" or fakeghost == "Off" then return end if GetLocalPlayer():GetProp("m_fFlags") == 256 then gui.SetValue("vis_fakeghost", 0) else gui.SetValue("vis_fakeghost", fakeghostval) end end cb_Register("CreateMove", Disable_FakeAAGhost)
-function Disable_FakeAAGhost2(event) if fakeghost == "in_air" or fakeghost == "Off" then return end if event:GetName() == "round_end" then gui.SetValue("vis_fakeghost", 0) end if event:GetName() == "round_freeze_end" then gui.SetValue("vis_fakeghost", fakeghostval) end end cb_Register("FireGameEvent", Disable_FakeAAGhost2)
+function fakeangleghostval() if fakeangleghost:GetValue() == 0 then fakeghost = "Off" elseif fakeangleghost:GetValue() == 1 then fakeghost = "in_air" elseif fakeangleghost:GetValue() == 2 then fakeghost = "in_freeze" elseif fakeangleghost:GetValue() == 3 then fakeghost = "in_freeze_and_air" end end cb_Register("Draw", fakeangleghostval) local FakeAAGhost2_round_end = false
+function Disable_FakeAAGhost(UserCMD) if gui.GetValue("vis_fakeghost") ~= 0 then fakeghostval = gui.GetValue("vis_fakeghost") end if fakeghost == "in_freeze" or fakeghost == "Off" then return end if GetLocalPlayer():GetProp("m_fFlags") == 256 then gui.SetValue("vis_fakeghost", 0) else if not FakeAAGhost2_round_end then gui.SetValue("vis_fakeghost", fakeghostval) end end end cb_Register("CreateMove", Disable_FakeAAGhost)
+function Disable_FakeAAGhost2(event) if fakeghost == "in_air" or fakeghost == "Off" then return end if event:GetName() == "round_end" then gui.SetValue("vis_fakeghost", 0) FakeAAGhost2_round_end = true end if event:GetName() == "round_freeze_end" then gui.SetValue("vis_fakeghost", fakeghostval) FakeAAGhost2_round_end = false end end cb_Register("FireGameEvent", Disable_FakeAAGhost2)
 
 -------------------- Scoped Fov Fix
 function scopefov()
