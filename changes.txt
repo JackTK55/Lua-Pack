@@ -1,5 +1,0 @@
-echo Added "Working Stattrak" - the weapon needs to have atleast 1 stattrak value set 
-
-echo Fixed Planting Timer at beginning of round 
-
-echo Fixed Bomb damage indicator
