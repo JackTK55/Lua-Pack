@@ -1,3 +1,3 @@
-Added "Working Stattrak" - the weapon needs to have atleast 1 stattrak value set
-Fixed Planting Timer at beginning of round
-Fixed Bomb damage indicator
+Added "Working Stattrak" - the weapon needs to have atleast 1 stattrak value set	;
+Fixed Planting Timer at beginning of round		;
+Fixed Bomb damage indicator				;
