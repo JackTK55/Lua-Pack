@@ -1,5 +1,3 @@
-Added "Working Stattrak" - the weapon needs to have atleast 1 stattrak value set \n
-
-Fixed Planting Timer at beginning of round \n
-
-Fixed Bomb damage indicator \n
+print("Added "Working Stattrak" - the weapon needs to have atleast 1 stattrak value set")
+print("Fixed Planting Timer at beginning of round")
+print("Fixed Bomb damage indicator")
