@@ -1,7 +1,7 @@
 -- stuff
-local draw_Line, draw_TextShadow, draw_Color, draw_Text, g_tickinterval, string_format, http_Get, string_gsub, file_Open, math_exp, math_rad, math_max, math_abs, math_tan, math_sin, math_cos, math_fmod, draw_GetTextSize, draw_FilledRect, draw_RoundedRect, draw_RoundedRectFill, draw_CreateFont, draw_SetFont, client_WorldToScreen, draw_GetScreenSize, client_GetConVar, client_SetConVar, client_exec, PlayerNameByUserID, PlayerIndexByUserID, entities_GetByIndex, GetLocalPlayer, gui_SetValue, gui_GetValue, LocalPlayerIndex, c_AllowListener, cb_Register, g_tickcount, g_realtime, g_curtime, g_absoluteframetime, math_floor, math_sqrt, GetPlayerResources, entities_FindByClass, IsButtonPressed, client_ChatSay, table_insert, table_remove, vector_Distance = draw.Line, draw.TextShadow, draw.Color, draw.Text, globals.TickInterval, string.format, http.Get, string.gsub, file.Open, math.exp, math.rad, math.max, math.abs, math.tan, math.sin, math.cos, math.fmod, draw.GetTextSize, draw.FilledRect, draw.RoundedRect, draw.RoundedRectFill, draw.CreateFont, draw.SetFont, client.WorldToScreen, draw.GetScreenSize, client.GetConVar, client.SetConVar, client.Command, client.GetPlayerNameByUserID, client.GetPlayerIndexByUserID, entities.GetByIndex, entities.GetLocalPlayer, gui.SetValue, gui.GetValue, client.GetLocalPlayerIndex, client.AllowListener, callbacks.Register, globals.TickCount, globals.RealTime, globals.CurTime, globals.AbsoluteFrameTime, math.floor, math.sqrt, entities.GetPlayerResources, entities.FindByClass, input.IsButtonPressed, client.ChatSay, table.insert, table.remove, vector.Distance
+local draw_Line, draw_TextShadow, draw_Color, draw_Text, g_tickinterval, string_format, http_Get, string_gsub, file_Open, math_random, math_exp, math_rad, math_max, math_abs, math_tan, math_sin, math_cos, math_fmod, draw_GetTextSize, draw_FilledRect, draw_RoundedRect, draw_RoundedRectFill, draw_CreateFont, draw_SetFont, client_WorldToScreen, draw_GetScreenSize, client_GetConVar, client_SetConVar, client_exec, PlayerNameByUserID, PlayerIndexByUserID, entities_GetByIndex, GetLocalPlayer, gui_SetValue, gui_GetValue, LocalPlayerIndex, c_AllowListener, cb_Register, g_tickcount, g_realtime, g_curtime, g_absoluteframetime, g_maxclients, math_floor, math_sqrt, GetPlayerResources, entities_FindByClass, IsButtonPressed, client_ChatSay, table_insert, table_remove, vector_Distance, draw_OutlinedCircle = draw.Line, draw.TextShadow, draw.Color, draw.Text, globals.TickInterval, string.format, http.Get, string.gsub, file.Open, math.random, math.exp, math.rad, math.max, math.abs, math.tan, math.sin, math.cos, math.fmod, draw.GetTextSize, draw.FilledRect, draw.RoundedRect, draw.RoundedRectFill, draw.CreateFont, draw.SetFont, client.WorldToScreen, draw.GetScreenSize, client.GetConVar, client.SetConVar, client.Command, client.GetPlayerNameByUserID, client.GetPlayerIndexByUserID, entities.GetByIndex, entities.GetLocalPlayer, gui.SetValue, gui.GetValue, client.GetLocalPlayerIndex, client.AllowListener, callbacks.Register, globals.TickCount, globals.RealTime, globals.CurTime, globals.AbsoluteFrameTime, globals.MaxClients, math.floor, math.sqrt, entities.GetPlayerResources, entities.FindByClass, input.IsButtonPressed, client.ChatSay, table.insert, table.remove, vector.Distance, draw.OutlinedCircle
 -------------- References
-local G_VM = gui.Groupbox(gui.Reference("VISUALS", "Shared"), "Extra Features", 0, 397, 200, 200)
+local G_VM = gui.Groupbox(gui.Reference("VISUALS", "Shared"), "Extra Features", 0, 418, 200, 247)
 local VOO_Ref = gui.Reference("VISUALS", "OTHER", "Options")
 local VEO_Ref = gui.Reference("VISUALS", "ENEMIES", "Options")
 local VTO_Ref = gui.Reference("VISUALS", "TEAMMATES", "Options")
@@ -9,7 +9,8 @@ local G_M1 = gui.Groupbox(gui.Reference("MISC", "GENERAL", "Main"), "Extra Featu
 -------------- Font
 local Vf30 = draw_CreateFont("Verdana", 30) 
 local Vf12 = draw_CreateFont("Verdana", 12) 
-local Tf = draw_CreateFont("Tahoma")
+local Vf11 = draw_CreateFont("Verdana", 11)
+local Tf13 = draw_CreateFont("Tahoma", 13, 200)
 -------------- Better Grenades
 local better_grenades = gui.Checkbox(VOO_Ref, "esp_other_better_grenades", "Better Grenades", false)
 -------------- Hit Log 
@@ -41,6 +42,8 @@ local zS = gui.Slider(VMStuff, "VM_Z", "Z", zO, -20, 20)
 local vfov = gui.Slider(VMStuff, "VM_fov", "Viewmodel FOV", fO, 0, 120)
 -------------- Sniper Crosshair
 local ComboCrosshair = gui.Combobox(G_VM, "vis_sniper_crosshair", "Sniper Crosshair", "Off", "Engine Crosshair", "Engine Crosshair (+scoped)", "Aimware Crosshair", "Draw Crosshair")
+-------------- Bullet impacts
+local BulletImpacts_combo = gui.Combobox(G_VM, "vis_bullet_impact", "Bullet Impact", "Off", "Everyone", "Enemy Only", "Team Only", "Local Only")
 -------------- Scoped FOV Fix
 local s_fovfix = gui.Checkbox(G_VM, "vis_fixfov", "Fix Scoped FOV", false)
 local fov_value, vm_fov_value = gui_GetValue("vis_view_fov"), gui_GetValue("vis_view_model_fov")
@@ -59,7 +62,6 @@ local CC_Spam_spd = gui.Slider(CC_G1, "CC_Spam_Speed", "Spam Speed", 67.5, 10, 2
 local chatspam1txt = gui.Text(CC_G1, "Spam 1") local ChatSpam1 = gui.Editbox(CC_G1, "CC_Spam1", "Custom Chat Spam 1")
 local chatspam2txt = gui.Text(CC_G1, "Spam 2") local ChatSpam2 = gui.Editbox(CC_G1, "CC_Spam2", "Custom Chat Spam 2")
 -------------- Aspect Ratio Changer
-local aspect_ratio_table = {}
 local aspect_ratio_check = gui.Checkbox(G_M1, "msc_aspect_enable", "Aspect Ratio Changer", false) 
 local aspect_ratio_reference = gui.Slider(G_M1, "msc_aspect_value", "Force aspect ratio", 100, 1, 199) -- % times your original ratio
 -------------- Esp On Dead
@@ -98,12 +100,13 @@ local function get_abs_fps() frame_rate = 0.9 * frame_rate + (1.0 - 0.9) * g_abs
 local function lerp_pos(x1, y1, z1, x2, y2, z2, percentage) local x = (x2 - x1) * percentage + x1 local y = (y2 - y1) * percentage + y1 local z = (z2 - z1) * percentage + z1 return x, y, z end
 local function distance3D(x1, y1, z1, x2, y2, z2) return math_floor(vector_Distance(x1, y1, z1, x2, y2, z2)) end
 local function menus() if IsButtonPressed(gui_GetValue("msc_menutoggle")) then menu_opened = not menu_opened end if menu_opened then if AB_Show:GetValue() then AB_W:SetActive(1) else AB_W:SetActive(0) end if ViewModelShown:GetValue() then VM_W:SetActive(1) else VM_W:SetActive(0) end if CC_Show:GetValue() then CC_W:SetActive(1) else CC_W:SetActive(0) end else AB_W:SetActive(0) VM_W:SetActive(0) CC_W:SetActive(0) end end cb_Register("Draw", "shows", menus)
+local function is_enemy(index) if entities_GetByIndex(index) == nil then return end return entities_GetByIndex(index):GetTeamNumber() ~= GetLocalPlayer():GetTeamNumber() end
 
 -------------------- Auto Updater
 local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.4.2.5.6"
+local currentVersion = "1.4.3"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 
 function autoupdater()
@@ -114,38 +117,23 @@ if updateDownloaded then draw_Color(255, 255, 255, 255) draw_Text(2, 0, string_g
 cb_Register("Draw", "Auto Update", autoupdater)
 
 -------------------- Grenade Timers
-local updatetick = 0 local grenades = {}
-function EventHook(Event)
-if not better_grenades:GetValue() then return end
-if Event:GetName() == "round_prestart" then grenades = {} end
-if Event:GetName() == "hegrenade_detonate" or Event:GetName() == "flashbang_detonate" or Event:GetName() == "inferno_expire" or Event:GetName() == "inferno_extinguish" then updatetick = g_tickcount() for index,value in pairs(grenades) do if value[1] == Event:GetInt("entityid") then table_remove(grenades, index) end end end end
-function ESPHook(Builder)
-if not better_grenades:GetValue() then return end
-if Builder:GetEntity():GetClass() == "CSmokeGrenadeProjectile" and Builder:GetEntity():GetProp("m_nSmokeEffectTickBegin") ~= 0 then delta = (g_tickcount() - Builder:GetEntity():GetProp("m_nSmokeEffectTickBegin")) * g_tickinterval() Builder:AddBarBottom(1 - (delta/17.5))
-elseif Builder:GetEntity():GetClass() == "CBaseCSGrenadeProjectile" then local found = false for index,value in pairs(grenades) do if value[1] == Builder:GetEntity():GetIndex() then DeltaT = (g_tickcount() - grenades[index][2]) * g_tickinterval() Builder:AddBarBottom(1 - (DeltaT/1.65)) found = true end end
-if found == false and g_tickcount() > updatetick then local gMatrix = {Builder:GetEntity():GetIndex(), g_tickcount()} table_insert(grenades, gMatrix) end end end
-function DrawingHook()
-if not better_grenades:GetValue() then return end
-for indexF,valueF in pairs(entities_FindByClass("CInferno")) do local found = false for indexT,valueT in pairs(grenades) do if valueT[1] ~= valueF:GetIndex() then return end
-x, y = client_WorldToScreen(valueF:GetAbsOrigin()) local mollysize = 25 if x == nil and y == nil then return end draw_Color(0, 0, 0, 255) draw_RoundedRectFill( x - mollysize, y, x + mollysize, y + 4 )
-local math = (((g_tickcount() - valueT[2]) * ((-1) - 1))/ ((valueT[2] + 7 / g_tickinterval()) - valueT[2])) + 1 draw_Color(227, 227, 227, 255) draw_RoundedRectFill(x - mollysize, y, x + mollysize * math, y + 4) draw_Color(255, 255, 255, 255) draw_RoundedRect(x - mollysize, y, x + mollysize, y + 4) 
-draw_SetFont(Tf) local w,h = draw_GetTextSize("MOLLY") draw_TextShadow(x - w/2, y - h * 1.25 , "MOLLY") found = true end if found == false and g_tickcount() > updatetick then local gMatrix = {valueF:GetIndex(), g_tickcount()} table_insert(grenades, gMatrix) end end end
-cb_Register("Draw", DrawingHook) cb_Register("DrawESP", ESPHook) cb_Register("FireGameEvent", EventHook) 
-
--------------------- Hit Log
-local hitgroup_names = {"head", "chest", "stomach", "left arm", "right arm", "left leg", "right leg"}
-local draw_hitsay = {}
-function ChatLogger(Event)
-if not HitLog:GetValue() or Event:GetName() == nil or Event:GetName() ~= "player_hurt" then return end
-local attacker, victim = PlayerIndexByUserID(Event:GetInt("attacker")), PlayerIndexByUserID(Event:GetInt("userid"))
-if attacker ~= LocalPlayerIndex() or victim == LocalPlayerIndex() then return end
-local victimName, dmg, health, hitGroup = PlayerNameByUserID(Event:GetInt("userid")), Event:GetString("dmg_health"), Event:GetString("health"), hitgroup_names[Event:GetInt("hitgroup")] or "body"
-response = string_format("Hit %s in the %s for %s damage (%s health remaining)", victimName, hitGroup, dmg, health) table_insert(draw_hitsay, {g_curtime(), response}) end
-local On_Screen_Time, pixels_between_each_line, ScreenX, ScreenY, lowestopacity = 15, 12, 8, 3, 63.5
-function hitlog()
-if not HitLog:GetValue() or GetLocalPlayer() == nil then return end local things_on_screen = 0 for k, l in pairs(draw_hitsay) do local a = 1 a = (On_Screen_Time - (g_curtime() - l[1])) / On_Screen_Time
-if 255*a < lowestopacity then table_remove(draw_hitsay, k) else draw_SetFont(Tf) draw_Color(255,255,255,255*a) draw_TextShadow(ScreenX, things_on_screen * pixels_between_each_line + ScreenY, l[2]) things_on_screen = things_on_screen + 1 end end end
-cb_Register("Draw", hitlog) cb_Register("FireGameEvent", ChatLogger)  
+local smokes, molotovs, flashes, grenades = {}, {}, {}, {}
+function Timers(e)
+if not better_grenades:GetValue() or e:GetName() ~= "round_prestart" and e:GetName() ~= "smokegrenade_detonate" and e:GetName() ~= "molotov_detonate" and e:GetName() ~= "inferno_startburn" and e:GetName() ~= "inferno_expire" and e:GetName() ~= "inferno_extinguish" and e:GetName() ~= "grenade_thrown" then return end local entityid = e:GetInt("entityid") local x = e:GetFloat("x") local y = e:GetFloat("y") local z = e:GetFloat("z") local userid_to_index = PlayerIndexByUserID(e:GetInt("userid"))
+if e:GetName() == "round_prestart" then smokes, molotovs = {}, {} end
+if e:GetName() == "smokegrenade_detonate" then table_insert(smokes, {g_curtime(), entityid, x, y, z}) end
+if e:GetName() == "molotov_detonate" then user_index = userid_to_index end if e:GetName() == "inferno_startburn" then table_insert(molotovs, {g_curtime(), entityid, x, y, z, user_index}) end
+if e:GetName() == "inferno_expire" or e:GetName() == "inferno_extinguish" then for k, v in pairs(molotovs) do if v[2] == entityid then table_remove(molotovs, k) end end end
+if e:GetName() == "grenade_thrown" then randnumber = math_random(1, client_GetConVar("ammo_grenade_limit_total")*g_maxclients()) if e:GetString("weapon") == "flashbang" then table_insert(flashes, {g_curtime(), randnumber * 1.77}) end if e:GetString("weapon") == "hegrenade" then table_insert(grenades, {g_curtime(), randnumber * 2.10}) end end end
+function DrawTimers()
+if not better_grenades:GetValue() or GetLocalPlayer() == nil then return end 
+for k, v in pairs(smokes) do if v[1] - g_curtime() + 17.6 > 0 then local X, Y = client_WorldToScreen(v[3], v[4], v[5]) local smoke_timeleft = string_format("%0.1f",  v[1] - g_curtime() + 17.6) if X ~= nil and Y ~= nil then draw_SetFont(Vf11) local tW, tH = draw_GetTextSize(smoke_timeleft) local tW2, tH2 = draw_GetTextSize("SMOKE") draw_Color(255, 255, 255, 255) draw_TextShadow(X - (tW/2), Y - (tH/2), smoke_timeleft) draw_Color(255, 255, 255, 255) draw_TextShadow(X - (tW2/2), Y - (tH2/2) + tH2, "SMOKE") end else table_remove(smokes, k) end end 
+for k, v in pairs(molotovs) do if v[1] - g_curtime() + 7 > 0 then local X, Y = client_WorldToScreen(v[3], v[4], v[5]) local molotov_timeleft = string_format("%0.1f",  v[1] - g_curtime() + 7) if X ~= nil and Y ~= nil then  draw_SetFont(Vf11) local tW, tH = draw_GetTextSize(molotov_timeleft) local tW2, tH2 = draw_GetTextSize("MOLLY") draw_Color(255, 255, 255, 255) draw_TextShadow(X - (tW/2), Y - (tH/2), molotov_timeleft) if not is_enemy(v[6]) then r, g, b, a = 153, 153, 255, 255 else r, g, b, a = 251, 82, 79, 255 end draw_Color(r, g, b, a) draw_TextShadow(X - (tW2/2), Y - (tH2/2) + tH2, "MOLLY") end else table_remove(molotovs, k) end end end
+function GFTimers(b)
+if not better_grenades:GetValue() or b:GetEntity():GetClass() ~= "CBaseCSGrenadeProjectile" then return end
+for k, v in pairs(flashes) do if v[1] - g_curtime() + 1.65 > 0 then if v[2] == randnumber * 1.77 then b:AddBarBottom(v[1] - g_curtime() + 1.65) end else table_remove(flashes, k) end end 
+for k, v in pairs(grenades) do if v[1] - g_curtime() + 1.65 > 0 then if v[2] == randnumber * 2.10 then b:AddBarBottom(v[1] - g_curtime() + 1.65) end else table_remove(grenades, k) end end end
+cb_Register("Draw", DrawTimers) cb_Register("DrawESP", GFTimers) cb_Register("FireGameEvent", Timers)
 
 -------------------- Auto Buy 
 local SecondaryWeapon, PrimaryWeapon, buy_armor = "", "", ""
@@ -181,7 +169,7 @@ function engineradar() if ERadar:GetValue() then ERval = 1 else ERval = 0 return
 function fakeangleghostval() if fakeangleghost:GetValue() == 0 then fakeghost = "Off" elseif fakeangleghost:GetValue() == 1 then fakeghost = "in_air" elseif fakeangleghost:GetValue() == 2 then fakeghost = "in_freeze" elseif fakeangleghost:GetValue() == 3 then fakeghost = "in_freeze_and_air" end end cb_Register("Draw", fakeangleghostval) local FakeAAGhost2_round_end = false
 function Disable_FakeAAGhost(UserCMD) if gui.GetValue("vis_fakeghost") ~= 0 then fakeghostval = gui.GetValue("vis_fakeghost") end if fakeghost == "in_freeze" or fakeghost == "Off" then return end if GetLocalPlayer():GetProp("m_fFlags") == 256 then gui.SetValue("vis_fakeghost", 0) else if not FakeAAGhost2_round_end then gui.SetValue("vis_fakeghost", fakeghostval) end end end cb_Register("CreateMove", Disable_FakeAAGhost)
 function Disable_FakeAAGhost2(event) if fakeghost == "in_air" or fakeghost == "Off" then return end if event:GetName() == "round_end" then gui.SetValue("vis_fakeghost", 0) FakeAAGhost2_round_end = true end if event:GetName() == "round_freeze_end" then gui.SetValue("vis_fakeghost", fakeghostval) FakeAAGhost2_round_end = false end end cb_Register("FireGameEvent", Disable_FakeAAGhost2)
-function StatTrak(e) if not Working_Stattrak:GetValue() then return end if e:GetName() == "player_death" and PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("Userid")) ~= LocalPlayerIndex() then wep = string_format("skin_%s_stattrak", e:GetString("weapon")) if tonumber(gui_GetValue(wep)) > 0 then gui_SetValue(wep, math_floor(gui_GetValue(wep)) + 1) end end if e:GetName() == "round_prestart" then client_exec("cl_fullupdate", true) end end cb_Register("FireGameEvent", StatTrak)
+function StatTrak(e) if not Working_Stattrak:GetValue() or not gui_GetValue("skin_active") then return end if e:GetName() == "player_death" and PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() and is_enemy(PlayerIndexByUserID(e:GetInt("userid"))) then if e:GetString("weapon") ~= "inferno" and e:GetString("weapon") ~= "hegrenade" and e:GetString("weapon") ~= "smokegrenade" and e:GetString("weapon") ~= "flashbang" and e:GetString("weapon") ~= "decoy" and e:GetString("weapon") ~= "knife" and e:GetString("weapon") ~= "knife_t" then wep = string_format("skin_%s_stattrak", e:GetString("weapon")) if tonumber(gui_GetValue(wep)) > 0 then gui_SetValue(wep, math_floor(gui_GetValue(wep)) + 1) end end end if e:GetName() == "round_prestart" then client_exec("cl_fullupdate", true) end end cb_Register("FireGameEvent", StatTrak)
 
 -------------------- Scoped Fov Fix
 function scopefov()
@@ -204,43 +192,46 @@ elseif not drawCrosshair and ComboCrosshair:GetValue() == 3 then gui_SetValue("e
 elseif drawCrosshair and ComboCrosshair:GetValue() == 4 then client_SetConVar("weapon_debug_spread_show", 0, true) gui_SetValue("esp_crosshair", false) draw_Color(255,255,255,255) draw_Line(scX, scY - 8, scX, scY + 8) --[[ line down ]] draw_Line(scX - 8, scY, scX + 8, scY) --[[ line across ]] end end
 cb_Register("Draw", ifCrosshair)
 
--------------------- Bomb Timer & defuse timer
-local function mathfix() local screenX, screenY = draw_GetScreenSize() screenY3 = screenY/2 end cb_Register("Draw", "fixes screenY3", mathfix)
-local function get_site_name(site) local a_x, a_y, a_z = GetPlayerResources():GetProp("m_bombsiteCenterA") local b_x, b_y, b_z = GetPlayerResources():GetProp("m_bombsiteCenterB") local site_x1, site_y1, site_z1 = site:GetMins() local site_x2, site_y2, site_z2 = site:GetMaxs() local site_x, site_y, site_z = lerp_pos(site_x1, site_y1, site_z1, site_x2, site_y2, site_z2, 0.5) local distance_a, distance_b = vector_Distance(site_x, site_y, site_z, a_x, a_y, a_z), vector_Distance(site_x, site_y, site_z, b_x, b_y, b_z) return distance_b > distance_a and "A" or "B" end
-local colorchange, drawBar, drawDefuse, drawPlanting, plantedTime, plantedTime2, fill, fill2, fill3, plantingName, plantingStarted, plantingTime, plantingSite = 10, false, false, false, 0, 0, 0, screenY3, 0, "", 0, 3.125, ""
-function bomb(event)
-if not BombTimer:GetValue() then return end
-if event:GetName() == "bomb_beginplant" then ScreenX = 20 ScreenY = 55 fill = 0 fill2 = screenY3 fill3 = 0 drawPlanting = true plantingName = PlayerNameByUserID(event:GetInt("userid")) plantingStarted = g_curtime() plantingSite = get_site_name(entities_GetByIndex(event:GetInt("site"))) end
-if event:GetName() == "bomb_abortplant" then ScreenX = 8 ScreenY = 3 drawPlanting = false end
-if event:GetName() == "bomb_planted" then ScreenX = 20 ScreenY = 55 plantedTime = g_curtime() drawBar = true drawPlanting = false end
-if event:GetName() == "bomb_begindefuse" then ScreenX = 20 ScreenY = 79 defusingName = PlayerNameByUserID(event:GetInt("userid")) plantedTime2 = g_curtime() drawDefuse = true end
-if event:GetName() == "bomb_abortdefuse" then ScreenX = 20 ScreenY = 55 drawDefuse = false fill2 = screenY3 fill3 = 0 end
-if event:GetName() == "bomb_defused" then drawBar = false drawDefuse = false ScreenX = 8 ScreenY = 3 end
-if event:GetName() == "round_officially_ended" then drawBar = false drawDefuse = false drawPlanting = false end 
-if event:GetName() == "round_prestart" then ScreenX = 8 ScreenY = 3 draw_hitsay = {} end end
-function drawProgress()
-if not BombTimer:GetValue() then return end local screenX, screenY = draw_GetScreenSize() local Player = GetLocalPlayer()
-if drawBar and entities_FindByClass("CPlantedC4")[1] ~= nil then local ToExplode = entities_FindByClass("CPlantedC4")[1] c4time = math_floor(ToExplode:GetProp("m_flTimerLength")) C4time = ((plantedTime - g_curtime()) + c4time)
-if C4time > -1  then local godownby = (screenY / c4time) / get_abs_fps() if Player:GetTeamNumber() == 3 and Player:GetProp("m_bHasDefuser") == 0 and C4time < 10.1 or Player:GetProp("m_bHasDefuser") == 1 and C4time < 5.1 then r, g, b, a = 255,13,13,255 else r, g, b, a = 124, 195, 13, 255 end
-local bombsite = ToExplode:GetProp("m_nBombSite") == 0 and "A" or "B" siteinfo = string_format("%s - %.1fs", bombsite, ((plantedTime - g_curtime()) + c4time)) draw_SetFont(Vf30) draw_Color(r, g, b, a) draw_TextShadow(20, 0, siteinfo)
-if C4time <= colorchange then draw_Color(255,13,13,255) else draw_Color(0,255,0,255) end draw_FilledRect(1, fill, 15, screenY) draw_Color(0,0,0,100) draw_FilledRect(0, 0, 16, screenY) fill = fill + godownby end end
-if drawPlanting then local plant_percentage = (g_curtime() - plantingStarted) / plantingTime local plantinfo = string_format("%s - %.1fs", plantingName, (plantingStarted - g_curtime()) + plantingTime) 
-if plant_percentage > 0 and 1 > plant_percentage then local remove_from_Y = screenY * (1 - plant_percentage) draw_SetFont(Vf30) draw_Color(124, 195, 13, 255) draw_TextShadow(20, 0, plantingSite.." - Planting") draw_Color(255, 255, 255, 255) draw_TextShadow(20, 25, plantinfo) draw_Color(0,255,0,255) draw_FilledRect(1, 0+remove_from_Y, 15, screenY+remove_from_Y) draw_Color(0,0,0,100) draw_FilledRect(0, 0, 16, screenY) end end
-if drawDefuse and entities_FindByClass("CPlantedC4")[1] ~= nil then local ToDefuse = entities_FindByClass("CPlantedC4")[1] DefuseTime = math_floor(ToDefuse:GetProp("m_flDefuseLength")) DefuseT = string_format("%.1fs", (plantedTime2 - g_curtime()) + DefuseTime) draw_SetFont(Vf30) draw_Color(255, 255, 255, 255) draw_TextShadow(20, 50, defusingName.." - ".. DefuseT)
-if DefuseTime == 10 then local godownby3 = (screenY / DefuseTime) / get_abs_fps() draw_Color(0,0,255,255) draw_FilledRect(1, fill3, 15, screenY) draw_Color(0,0,0,100) draw_FilledRect(0, 0, 16, screenY) fill3 = fill3 + godownby3
-elseif DefuseTime == 5 then local godownby2 = ((screenY/2) / DefuseTime) / get_abs_fps() draw_Color(0,0,255,255) draw_FilledRect(1, fill2, 15, screenY) draw_Color(0,0,0,100) draw_FilledRect(0, (screenY/2), 16, screenY) fill2 = fill2 + godownby2 end end end 
+-------------------- HitLog
+local hit_logs, hitgroup_names = {}, {"head", "chest", "stomach", "left arm", "right arm", "left leg", "right leg"}
+function hitlog(e)
+if not HitLog:GetValue() or e:GetName() ~= "player_hurt" then return end
+if PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() then
+log = string_format("Hit %s in the %s for %s damage (%s health remaining)", PlayerNameByUserID(e:GetInt("userid")), hitgroup_names[e:GetInt("hitgroup")] or "body", e:GetString("dmg_health"), e:GetString("health"))
+table_insert(hit_logs, {g_curtime(), log}) end end
+local ScreenX, ScreenY = 8, 3
+function draw_hitlog()
+if not HitLog:GetValue() or hit_logs[1] == nil then return end local ScreenX,ScreenY = ScreenX,ScreenY
+for k, v in pairs(hit_logs) do a = (v[1] - g_curtime() + 12) / 12 if 255*a > 67.5 then draw_SetFont(Tf13) tW, tH = draw_GetTextSize(v[2]) draw_Color(255, 255, 255, 255*a) draw_TextShadow(ScreenX, ScreenY, v[2]) ScreenY = ScreenY + tH else table_remove(hit_logs, k) end end end
+cb_Register("Draw", draw_hitlog) cb_Register("FireGameEvent", hitlog)
 
--------------------- Bomb Damage
-function DrawDamage()
+-------------------- Bomb Timer & defuse timer & Bomb Damage
+local function get_site_name(site) local a_x, a_y, a_z = GetPlayerResources():GetProp("m_bombsiteCenterA") local b_x, b_y, b_z = GetPlayerResources():GetProp("m_bombsiteCenterB") local site_x1, site_y1, site_z1 = site:GetMins() local site_x2, site_y2, site_z2 = site:GetMaxs() local site_x, site_y, site_z = lerp_pos(site_x1, site_y1, site_z1, site_x2, site_y2, site_z2, 0.5) local distance_a, distance_b = vector_Distance(site_x, site_y, site_z, a_x, a_y, a_z), vector_Distance(site_x, site_y, site_z, b_x, b_y, b_z) return distance_b > distance_a and "A" or "B" end
+function bombEvents(e)
+if not BombTimer:GetValue() or e:GetName() ~= "bomb_beginplant" and e:GetName() ~= "bomb_abortplant" and e:GetName() ~= "bomb_planted" and e:GetName() ~= "bomb_begindefuse" and e:GetName() ~= "bomb_abortdefuse" and e:GetName() ~= "bomb_defused" and e:GetName() ~= "round_officially_ended" and e:GetName() ~= "round_prestart" then return end
+if e:GetName() == "bomb_beginplant" then planter = PlayerNameByUserID(e:GetInt("userid")) plantPercent = 0 plantingStarted = g_curtime() plantingSite = get_site_name(entities_GetByIndex(e:GetInt("site"))) drawPlant = true ScreenX,ScreenY = 20,60 end
+if e:GetName() == "bomb_abortplant" then drawPlant = false ScreenX,ScreenY = 8,3 end
+if e:GetName() == "bomb_planted" then drawPlant = false plantedPercent = 0 plantedAt = g_curtime() drawBombPlanted = true ScreenX,ScreenY = 20,60 end
+if e:GetName() == "bomb_begindefuse" then defuser = PlayerNameByUserID(e:GetInt("userid")) defusePercent = 0 defuseStarted = g_curtime() drawDefuse = true ScreenX,ScreenY = 20,90 end
+if e:GetName() == "bomb_abortdefuse" then drawDefuse = false ScreenX,ScreenY = 20,60 end
+if e:GetName() == "bomb_defused" then drawBombPlanted = false drawDefuse = false ScreenX,ScreenY = 8,3 end
+if e:GetName() == "round_officially_ended" then drawBombPlanted = false drawDefuse = false drawPlant = false ScreenX,ScreenY = 8,3 end 
+if e:GetName() == "round_prestart" then ScreenX,ScreenY = 8,3 hit_logs = {} end end
+function drawBombTimers()
+if not BombTimer:GetValue() then return end local screenX, screenY = draw_GetScreenSize()
+if drawPlant then local plantTime = string_format("%s - %0.1fs", planter, plantingStarted - g_curtime() + 3.125) local plantingInfo = string_format("%s - Planting", plantingSite) local plantPercent = (g_curtime() - plantingStarted) / 3.125 draw_SetFont(Vf30) local tW, tH = draw_GetTextSize(plantingInfo) draw_Color(124, 195, 13, 255) draw_Text(20, 0, plantingInfo) draw_Color(255, 255, 255, 255) draw_Text(20, tH, plantTime) if plantPercent < 1 and plantPercent > 0 then local plantingBar = (1 - plantPercent) * screenY draw_Color(13, 13, 13, 70) draw_FilledRect(0, 0, 16, screenY) draw_Color(0, 150, 0, 255) draw_FilledRect(1, plantingBar, 15, screenY+plantingBar) end end
+if drawBombPlanted then local plantedBomb = entities_FindByClass("CPlantedC4") for i=1, #plantedBomb do bLength = plantedBomb[i]:GetPropFloat("m_flTimerLength") dLength = plantedBomb[i]:GetPropFloat("m_flDefuseLength") bSite = plantedBomb[i]:GetPropInt("m_nBombSite") == 0 and "A" or "B" end local plantedInfo = string_format("%s - %0.1fs", bSite, (plantedAt - g_curtime()) + bLength) local plantedPercent = (g_curtime() - plantedAt) / bLength if plantedAt - g_curtime() + bLength > 0 then draw_SetFont(Vf30) pTW, pTH = draw_GetTextSize(plantedInfo) 
+if GetLocalPlayer():GetTeamNumber() == 3 and not GetLocalPlayer():GetPropBool("m_bHasDefuser") and (plantedAt - g_curtime()) + bLength < 10.1 or GetLocalPlayer():GetPropBool("m_bHasDefuser") and (plantedAt - g_curtime()) + bLength < 5.1 then r, g, b, a = 255,13,13,255 else r, g, b, a = 124, 195, 13, 255 end draw_Color(r, g, b, a) draw_Text(20, 0, plantedInfo) if plantedPercent < 1 and plantedPercent > 0 then local plantedBar = (1 - plantedPercent) * screenY draw_Color(13, 13, 13, 70) draw_FilledRect(0, 0, 16, screenY) draw_Color(0, 150, 0, 255) draw_FilledRect(1, screenY-plantedBar, 15, screenY) end end end
+if drawDefuse then local plantedBomb = entities_FindByClass("CPlantedC4") for i=1, #plantedBomb do dLength = plantedBomb[i]:GetPropFloat("m_flDefuseLength") end local defuseInfo = string_format("%s - %0.1fs", defuser, (defuseStarted - g_curtime()) + dLength) local defusePercent = (g_curtime() - defuseStarted) / dLength if (defuseStarted - g_curtime()) + dLength > 0 then draw_SetFont(Vf30) draw_Color(255, 255, 255, 255) draw_Text(20, pTH+pTH, defuseInfo) if defusePercent < 1 and defusePercent > 0 then local defuseBar = (1 - defusePercent) * screenY draw_Color(13, 13, 13, 70) draw_FilledRect(0, 0, 16, screenY) draw_Color(0, 0, 150, 255) draw_FilledRect(1, screenY-defuseBar, 15, screenY) end end end end
+function BombDamageIndicator()
 if not Bomb_Damage:GetValue() or entities_FindByClass("CPlantedC4")[1] == nil then return end local Bomb = entities_FindByClass("CPlantedC4")[1]
-if Bomb:GetProp("m_bBombTicking") and Bomb:GetProp("m_bBombDefused") == 0 and g_curtime() - 1 < Bomb:GetProp("m_flC4Blow") then local Player = GetLocalPlayer() local HealthToTake = math_floor(DamagefromDomb(Bomb, Player))
-if HealthToTake + 1 >= Player:GetHealth() then draw_SetFont(Vf30) draw_Color(255,0,0,255) draw_TextShadow(20, 25, "FATAL") 
-elseif HealthToTake < Player:GetHealth() and HealthToTake > 0 then draw_SetFont(Vf30) draw_Color(255,255,255,255) draw_TextShadow(20, 25, "-"..HealthToTake+1) end end end
-function DamagefromDomb(Bomb, Player)
-if not Bomb_Damage:GetValue() then return end local Bxyz = {Bomb:GetAbsOrigin()} local Pxyz = {Player:GetAbsOrigin()} local ArmorValue = Player:GetProp("m_ArmorValue")
-local C4Distance = math_sqrt((Bxyz[1] - Pxyz[1]) ^2 + (Bxyz[2] - Pxyz[2]) ^2 + (Bxyz[3] - Pxyz[3]) ^2) local d = ((C4Distance-75.68) / 789.2) local f1Damage = 450.7*math_exp(-d * d)
-if ArmorValue > 0 then local f1New = f1Damage * 0.5 local f1Armor = (f1Damage - f1New) * 0.5 if f1Armor > ArmorValue then f1Armor = ArmorValue * 2 f1New = f1Damage - f1Armor end f1Damage = f1New end return f1Damage end 
-cb_Register("Draw", drawProgress) cb_Register("Draw", DrawDamage) cb_Register("FireGameEvent", bomb)
+if Bomb:GetPropInt("m_bBombTicking") and g_curtime() - 1 < Bomb:GetPropInt("m_flC4Blow") and not Bomb:GetPropBool("m_bBombDefused") then local bDamage = math_floor(DamagefromBomb(Bomb, GetLocalPlayer())) local bDmgInfo = string_format("-%i", bDamage + 1)
+if bDamage + 1 >= GetLocalPlayer():GetHealth() then draw_SetFont(Vf30) draw_Color(255, 0, 0, 255) draw_Text(20, pTH, "FATAL")
+elseif bDamage < GetLocalPlayer():GetHealth() and bDamage > 0 then draw_SetFont(Vf30) draw_Color(255,255,255,255) draw_Text(20, pTH, bDmgInfo) end end end
+function DamagefromBomb(Bomb, Player)
+if not Bomb_Damage:GetValue() then return end local Bxyz = {Bomb:GetAbsOrigin()} local Pxyz = {Player:GetAbsOrigin()} local ArmorValue = Player:GetPropInt("m_ArmorValue") local C4Distance = math_sqrt((Bxyz[1] - Pxyz[1]) ^2 + (Bxyz[2] - Pxyz[2]) ^2 + (Bxyz[3] - Pxyz[3]) ^2) local d = ((C4Distance-75.68) / 789.2) local f1Damage = 450.7*math_exp(-d * d) if ArmorValue > 0 then local f1New = f1Damage * 0.5 local f1Armor = (f1Damage - f1New) * 0.5 if f1Armor > ArmorValue then f1Armor = ArmorValue * 2 f1New = f1Damage - f1Armor end f1Damage = f1New end 
+return f1Damage end 
+cb_Register("Draw", drawBombTimers) cb_Register("Draw", BombDamageIndicator) cb_Register("FireGameEvent", bombEvents)
 
 -------------------- Chat Spams
 local c_spammedlast = g_realtime() + CC_Spam_spd:GetValue()/100
@@ -252,6 +243,7 @@ elseif CC_Spams:GetValue() == 3 and g_realtime() >= c_spammedlast then client_Ch
 cb_Register("Draw", custom_chat)
 
 -------------------- Aspect Ratio Changer
+local aspect_ratio_table = {}
 local function gcd(m, n) while m ~= 0 do m, n = math_fmod(n, m), m end return n end
 local function set_aspect_ratio(aspect_ratio_multiplier) local screen_width, screen_height = draw_GetScreenSize() local aspectratio_value = (screen_width*aspect_ratio_multiplier)/screen_height if aspect_ratio_multiplier == 1 or not aspect_ratio_check:GetValue() then aspectratio_value = 0 end client_SetConVar( "r_aspectratio", tonumber(aspectratio_value), true) end
 local function on_aspect_ratio_changed() local screen_width, screen_height = draw_GetScreenSize() for i=1, 200 do local i2=i*0.01    i2 = 2 - i2 local divisor = gcd(screen_width*i2, screen_height) if screen_width*i2/divisor < 100 or i2 == 1 then aspect_ratio_table[i] = screen_width*i2/divisor .. ":" .. screen_height/divisor  end  end local aspect_ratio = aspect_ratio_reference:GetValue()*0.01 aspect_ratio = 2 - aspect_ratio set_aspect_ratio(aspect_ratio) end
@@ -315,7 +307,7 @@ if not RecoilCrosshair:GetValue() or GetLocalPlayer() == nil or GetLocalPlayer()
 local r, g, b, a = gui_GetValue("clr_esp_crosshair_recoil") local recoil_scale = client_GetConVar("weapon_recoil_scale") local fov = gui_GetValue("vis_view_fov") if fov == 0 then fov = 90 end local weapon = GetLocalPlayer():GetPropEntity("m_hActiveWeapon") if weapon == nil then return end local weapon_name = weapon:GetClass() 
 if weapon_name == "CWeaponAWP" or weapon_name == "CWeaponSSG08" or weapon:GetProp("m_flRecoilIndex") == 0 or gui_GetValue("rbot_active") and gui_GetValue("rbot_antirecoil") then return end local aim_punch_angle_pitch, aim_punch_angle_yaw = GetLocalPlayer():GetPropVector("localdata", "m_Local", "m_aimPunchAngle") 
 if -aim_punch_angle_pitch >= 0.07 and -aim_punch_angle_pitch >= 0.07 then if gui_GetValue("vis_norecoil") then x = x - (((screenX/fov)* aim_punch_angle_yaw)*1.2)*(recoil_scale*0.5) y = y + (((screenY/fov)* aim_punch_angle_pitch)*2)*(recoil_scale*0.5) else x = x - (((screenX/fov)* aim_punch_angle_yaw)*0.6)*(recoil_scale*0.5) y = y + ((screenY/fov)* aim_punch_angle_pitch)*(recoil_scale*0.5) end 
-draw_Color(r, g, b, a) draw_RoundedRect(x-3, y-3, x+3, y+3) end end
+draw_Color(r, g, b, a) draw.OutlinedCircle(x, y, 3) end end
 cb_Register("Draw", RCC)
 
 -------------------- Name Steal fix
@@ -330,10 +322,23 @@ if e:GetName() == "round_start" then gui_SetValue("msc_namestealer_enable", name
 -------------------- Show Team Damage
 local damagedone, killed = 0, 0
 function KillsAndDamage(e)
-if e:GetName() == "player_hurt" then if PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() and playerteam == GetLocalPlayer():GetTeamNumber() then damagedone = damagedone + e:GetInt("dmg_health") end end
-if e:GetName() == "player_death" then if PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() and playerteam == GetLocalPlayer():GetTeamNumber() then killed = killed + 1 end end
+if e:GetName() == "player_hurt" then if PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() and not is_enemy(PlayerIndexByUserID(e:GetInt("userid"))) then damagedone = damagedone + e:GetInt("dmg_health") end end
+if e:GetName() == "player_death" then if PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() and not is_enemy(PlayerIndexByUserID(e:GetInt("userid"))) then killed = killed + 1 end end
 if e:GetName() == "player_connect_full" then damagedone, killed = 0, 0 end end
-function DrawsTKsDMG() if not TeamDamageShow:GetValue() or GetLocalPlayer() == nil then return end local X, Y = draw_GetScreenSize() draw_Color(255,255,255,255) draw_SetFont(Tf) draw_TextShadow(10, Y/2-40, "Damage Done: ".. damagedone) draw_TextShadow(10, Y/2-30, "Teammates Killed: ".. killed) end 
-cb_Register("FireGameEvent", KillsAndDamage) cb_Register("Draw", DrawsTKsDMG)
+function DrawsTKsDMG() if not TeamDamageShow:GetValue() or GetLocalPlayer() == nil then return end local X, Y = draw_GetScreenSize() draw_Color(255,255,255,255) draw_SetFont(Tf13) draw_TextShadow(5, Y/2-40, "Damage Done: ".. damagedone) draw_TextShadow(5, Y/2-30, "Teammates Killed: ".. killed) end 
+cb_Register("Draw", DrawsTKsDMG) cb_Register("FireGameEvent", KillsAndDamage)
 
-c_AllowListener("round_freeze_end") c_AllowListener("round_end") c_AllowListener("round_prestart") c_AllowListener("round_start") c_AllowListener("bomb_beginplant") c_AllowListener("bomb_abortplant") c_AllowListener("bomb_planted") c_AllowListener("bomb_defused") c_AllowListener("bomb_begindefuse") c_AllowListener("bomb_abortdefuse") c_AllowListener("round_officially_ended") c_AllowListener("player_spawn") c_AllowListener("player_hurt") c_AllowListener("player_death") c_AllowListener("player_connect_full") c_AllowListener("inferno_expire") c_AllowListener("inferno_extinguish") c_AllowListener("molotov_detonate") c_AllowListener("hegrenade_detonate") c_AllowListener("flashbang_detonate") 
+-------------------- ghetto Bullet impacts
+local bulletimpacts = {}
+function bulletimpact(e)
+if e:GetName() ~= "bullet_impact" then return end x = e:GetFloat("x") y = e:GetFloat("y") z = e:GetFloat("z") player_index = PlayerIndexByUserID(e:GetInt("userid"))
+if BulletImpacts_combo:GetValue() == 0 then return
+elseif BulletImpacts_combo:GetValue() == 1 then table_insert(bulletimpacts, {g_curtime(), x, y, z})
+elseif BulletImpacts_combo:GetValue() == 2 then if is_enemy(player_index) then table_insert(bulletimpacts, {g_curtime(), x, y, z}) end
+elseif BulletImpacts_combo:GetValue() == 3 then if not is_enemy(player_index) then table_insert(bulletimpacts, {g_curtime(), x, y, z}) end
+elseif BulletImpacts_combo:GetValue() == 4 then if player_index == LocalPlayerIndex() then table_insert(bulletimpacts, {g_curtime(), x, y, z}) end end end
+function showimpacts() if BulletImpacts_combo:GetValue() == 0 or GetLocalPlayer() == nil then return end for k, v in pairs(bulletimpacts) do if g_curtime() - v[1] > tonumber(client_GetConVar("sv_showimpacts_time")) then table_remove(bulletimpacts, k) else local X, Y = client_WorldToScreen(v[2], v[3], v[4]) if X ~= nil and Y ~= nil then draw_Color(255, 255, 255, 255) draw_RoundedRect(X-3, Y-3, X+3, Y+3) end end end end
+cb_Register("Draw", showimpacts) cb_Register("FireGameEvent", bulletimpact)
+
+
+c_AllowListener("round_freeze_end") c_AllowListener("round_end") c_AllowListener("round_prestart") c_AllowListener("round_start") c_AllowListener("bomb_beginplant") c_AllowListener("bomb_abortplant") c_AllowListener("bomb_planted") c_AllowListener("bomb_defused") c_AllowListener("bomb_begindefuse") c_AllowListener("bomb_abortdefuse") c_AllowListener("round_officially_ended") c_AllowListener("player_spawn") c_AllowListener("player_hurt") c_AllowListener("player_death") c_AllowListener("player_connect_full") c_AllowListener("smokegrenade_detonate") c_AllowListener("molotov_detonate") c_AllowListener("inferno_startburn") c_AllowListener("inferno_expire") c_AllowListener("inferno_extinguish") c_AllowListener("grenade_thrown") c_AllowListener("bullet_impact")
