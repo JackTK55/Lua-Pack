@@ -106,7 +106,7 @@ local function is_enemy(index) if entities_GetByIndex(index) == nil then return 
 local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.4.3.1"
+local currentVersion = "1.4.3.2"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 
 function autoupdater()
@@ -225,12 +225,12 @@ if GetLocalPlayer():GetTeamNumber() == 3 and not GetLocalPlayer():GetPropBool("m
 if drawDefuse and entities_FindByClass("CPlantedC4")[1] ~= nil  then local plantedBomb = entities_FindByClass("CPlantedC4") for i=1, #plantedBomb do dLength = plantedBomb[i]:GetPropFloat("m_flDefuseLength") end local defuseInfo = string_format("%s - %0.1fs", defuser, (defuseStarted - g_curtime()) + dLength) local defusePercent = (g_curtime() - defuseStarted) / dLength if (defuseStarted - g_curtime()) + dLength > 0 then draw_SetFont(Vf30) draw_Color(255, 255, 255, 255) draw_Text(20, pTH+pTH, defuseInfo) if defusePercent < 1 and defusePercent > 0 then local defuseBar = (1 - defusePercent) * screenY draw_Color(13, 13, 13, 70) draw_FilledRect(0, 0, 16, screenY) draw_Color(0, 0, 150, 255) draw_FilledRect(1, screenY-defuseBar, 15, screenY) end end end end
 function BombDamageIndicator()
 if not Bomb_Damage:GetValue() or entities_FindByClass("CPlantedC4")[1] == nil then return end local Bomb = entities_FindByClass("CPlantedC4")[1]
-if Bomb:GetPropInt("m_bBombTicking") and g_curtime() - 1 < Bomb:GetPropInt("m_flC4Blow") and not Bomb:GetPropBool("m_bBombDefused") then local bDamage = DamagefromBomb(Bomb, GetLocalPlayer()) local bDmgInfo = string_format("-%i", bDamage)
+if Bomb:GetPropBool("m_bBombTicking") and g_curtime() - 1 < Bomb:GetPropFloat("m_flC4Blow") and not Bomb:GetPropBool("m_bBombDefused") then local bDamage = DamagefromBomb(Bomb, GetLocalPlayer()) local bDmgInfo = string_format("-%i", bDamage)
 if bDamage >= GetLocalPlayer():GetHealth() then draw_SetFont(Vf30) draw_Color(255, 0, 0, 255) draw_Text(20, pTH, "FATAL")
-elseif bDamage < GetLocalPlayer():GetHealth() and bDamage > 0 then draw_SetFont(Vf30) draw_Color(255,255,255,255) draw_Text(20, pTH, bDmgInfo) end end end
+elseif bDamage < GetLocalPlayer():GetHealth() and bDamage - 1 > 0 then draw_SetFont(Vf30) draw_Color(255,255,255,255) draw_Text(20, pTH, bDmgInfo) end end end
 function DamagefromBomb(Bomb, Player)
 if not Bomb_Damage:GetValue() then return end local Bxyz = {Bomb:GetAbsOrigin()} local Pxyz = {Player:GetAbsOrigin()} local ArmorValue = Player:GetPropInt("m_ArmorValue") local C4Distance = math_sqrt((Bxyz[1] - Pxyz[1]) ^2 + (Bxyz[2] - Pxyz[2]) ^2 + (Bxyz[3] - Pxyz[3]) ^2) local d = ((C4Distance-75.68) / 789.2) local f1Damage = 450.7*math_exp(-d * d) if ArmorValue > 0 then local f1New = f1Damage * 0.5 local f1Armor = (f1Damage - f1New) * 0.5 if f1Armor > ArmorValue then f1Armor = ArmorValue * 2 f1New = f1Damage - f1Armor end f1Damage = f1New end 
-return math_ceil(f1Damage + 0.723) end 
+return math_ceil(f1Damage + 0.5) end 
 cb_Register("Draw", drawBombTimers) cb_Register("Draw", BombDamageIndicator) cb_Register("FireGameEvent", bombEvents)
 
 -------------------- Chat Spams
