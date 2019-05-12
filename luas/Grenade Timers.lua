@@ -1,4 +1,4 @@
-local GetLocalPlayer, GetPlayerIndexByUserID, entities_GetByIndex, table_insert, table_remove, client_GetConVar, math_random, g_curtime, g_maxclients, client_WorldToScreen, string_format, draw_SetFont, draw_GetTextSize, draw_Color, draw_TextShadow = entities.GetLocalPlayer, entities.GetByIndex, client.GetPlayerIndexByUserID, table.insert, table.remove, client.GetConVar, math.random, globals.CurTime, globals.MaxClients, client.WorldToScreen, string.format, draw.SetFont, draw.GetTextSize, draw.Color, draw.TextShadow
+local GetLocalPlayer, GetPlayerIndexByUserID, entities_GetByIndex, table_insert, table_remove, client_GetConVar, math_random, g_curtime, g_maxclients, client_WorldToScreen, string_format, draw_SetFont, draw_GetTextSize, draw_Color, draw_TextShadow = entities.GetLocalPlayer, client.GetPlayerIndexByUserID, entities.GetByIndex, table.insert, table.remove, client.GetConVar, math.random, globals.CurTime, globals.MaxClients, client.WorldToScreen, string.format, draw.SetFont, draw.GetTextSize, draw.Color, draw.TextShadow
 
 local better_grenades = gui.Checkbox(gui.Reference("VISUALS", "OTHER", "Options"), "esp_other_better_grenades", "Better Grenades", false)
 local Vf11 = draw.CreateFont("Verdana", 11)
@@ -90,9 +90,9 @@ function smoke_and_molotov_timers()
 				draw_TextShadow(X - (tW/2), Y - (tH/2), molotov_timeleft)
 				
 				if entities_GetByIndex(v[6]):GetTeamNumber() ~= GetLocalPlayer():GetTeamNumber() then
-					r, g, b, a = 153, 153, 255, 255 
-				else 
 					r, g, b, a = 251, 82, 79, 255 
+				else 
+					r, g, b, a = 153, 153, 255, 255 
 				end 
 					
 				draw_Color(r, g, b, a) 
