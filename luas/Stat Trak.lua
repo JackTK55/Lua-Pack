@@ -13,7 +13,7 @@ function StatTrak(e)
 
 		if e:GetString("weapon") ~= "inferno" and e:GetString("weapon") ~= "hegrenade" and 
 			e:GetString("weapon") ~= "smokegrenade" and e:GetString("weapon") ~= "flashbang" and 
-			e:GetString("weapon") ~= "decoy" and e:GetString("weapon") ~= "knife" and e:GetString("weapon") ~= "knife_t" then 
+			e:GetString("weapon") ~= "decoy" and e:GetString("weapon") ~= "knife" and e:GetString("weapon") ~= "knife_t" and e:GetString("weapon") ~= "taser" then 
 			
 			wep = string_format("skin_%s_stattrak", e:GetString("weapon"))
 			
