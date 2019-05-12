@@ -27,4 +27,5 @@ function StatTrak(e)
 		client_exec("cl_fullupdate", true) 
 	end 
 end 
+
 callbacks.Register("FireGameEvent", StatTrak)
