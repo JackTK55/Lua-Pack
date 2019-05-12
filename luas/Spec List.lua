@@ -1,4 +1,4 @@
-local draw_GetScreenSize, entities_FindByClass, GetLocalPlayer, LocalPlayerIndex, GetPlayerResources, draw_SetFont, draw_GetTextSize, draw_Color, draw_TextShadow = draw.GetScreenSize, entities.FindByClass, entitiesGetLocalPlayer, client.GetLocalPlayerIndex, entities.GetPlayerResources, draw.SetFont, draw.GetTextSize, draw.Color, draw.TextShadow
+local draw_GetScreenSize, entities_FindByClass, GetLocalPlayer, LocalPlayerIndex, GetPlayerResources, draw_SetFont, draw_GetTextSize, draw_Color, draw_TextShadow = draw.GetScreenSize, entities.FindByClass, entities.GetLocalPlayer, client.GetLocalPlayerIndex, entities.GetPlayerResources, draw.SetFont, draw.GetTextSize, draw.Color, draw.TextShadow
 
 local SpectatorList = gui.Checkbox(gui.Reference("MISC", "GENERAL", "Main"), "msc_speclist", "Spectators", false)
 local Vf12 = draw.CreateFont("Verdana", 12) 
