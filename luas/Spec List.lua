@@ -48,4 +48,4 @@ function SpecList()
 	end 
 end
 
-cb_Register("Draw", SpecList)
+callbacks.Register("Draw", SpecList)
