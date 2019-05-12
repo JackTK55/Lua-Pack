@@ -22,10 +22,10 @@ function StatTrak(e)
 	PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() then 
 
 		if not table_contains(bad_weapons, e:GetString("weapon")) then 	
-			act = string_format("skin_%s_enable", e:GetString("weapon"))
+			enabled = string_format("skin_%s_enable", e:GetString("weapon"))
 			wep = string_format("skin_%s_stattrak", e:GetString("weapon"))
 			
-			if gui_GetValue(act) then
+			if gui_GetValue(enabled) then
 				if tonumber(gui_GetValue(wep)) > 0 then 
 					gui_SetValue(wep, math_floor(gui_GetValue(wep)) + 1) 
 				end 
