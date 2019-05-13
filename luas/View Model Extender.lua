@@ -40,7 +40,7 @@ callbacks.Register("Draw", "View Model Extender", function()
 	else
 		VM_W:SetActive(0)
 	end
-	
+
 	if VM_e:GetValue() then
 		client_SetConVar("viewmodel_offset_x", xS:GetValue(), true)
 		client_SetConVar("viewmodel_offset_y", yS:GetValue(), true)
@@ -50,7 +50,7 @@ callbacks.Register("Draw", "View Model Extender", function()
 		client_SetConVar("viewmodel_offset_y", yO, true)
 		client_SetConVar("viewmodel_offset_z", zO, true)
 	end
-	
+
 	if VM_save_Cache:GetValue() then
 		xO = string_format('%.3f', client_GetConVar("viewmodel_offset_x"))
 		yO = string_format('%.3f', client_GetConVar("viewmodel_offset_y"))
@@ -58,8 +58,8 @@ callbacks.Register("Draw", "View Model Extender", function()
 		gui.SetValue('VM_Xc', xO)
 		gui.SetValue('VM_Yc', yO)
 		gui.SetValue('VM_Zc', zO)
-		
+
 		VM_save_Cache:SetValue(0)
 	end
-	
+
 end)
