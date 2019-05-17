@@ -1,7 +1,7 @@
 -- stuff
 local draw_Line, draw_TextShadow, draw_Color, draw_Text, g_tickinterval, string_format, http_Get, string_gsub, file_Open, math_random, math_exp, math_rad, math_max, math_abs, math_tan, math_sin, math_cos, math_fmod, draw_GetTextSize, draw_FilledRect, draw_RoundedRect, draw_RoundedRectFill, draw_CreateFont, draw_SetFont, client_WorldToScreen, draw_GetScreenSize, client_GetConVar, client_SetConVar, client_exec, PlayerNameByUserID, PlayerIndexByUserID, entities_GetByIndex, GetLocalPlayer, gui_SetValue, gui_GetValue, LocalPlayerIndex, c_AllowListener, cb_Register, g_tickcount, g_realtime, g_curtime, g_absoluteframetime, g_maxclients, math_floor, math_ceil, math_sqrt, GetPlayerResources, entities_FindByClass, IsButtonPressed, client_ChatSay, table_insert, table_remove, vector_Distance, draw_OutlinedCircle = draw.Line, draw.TextShadow, draw.Color, draw.Text, globals.TickInterval, string.format, http.Get, string.gsub, file.Open, math.random, math.exp, math.rad, math.max, math.abs, math.tan, math.sin, math.cos, math.fmod, draw.GetTextSize, draw.FilledRect, draw.RoundedRect, draw.RoundedRectFill, draw.CreateFont, draw.SetFont, client.WorldToScreen, draw.GetScreenSize, client.GetConVar, client.SetConVar, client.Command, client.GetPlayerNameByUserID, client.GetPlayerIndexByUserID, entities.GetByIndex, entities.GetLocalPlayer, gui.SetValue, gui.GetValue, client.GetLocalPlayerIndex, client.AllowListener, callbacks.Register, globals.TickCount, globals.RealTime, globals.CurTime, globals.AbsoluteFrameTime, globals.MaxClients, math.floor, math.ceil, math.sqrt, entities.GetPlayerResources, entities.FindByClass, input.IsButtonPressed, client.ChatSay, table.insert, table.remove, vector.Distance, draw.OutlinedCircle
 -------------- References
-local G_VM = gui.Groupbox(gui.Reference("VISUALS", "Shared"), "Extra Features", 0, 418, 200, 247)
+local G_VM = gui.Groupbox(gui.Reference("VISUALS", "Shared"), "Extra Features", 0, 369, 200, 247)
 local VOO_Ref = gui.Reference("VISUALS", "OTHER", "Options")
 local VEO_Ref = gui.Reference("VISUALS", "ENEMIES", "Options")
 local VTO_Ref = gui.Reference("VISUALS", "TEAMMATES", "Options")
@@ -17,15 +17,20 @@ local better_grenades = gui.Checkbox(VOO_Ref, "esp_other_better_grenades", "Bett
 local HitLog = gui.Checkbox(G_M1, "msc_hitlog", "Hit Log", false)
 -------------- Auto Buy
 local AB_Show = gui.Checkbox(G_M1, "msc_autobuy", "AutoBuy", false)
-local AB_W = gui.Window("AB_W", "Auto Buy", 200, 200, 200, 328)
-local AB_GB = gui.Groupbox(AB_W, "Auto Buy Settings", 15, 14, 170, 268)
+local AB_W = gui.Window("AB_W", "Auto Buy", 200, 200, 200, 258)
+local AB_GB = gui.Groupbox(AB_W, "Auto Buy Settings", 15, 14, 170, 198)
 local AB_E = gui.Checkbox(AB_GB, "AB_Active", "Active", false)
-local PrimaryWeapons = gui.Combobox(AB_GB, "AB_Primary_Weapons", "Primary Weapons", "Off", "AK | M4", "Scout", "SG553 | AUG", "AWP", "Auto")
-local SecondaryWeapons = gui.Combobox(AB_GB, "AB_Secondary_Weapons", "Secondary Weapons", "Off", "Elite", "P250", "Tec-9 | Five-Seven", "R8 | Deagle")
-local Armor = gui.Combobox(AB_GB, "AB_Armor", "Armor", "Off", "Kevlar", "Kevlar + Helmet")
-local Nades = gui.Checkbox(AB_GB, "AB_Nades", "Grenades", false)
-local Zeus = gui.Checkbox(AB_GB, "AB_Zeus", "Zeus", false)
-local Defuser = gui.Checkbox(AB_GB, "AB_Defuser", "Defuser", false)
+local PrimaryWeapons = gui.Combobox(AB_GB, "AB_Primary_Weapons", "Primary Weapons", "-", "AK | M4", "Scout", "SG553 | AUG", "AWP", "Auto")
+local SecondaryWeapons = gui.Combobox(AB_GB, "AB_Secondary_Weapons", "Secondary Weapons", "-", "Elite", "P250", "Tec-9 | Five-Seven", "R8 | Deagle")
+local AB_M = gui.Multibox(AB_GB, 'Gear')
+local Kev = gui.Checkbox(AB_M, "AB_Armor_K", "Kevlar", false)
+local Kev_Hel = gui.Checkbox(AB_M, "AB_Armor_KH", "Helmet", false)
+local Defuser = gui.Checkbox(AB_M, "AB_Defuser", "Defuse Kit", false)
+local GNade = gui.Checkbox(AB_M, "AB_GNade", "Grenade", false)
+local MNade = gui.Checkbox(AB_M, "AB_MNade", "Molotov", false)
+local SNade = gui.Checkbox(AB_M, "AB_SNade", "Smoke", false)
+local FNade = gui.Checkbox(AB_M, "AB_FNade", "Flashbang", false)
+local Zeus = gui.Checkbox(AB_M, "AB_Zeus", "Zeus", false)
 -------------- Spec List
 local SpectatorList = gui.Checkbox(G_M1, "msc_speclist", "Spectators", false)
 -------------- Show Team Damage
@@ -41,9 +46,10 @@ local yS = gui.Slider(VMStuff, "VM_Y", "Y", yO, -100, 100)
 local zS = gui.Slider(VMStuff, "VM_Z", "Z", zO, -20, 20)
 local vfov = gui.Slider(VMStuff, "VM_fov", "Viewmodel FOV", fO, 0, 120)
 -------------- Sniper Crosshair
-local ComboCrosshair = gui.Combobox(G_VM, "vis_sniper_crosshair", "Sniper Crosshair", "Off", "Engine Crosshair", "Engine Crosshair (+scoped)", "Aimware Crosshair", "Draw Crosshair")
+local ComboCrosshair = gui.Combobox(G_VM, "vis_sniper_crosshair", "Sniper Crosshair", "Off", "Engine Crosshair", "Aimware Crosshair", "Draw Crosshair")
 -------------- Bullet impacts
 local BulletImpacts_combo = gui.Combobox(G_VM, "vis_bullet_impact", "Bullet Impact", "Off", "Everyone", "Enemy Only", "Team Only", "Local Only")
+local BulletImpacts_color = gui.ColorEntry('clr_vis_bullet_impact', 'Bullet Impacts [LUA]', 255,255,255,255)
 -------------- Scoped FOV Fix
 local s_fovfix = gui.Checkbox(G_VM, "vis_fixfov", "Fix Scoped FOV", false)
 local fov_value, vm_fov_value = gui_GetValue("vis_view_fov"), gui_GetValue("vis_view_model_fov")
@@ -86,16 +92,16 @@ local trige, trigm, trigaf, trighc = gui_GetValue("lbot_trg_enable"), gui_GetVal
 local RecoilCrosshair = gui.Checkbox(G_VM, "vis_recoilcrosshair", "Recoil Crosshair", false)
 -------------- Disable Fake angle ghost while in air/freezetime
 local fakeangleghost = gui.Combobox(gui.Reference("VISUALS", "MISC", "Yourself Extra"), "vis_disable_fakeangleghost", "Disable Fake Angle Ghost", "Off", "In Air", "On Freeze Period", "Both")
--------------- Infinite Name Spam
-local infname = gui.Checkbox(gui.Reference("MISC", "ENHANCEMENT", "Appearance"), "msc_infinite_namespam_button", "Enable infinite namespam [BUTTON]", false)
 -------------- Name Steal fix
 local StealNameFix = gui.Checkbox(gui.Reference("MISC", "ENHANCEMENT", "Namestealer"), "msc_namestealer_fix", "Fix Name Steal", false)
 -------------- Working Stattrak
 local Working_Stattrak = gui.Checkbox(G_M1, "msc_stattrakcount", "Working Stattrak", false)
+-------------- Ghost Mode
+local ghost_view = gui.Checkbox(gui.Reference("VISUALS", "MISC", "Yourself Extra"), 'vis_ghost', 'Ghost View', false)
 -------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------- 
-local frame_rate, menu_opened = 0.0, true
+local frame_rate, menu_opened = 0.0, gui.Reference( "MENU" ):IsActive()
 local function get_abs_fps() frame_rate = 0.9 * frame_rate + (1.0 - 0.9) * g_absoluteframetime() return math_floor((1.0 / frame_rate) + 0.5) end
 local function lerp_pos(x1, y1, z1, x2, y2, z2, percentage) local x = (x2 - x1) * percentage + x1 local y = (y2 - y1) * percentage + y1 local z = (z2 - z1) * percentage + z1 return x, y, z end
 local function distance3D(x1, y1, z1, x2, y2, z2) return math_floor(vector_Distance(x1, y1, z1, x2, y2, z2)) end
@@ -106,7 +112,7 @@ local function is_enemy(index) if entities_GetByIndex(index) == nil then return 
 local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.4.3.2"
+local currentVersion = "1.4.3.3"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 
 function autoupdater()
@@ -135,12 +141,11 @@ for k, v in pairs(flashes) do if v[1] - g_curtime() + 1.65 > 0 then if v[2] == r
 for k, v in pairs(grenades) do if v[1] - g_curtime() + 1.65 > 0 then if v[2] == randnumber * 2.10 then b:AddBarBottom(v[1] - g_curtime() + 1.65) end else table_remove(grenades, k) end end end
 cb_Register("Draw", DrawTimers) cb_Register("DrawESP", GFTimers) cb_Register("FireGameEvent", Timers)
 
--------------------- Auto Buy 
+-------------------- Auto Buy
 local SecondaryWeapon, PrimaryWeapon, buy_armor = "", "", ""
-function buy(Event)
-if not AB_E:GetValue() or GetLocalPlayer() == nil or Event:GetName() == nil then return end
-if Event:GetName() == "player_spawn" then if PlayerIndexByUserID(Event:GetInt("userid")) == LocalPlayerIndex() then buy = true end end money = GetLocalPlayer():GetProp("m_iAccount")
-if buy then if (SecondaryWeapons:GetValue() == 0) then SecondaryWeapon = ""
+function auto_buy(e)
+if not AB_E:GetValue() or GetLocalPlayer() == nil or e:GetName() ~= 'player_spawn' or PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() then return end
+if (SecondaryWeapons:GetValue() == 0) then SecondaryWeapon = ""
 elseif (SecondaryWeapons:GetValue() == 1) then SecondaryWeapon = 'buy "elite"; '
 elseif (SecondaryWeapons:GetValue() == 2) then SecondaryWeapon = 'buy "p250"; '
 elseif (SecondaryWeapons:GetValue() == 3) then SecondaryWeapon = 'buy "tec9"; '
@@ -151,16 +156,19 @@ elseif (PrimaryWeapons:GetValue() == 1) then PrimaryWeapon = 'buy "ak47"; '
 elseif (PrimaryWeapons:GetValue() == 2) then PrimaryWeapon = 'buy "ssg08"; '
 elseif (PrimaryWeapons:GetValue() == 3) then PrimaryWeapon = 'buy "sg556"; '
 elseif (PrimaryWeapons:GetValue() == 4) then PrimaryWeapon = 'buy "awp"; '
-elseif (PrimaryWeapons:GetValue() == 5) then PrimaryWeapon = 'buy "scar20"; ' end
-if Armor:GetValue() == 0 then buy_armor = ""
-elseif Armor:GetValue() == 1 then buy_armor = 'buy "vest"; '
-elseif Armor:GetValue() == 2 then buy_armor = 'buy "vest"; buy "vesthelm"' end
-if Nades:GetValue() then client_exec('buy "hegrenade"; buy "incgrenade"; buy "molotov"; buy "smokegrenade"; buy "flashbang"', true) end
-if Zeus:GetValue() then client_exec('buy "taser"', true) end
-if Defuser:GetValue() then client_exec('buy "defuser"', true) end PWb = false end current_buy = (PrimaryWeapon.. SecondaryWeapon.. buy_armor) client_exec(current_buy, true) buy = false end end
-cb_Register("FireGameEvent", buy)
+elseif (PrimaryWeapons:GetValue() == 5) then PrimaryWeapon = 'buy "scar20"; ' end 
+if Kev:GetValue() then buy_armor = 'buy "vest"; ' end
+if Kev_Hel:GetValue() then buy_armor = 'buy "vest"; buy "vesthelm"; ' end
+current_buy = (PrimaryWeapon.. SecondaryWeapon.. buy_armor)
+if Defuser:GetValue() then client_exec('buy "defuser"', true) end
+if GNade:GetValue() then client_exec('buy "hegrenade"; ') end
+if MNade:GetValue() then client_exec('buy "molotov"; buy "incgrenade"; ') end
+if SNade:GetValue() then client_exec('buy "smokegrenade"; ') end
+if FNade:GetValue() then client_exec('buy "flashbang"') end
+if Zeus:GetValue() then client_exec('buy "taser"', true) end PWb = false client_exec(current_buy, true) end end
+cb_Register("FireGameEvent", auto_buy)
 
--------------------- View Model Extender | Spectator list fix / made by anue | Disable Post Processing | full bright | Engine Radar | Disable Fake angle ghost while in air/freeze time | Working Stattrak
+-------------------- View Model Extender | Spectator list fix / made by anue | Disable Post Processing | full bright | Engine Radar | Disable Fake angle ghost while in air/freeze time | Working Stattrak | ghost view
 function VM_E() if VM_e:GetValue() then client_SetConVar("viewmodel_offset_x", xS:GetValue(), true) client_SetConVar("viewmodel_offset_y", yS:GetValue(), true) client_SetConVar("viewmodel_offset_z", zS:GetValue(), true) client_SetConVar("viewmodel_fov", vfov:GetValue(), true) else client_SetConVar("viewmodel_offset_x", xO, true) client_SetConVar("viewmodel_offset_y", yO, true) client_SetConVar("viewmodel_offset_z", zO, true) client_SetConVar("viewmodel_fov", fO, true) end end cb_Register("Draw", VM_E)
 function speclistfix(E) if not gui_GetValue("msc_showspec") or E:GetName() ~= "round_start" then return end client_exec("cl_fullupdate", true) end cb_Register("FireGameEvent", speclistfix)
 function Dis_PP() if DPP:GetValue() then client_SetConVar("mat_postprocess_enable", 0, true) else client_SetConVar("mat_postprocess_enable", 1, true) end end cb_Register("Draw", Dis_PP)
@@ -170,6 +178,7 @@ function fakeangleghostval() if fakeangleghost:GetValue() == 0 then fakeghost = 
 function Disable_FakeAAGhost(UserCMD) if gui.GetValue("vis_fakeghost") ~= 0 then fakeghostval = gui.GetValue("vis_fakeghost") end if fakeghost == "in_freeze" or fakeghost == "Off" then return end if GetLocalPlayer():GetProp("m_fFlags") == 256 then gui.SetValue("vis_fakeghost", 0) else if not FakeAAGhost2_round_end then gui.SetValue("vis_fakeghost", fakeghostval) end end end cb_Register("CreateMove", Disable_FakeAAGhost)
 function Disable_FakeAAGhost2(event) if fakeghost == "in_air" or fakeghost == "Off" then return end if event:GetName() == "round_end" then gui.SetValue("vis_fakeghost", 0) FakeAAGhost2_round_end = true end if event:GetName() == "round_freeze_end" then gui.SetValue("vis_fakeghost", fakeghostval) FakeAAGhost2_round_end = false end end cb_Register("FireGameEvent", Disable_FakeAAGhost2)
 function StatTrak(e) if not Working_Stattrak:GetValue() or not gui_GetValue("skin_active") then return end if e:GetName() == "player_death" and PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() and is_enemy(PlayerIndexByUserID(e:GetInt("userid"))) then if e:GetString("weapon") ~= "inferno" and e:GetString("weapon") ~= "hegrenade" and e:GetString("weapon") ~= "smokegrenade" and e:GetString("weapon") ~= "flashbang" and e:GetString("weapon") ~= "decoy" and e:GetString("weapon") ~= "knife" and e:GetString("weapon") ~= "knife_t" then wep = string_format("skin_%s_stattrak", e:GetString("weapon")) if tonumber(gui_GetValue(wep)) > 0 then gui_SetValue(wep, math_floor(gui_GetValue(wep)) + 1) end end end if e:GetName() == "round_prestart" then client_exec("cl_fullupdate", true) end end cb_Register("FireGameEvent", StatTrak)
+function ghostview() if GetLocalPlayer() == nil then return end if ghost_view:GetValue() then ghost = 1 else ghost = 0 end if GetLocalPlayer():GetProp('m_bIsPlayerGhost') ~= ghost then GetLocalPlayer():SetProp('m_bIsPlayerGhost', ghost) end end cb_Register("Draw", 'ghost view', ghostview)
 
 -------------------- Scoped Fov Fix
 function scopefov()
@@ -182,14 +191,13 @@ cb_Register("Draw", "fixes scoped fov", scopefov)
 
 -------------------- Sniper Crosshair
 function ifCrosshair()
-if GetLocalPlayer() == nil  then return end local Weapon = GetLocalPlayer():GetPropEntity("m_hActiveWeapon") local Scoped = GetLocalPlayer():GetProp("m_bIsScoped") == 1 or GetLocalPlayer():GetProp("m_bIsScoped") == 257 if Weapon == nil then return end local cWep = Weapon:GetClass()
+if GetLocalPlayer() == nil then return end local Weapon = GetLocalPlayer():GetPropEntity("m_hActiveWeapon") local Scoped = GetLocalPlayer():GetProp("m_bIsScoped") == 1 or GetLocalPlayer():GetProp("m_bIsScoped") == 257 if Weapon == nil then return end local cWep = Weapon:GetClass()
 if cWep == "CWeaponAWP" or cWep == "CWeaponSSG08" or cWep == "CWeaponSCAR20" or cWep == "CWeaponG3SG1" then drawCrosshair = true else drawCrosshair = false end local screenCenterX, screenY = draw_GetScreenSize() local scX, scY = screenCenterX / 2, screenY / 2
-if drawCrosshair and ComboCrosshair:GetValue() == 0 then client_SetConVar("weapon_debug_spread_show", 0, true) gui_SetValue("esp_crosshair", false)
+if drawCrosshair and ComboCrosshair:GetValue() == 0 then return
 elseif drawCrosshair and ComboCrosshair:GetValue() == 1 then gui_SetValue("esp_crosshair", false) if Scoped then client_SetConVar("weapon_debug_spread_show", 0, true) else client_SetConVar("weapon_debug_spread_show", 3, true) end
-elseif drawCrosshair and ComboCrosshair:GetValue() == 2 then gui_SetValue("esp_crosshair", false) client_SetConVar("weapon_debug_spread_show", 3, true)
-elseif drawCrosshair and ComboCrosshair:GetValue() == 3 then if Scoped then gui_SetValue("esp_crosshair", false) else client_SetConVar("weapon_debug_spread_show", 0, true) gui_SetValue("esp_crosshair", true) end 
-elseif not drawCrosshair and ComboCrosshair:GetValue() == 3 then gui_SetValue("esp_crosshair", false)
-elseif drawCrosshair and ComboCrosshair:GetValue() == 4 then client_SetConVar("weapon_debug_spread_show", 0, true) gui_SetValue("esp_crosshair", false) draw_Color(255,255,255,255) draw_Line(scX, scY - 8, scX, scY + 8) --[[ line down ]] draw_Line(scX - 8, scY, scX + 8, scY) --[[ line across ]] end end
+elseif drawCrosshair and ComboCrosshair:GetValue() == 2 then if Scoped then gui_SetValue("esp_crosshair", false) else client_SetConVar("weapon_debug_spread_show", 0, true) gui_SetValue("esp_crosshair", true) end 
+elseif not drawCrosshair and ComboCrosshair:GetValue() == 2 then gui_SetValue("esp_crosshair", false)
+elseif drawCrosshair and ComboCrosshair:GetValue() == 3 then client_SetConVar("weapon_debug_spread_show", 0, true) gui_SetValue("esp_crosshair", false) draw_Color(255,255,255,255) draw_Line(scX, scY - 8, scX, scY + 8) --[[ line down ]] draw_Line(scX - 8, scY, scX + 8, scY) --[[ line across ]] end end
 cb_Register("Draw", ifCrosshair)
 
 -------------------- HitLog
@@ -312,8 +320,7 @@ cb_Register("Draw", RCC)
 
 -------------------- Name Steal fix
 function infiniteNameSpam()
-if gui_GetValue("msc_namestealer_enable") ~= 0 then namesteal = gui_GetValue("msc_namestealer_enable") end
-if infname:GetValue() then client.SetConVar("name", "\n\xAD\xAD\xAD", false) infname:SetValue(0) end end cb_Register("Draw", infiniteNameSpam)
+if gui_GetValue("msc_namestealer_enable") ~= 0 then namesteal = gui_GetValue("msc_namestealer_enable") end end cb_Register("Draw", infiniteNameSpam)
 function NameStealFix(e)
 if not StealNameFix:GetValue() or GetLocalPlayer() == nil or GetLocalPlayer():GetTeamNumber() == 1 then return end
 if e:GetName() == "round_end" then gui_SetValue("msc_namestealer_enable", 0) end
@@ -337,7 +344,7 @@ elseif BulletImpacts_combo:GetValue() == 1 then table_insert(bulletimpacts, {g_c
 elseif BulletImpacts_combo:GetValue() == 2 then if is_enemy(player_index) then table_insert(bulletimpacts, {g_curtime(), x, y, z}) end
 elseif BulletImpacts_combo:GetValue() == 3 then if not is_enemy(player_index) then table_insert(bulletimpacts, {g_curtime(), x, y, z}) end
 elseif BulletImpacts_combo:GetValue() == 4 then if player_index == LocalPlayerIndex() then table_insert(bulletimpacts, {g_curtime(), x, y, z}) end end end
-function showimpacts() if BulletImpacts_combo:GetValue() == 0 or GetLocalPlayer() == nil then return end for k, v in pairs(bulletimpacts) do if g_curtime() - v[1] > tonumber(client_GetConVar("sv_showimpacts_time")) then table_remove(bulletimpacts, k) else local X, Y = client_WorldToScreen(v[2], v[3], v[4]) if X ~= nil and Y ~= nil then draw_Color(255, 255, 255, 255) draw_RoundedRect(X-3, Y-3, X+3, Y+3) end end end end
+function showimpacts() if BulletImpacts_combo:GetValue() == 0 or GetLocalPlayer() == nil then return end local r, g, b, a = BulletImpacts_color:GetValue() for k, v in pairs(bulletimpacts) do if g_curtime() - v[1] > tonumber(client_GetConVar("sv_showimpacts_time")) then table_remove(bulletimpacts, k) else local X, Y = client_WorldToScreen(v[2], v[3], v[4]) if X ~= nil and Y ~= nil then draw_Color(r, g, b, a) draw_RoundedRect(X-3, Y-3, X+3, Y+3) end end end end
 cb_Register("Draw", showimpacts) cb_Register("FireGameEvent", bulletimpact)
 
 
