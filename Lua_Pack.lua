@@ -1,11 +1,11 @@
 -- stuff
 local draw_Line, draw_TextShadow, draw_Color, draw_Text, g_tickinterval, string_format, http_Get, string_gsub, file_Open, math_random, math_exp, math_rad, math_max, math_abs, math_tan, math_sin, math_cos, math_fmod, draw_GetTextSize, draw_FilledRect, draw_RoundedRect, draw_RoundedRectFill, draw_CreateFont, draw_SetFont, client_WorldToScreen, draw_GetScreenSize, client_GetConVar, client_SetConVar, client_exec, PlayerNameByUserID, PlayerIndexByUserID, entities_GetByIndex, GetLocalPlayer, gui_SetValue, gui_GetValue, LocalPlayerIndex, c_AllowListener, cb_Register, g_tickcount, g_realtime, g_curtime, g_absoluteframetime, g_maxclients, math_floor, math_ceil, math_sqrt, GetPlayerResources, entities_FindByClass, IsButtonPressed, client_ChatSay, table_insert, table_remove, vector_Distance, draw_OutlinedCircle = draw.Line, draw.TextShadow, draw.Color, draw.Text, globals.TickInterval, string.format, http.Get, string.gsub, file.Open, math.random, math.exp, math.rad, math.max, math.abs, math.tan, math.sin, math.cos, math.fmod, draw.GetTextSize, draw.FilledRect, draw.RoundedRect, draw.RoundedRectFill, draw.CreateFont, draw.SetFont, client.WorldToScreen, draw.GetScreenSize, client.GetConVar, client.SetConVar, client.Command, client.GetPlayerNameByUserID, client.GetPlayerIndexByUserID, entities.GetByIndex, entities.GetLocalPlayer, gui.SetValue, gui.GetValue, client.GetLocalPlayerIndex, client.AllowListener, callbacks.Register, globals.TickCount, globals.RealTime, globals.CurTime, globals.AbsoluteFrameTime, globals.MaxClients, math.floor, math.ceil, math.sqrt, entities.GetPlayerResources, entities.FindByClass, input.IsButtonPressed, client.ChatSay, table.insert, table.remove, vector.Distance, draw.OutlinedCircle
 -------------- References
-local G_VM = gui.Groupbox(gui.Reference("VISUALS", "Shared"), "Extra Features", 0, 369, 200, 247)
+local G_VM = gui.Groupbox(gui.Reference("VISUALS", "Shared"), "Extra Features")
 local VOO_Ref = gui.Reference("VISUALS", "OTHER", "Options")
 local VEO_Ref = gui.Reference("VISUALS", "ENEMIES", "Options")
 local VTO_Ref = gui.Reference("VISUALS", "TEAMMATES", "Options")
-local G_M1 = gui.Groupbox(gui.Reference("MISC", "GENERAL", "Main"), "Extra Features", 0, 206, 200, 293)
+local G_M1 = gui.Groupbox(gui.Reference("MISC", "GENERAL", "Main"), "Extra Features")
 -------------- Font
 local Vf30 = draw_CreateFont("Verdana", 30) 
 local Vf12 = draw_CreateFont("Verdana", 12) 
@@ -17,7 +17,7 @@ local better_grenades = gui.Checkbox(VOO_Ref, "esp_other_better_grenades", "Bett
 local HitLog = gui.Checkbox(G_M1, "msc_hitlog", "Hit Log", false)
 -------------- Auto Buy
 local AB_Show = gui.Checkbox(G_M1, "msc_autobuy", "AutoBuy", false)
-local AB_W = gui.Window("AB_W", "Auto Buy", 200, 200, 200, 258)
+local AB_W = gui.Window("AB_W", "Auto Buy", 100, 200, 200, 258)
 local AB_GB = gui.Groupbox(AB_W, "Auto Buy Settings", 15, 14, 170, 198)
 local AB_E = gui.Checkbox(AB_GB, "AB_Active", "Active", false)
 local PrimaryWeapons = gui.Combobox(AB_GB, "AB_Primary_Weapons", "Primary Weapons", "-", "AK | M4", "Scout", "SG553 | AUG", "AWP", "Auto")
@@ -38,7 +38,7 @@ local TeamDamageShow = gui.Checkbox(G_M1, "msc_showteamdmg", "Show Team Damage",
 -------------- View Model Extender
 local function VM_Cache() xO = client_GetConVar("viewmodel_offset_x") yO = client_GetConVar("viewmodel_offset_y") zO = client_GetConVar("viewmodel_offset_z") fO = client_GetConVar("viewmodel_fov") end VM_Cache()
 local ViewModelShown = gui.Checkbox(G_M1, "msc_vme", "Viewmodel Changer", false)
-local VM_W = gui.Window("VM_W", "Viewmodel Extender", 200,200,200,300)
+local VM_W = gui.Window("VM_W", "Viewmodel Extender", 305,200,200,300)
 local VMStuff = gui.Groupbox(VM_W, "Viewmodel Stuff", 15, 14, 170, 240)
 local VM_e = gui.Checkbox(VMStuff, "msc_vme", "Enable", false)
 local xS = gui.Slider(VMStuff, "VM_X", "X", xO, -20, 20)
@@ -61,12 +61,14 @@ local BombTimer = gui.Checkbox(VOO_Ref, "esp_other_better_c4timer", "Bomb Timer"
 local Bomb_Damage = gui.Checkbox(VOO_Ref, "esp_other_bombdamage", "Bomb Damage", false)
 -------------- Chat Spammer
 local CC_Show = gui.Checkbox(G_M1, "msc_chat_spams", "Chat Spams", false)
-local CC_W = gui.Window("CC_W", "Chat Spam", 200,200,200,285)
+local CC_W = gui.Window("CC_W", "Chat Spam", 510,200,200,285)
 local CC_G1 = gui.Groupbox(CC_W, "Chat Spams", 15, 15, 170, 224)
 local CC_Spams = gui.Combobox(CC_G1, "CC_Spam", "Spams", "Off", "Spam 1", "Spam 2", "Clear Chat")
 local CC_Spam_spd = gui.Slider(CC_G1, "CC_Spam_Speed", "Spam Speed", 67.5, 10, 250)
 local chatspam1txt = gui.Text(CC_G1, "Spam 1") local ChatSpam1 = gui.Editbox(CC_G1, "CC_Spam1", "Custom Chat Spam 1")
 local chatspam2txt = gui.Text(CC_G1, "Spam 2") local ChatSpam2 = gui.Editbox(CC_G1, "CC_Spam2", "Custom Chat Spam 2")
+-------------- Working Stattrak
+local Working_Stattrak = gui.Checkbox(G_M1, "msc_stattrakcount", "Working Stattrak", false)
 -------------- Aspect Ratio Changer
 local aspect_ratio_check = gui.Checkbox(G_M1, "msc_aspect_enable", "Aspect Ratio Changer", false) 
 local aspect_ratio_reference = gui.Slider(G_M1, "msc_aspect_value", "Force aspect ratio", 100, 1, 199) -- % times your original ratio
@@ -94,25 +96,23 @@ local RecoilCrosshair = gui.Checkbox(G_VM, "vis_recoilcrosshair", "Recoil Crossh
 local fakeangleghost = gui.Combobox(gui.Reference("VISUALS", "MISC", "Yourself Extra"), "vis_disable_fakeangleghost", "Disable Fake Angle Ghost", "Off", "In Air", "On Freeze Period", "Both")
 -------------- Name Steal fix
 local StealNameFix = gui.Checkbox(gui.Reference("MISC", "ENHANCEMENT", "Namestealer"), "msc_namestealer_fix", "Fix Name Steal", false)
--------------- Working Stattrak
-local Working_Stattrak = gui.Checkbox(G_M1, "msc_stattrakcount", "Working Stattrak", false)
 -------------- Ghost Mode
 local ghost_view = gui.Checkbox(gui.Reference("VISUALS", "MISC", "Yourself Extra"), 'vis_ghost', 'Ghost View', false)
 -------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------- 
-local frame_rate, menu_opened = 0.0, gui.Reference( "MENU" ):IsActive()
+local frame_rate = 0.0
 local function get_abs_fps() frame_rate = 0.9 * frame_rate + (1.0 - 0.9) * g_absoluteframetime() return math_floor((1.0 / frame_rate) + 0.5) end
 local function lerp_pos(x1, y1, z1, x2, y2, z2, percentage) local x = (x2 - x1) * percentage + x1 local y = (y2 - y1) * percentage + y1 local z = (z2 - z1) * percentage + z1 return x, y, z end
 local function distance3D(x1, y1, z1, x2, y2, z2) return math_floor(vector_Distance(x1, y1, z1, x2, y2, z2)) end
-local function menus() if IsButtonPressed(gui_GetValue("msc_menutoggle")) then menu_opened = not menu_opened end if menu_opened then if AB_Show:GetValue() then AB_W:SetActive(1) else AB_W:SetActive(0) end if ViewModelShown:GetValue() then VM_W:SetActive(1) else VM_W:SetActive(0) end if CC_Show:GetValue() then CC_W:SetActive(1) else CC_W:SetActive(0) end else AB_W:SetActive(0) VM_W:SetActive(0) CC_W:SetActive(0) end end cb_Register("Draw", "shows", menus)
+cb_Register("Draw", "Shows Menus", function() local menu_opened = gui.Reference("MENU"):IsActive() if AB_Show:GetValue() then AB_W:SetActive(menu_opened) else AB_W:SetActive(0) end if ViewModelShown:GetValue() then VM_W:SetActive(menu_opened) else VM_W:SetActive(0) end if CC_Show:GetValue() then CC_W:SetActive(menu_opened) else CC_W:SetActive(0) end end)
 local function is_enemy(index) if entities_GetByIndex(index) == nil then return end return entities_GetByIndex(index):GetTeamNumber() ~= GetLocalPlayer():GetTeamNumber() end
 
 -------------------- Auto Updater
 local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.4.3.3"
+local currentVersion = "1.4.4"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 
 function autoupdater()
