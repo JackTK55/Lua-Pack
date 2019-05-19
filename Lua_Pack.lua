@@ -1,63 +1,5 @@
---[[
-add this 
-Fake ducking indication
-
-local reference = gui.Reference("VISUALS", "ENEMIES", "Options");
-local enable = gui.Checkbox(reference, "fakeduckflag_enable", "Is Fakeducking", 0 );
-local storedTick = 0
-local crouched_ticks = { }
-
-local function toBits(num)
-    local t = { }
-    while num > 0 do
-        rest = math.fmod(num,2)
-        t[#t+1] = rest
-        num = (num-rest) / 2
-    end
-
-    return t
-end
-
-
-callbacks.Register("DrawESP", "FD_Indicator", function(Builder)
-    local g_Local = entities.GetLocalPlayer()
-    local Entity = Builder:GetEntity()
-
-    if g_Local == nil or Entity == nil or not Entity:IsPlayer() or not Entity:IsAlive() then
-        return
-    end
-    if enable:GetValue() then
-    
-    local index = Entity:GetIndex()
-    local m_flDuckAmount = Entity:GetProp("m_flDuckAmount")
-    local m_flDuckSpeed = Entity:GetProp("m_flDuckSpeed")
-    local m_fFlags = Entity:GetProp("m_fFlags")
-
-    if crouched_ticks[index] == nil then 
-        crouched_ticks[index] = 0
-    end
-
-    if m_flDuckSpeed ~= nil and m_flDuckAmount ~= nil then
-        if m_flDuckSpeed == 8 and m_flDuckAmount <= 0.9 and m_flDuckAmount > 0.01 and toBits(m_fFlags)[1] == 1 then
-            if storedTick ~= globals.TickCount() then
-                crouched_ticks[index] = crouched_ticks[index] + 1
-                storedTick = globals.TickCount()
-            end
-
-            if crouched_ticks[index] >= 5 then 
-                Builder:Color(255, 255, 0, 255)
-                Builder:AddTextTop("Fake Duck")
-            end
-        else
-            crouched_ticks[index] = 0
-        end
-      end
-    end
-end)
-	--]]
-
 -- stuff
-local draw_Line, draw_TextShadow, draw_Color, draw_Text, g_tickinterval, string_format, http_Get, string_gsub, file_Open, math_random, math_exp, math_rad, math_max, math_abs, math_tan, math_sin, math_cos, math_fmod, draw_GetTextSize, draw_FilledRect, draw_RoundedRect, draw_RoundedRectFill, draw_CreateFont, draw_SetFont, client_WorldToScreen, draw_GetScreenSize, client_GetConVar, client_SetConVar, client_exec, PlayerNameByUserID, PlayerIndexByUserID, entities_GetByIndex, GetLocalPlayer, gui_SetValue, gui_GetValue, LocalPlayerIndex, c_AllowListener, cb_Register, g_tickcount, g_realtime, g_curtime, g_absoluteframetime, g_maxclients, math_floor, math_ceil, math_sqrt, GetPlayerResources, entities_FindByClass, IsButtonPressed, client_ChatSay, table_insert, table_remove, vector_Distance, draw_OutlinedCircle = draw.Line, draw.TextShadow, draw.Color, draw.Text, globals.TickInterval, string.format, http.Get, string.gsub, file.Open, math.random, math.exp, math.rad, math.max, math.abs, math.tan, math.sin, math.cos, math.fmod, draw.GetTextSize, draw.FilledRect, draw.RoundedRect, draw.RoundedRectFill, draw.CreateFont, draw.SetFont, client.WorldToScreen, draw.GetScreenSize, client.GetConVar, client.SetConVar, client.Command, client.GetPlayerNameByUserID, client.GetPlayerIndexByUserID, entities.GetByIndex, entities.GetLocalPlayer, gui.SetValue, gui.GetValue, client.GetLocalPlayerIndex, client.AllowListener, callbacks.Register, globals.TickCount, globals.RealTime, globals.CurTime, globals.AbsoluteFrameTime, globals.MaxClients, math.floor, math.ceil, math.sqrt, entities.GetPlayerResources, entities.FindByClass, input.IsButtonPressed, client.ChatSay, table.insert, table.remove, vector.Distance, draw.OutlinedCircle
+local draw_Line, draw_TextShadow, draw_Color, draw_Text, g_tickinterval, string_format, http_Get, string_gsub, file_Open, math_random, math_exp, math_rad, math_max, math_abs, math_tan, math_sin, math_cos, math_fmod, draw_GetTextSize, draw_FilledRect, draw_RoundedRect, draw_RoundedRectFill, draw_CreateFont, draw_SetFont, client_WorldToScreen, draw_GetScreenSize, client_GetConVar, client_SetConVar, client_exec, PlayerNameByUserID, PlayerIndexByUserID, entities_GetByIndex, GetLocalPlayer, gui_SetValue, gui_GetValue, LocalPlayerIndex, c_AllowListener, cb_Register, g_tickcount, g_realtime, g_curtime, g_absoluteframetime, g_maxclients, math_floor, math_ceil, math_sqrt, GetPlayerResources, entities_FindByClass, IsButtonPressed, client_ChatSay, table_insert, table_remove, vector_Distance, draw_OutlinedCircle, table_concat = draw.Line, draw.TextShadow, draw.Color, draw.Text, globals.TickInterval, string.format, http.Get, string.gsub, file.Open, math.random, math.exp, math.rad, math.max, math.abs, math.tan, math.sin, math.cos, math.fmod, draw.GetTextSize, draw.FilledRect, draw.RoundedRect, draw.RoundedRectFill, draw.CreateFont, draw.SetFont, client.WorldToScreen, draw.GetScreenSize, client.GetConVar, client.SetConVar, client.Command, client.GetPlayerNameByUserID, client.GetPlayerIndexByUserID, entities.GetByIndex, entities.GetLocalPlayer, gui.SetValue, gui.GetValue, client.GetLocalPlayerIndex, client.AllowListener, callbacks.Register, globals.TickCount, globals.RealTime, globals.CurTime, globals.AbsoluteFrameTime, globals.MaxClients, math.floor, math.ceil, math.sqrt, entities.GetPlayerResources, entities.FindByClass, input.IsButtonPressed, client.ChatSay, table.insert, table.remove, vector.Distance, draw.OutlinedCircle, table.concat
 -------------- References
 local G_VM = gui.Groupbox(gui.Reference("VISUALS", "Shared"), "Extra Features")
 local VOO_Ref = gui.Reference("VISUALS", "OTHER", "Options")
@@ -75,8 +17,8 @@ local better_grenades = gui.Checkbox(VOO_Ref, "esp_other_better_grenades", "Bett
 local HitLog = gui.Checkbox(G_M1, "msc_hitlog", "Hit Log", false)
 -------------- Auto Buy
 local AB_Show = gui.Checkbox(G_M1, "msc_autobuy", "AutoBuy", false)
-local AB_W = gui.Window("AB_W", "Auto Buy", 100, 200, 200, 258)
-local AB_GB = gui.Groupbox(AB_W, "Auto Buy Settings", 15, 14, 170, 198)
+local AB_W = gui.Window("AB_W", "Auto Buy", 100, 200, 200, 306)
+local AB_GB = gui.Groupbox(AB_W, "Auto Buy Settings", 16, 17)
 local AB_E = gui.Checkbox(AB_GB, "AB_Active", "Active", false)
 local PrimaryWeapons = gui.Combobox(AB_GB, "AB_Primary_Weapons", "Primary Weapons", "-", "AK | M4", "Scout", "SG553 | AUG", "AWP", "Auto")
 local SecondaryWeapons = gui.Combobox(AB_GB, "AB_Secondary_Weapons", "Secondary Weapons", "-", "Elite", "P250", "Tec-9 | Five-Seven", "R8 | Deagle")
@@ -89,6 +31,7 @@ local MNade = gui.Checkbox(AB_M, "AB_MNade", "Molotov", false)
 local SNade = gui.Checkbox(AB_M, "AB_SNade", "Smoke", false)
 local FNade = gui.Checkbox(AB_M, "AB_FNade", "Flashbang", false)
 local Zeus = gui.Checkbox(AB_M, "AB_Zeus", "Zeus", false)
+local AB_buyAbove = gui.Slider(AB_GB, 'AB_buyAboveAmount', 'Buy if $ is Above (value*1000)', 3.7, 0, 16)
 -------------- Spec List
 local SpectatorList = gui.Checkbox(G_M1, "msc_speclist", "Spectators", false)
 -------------- Show Team Damage
@@ -156,6 +99,9 @@ local fakeangleghost = gui.Combobox(gui.Reference("VISUALS", "MISC", "Yourself E
 local StealNameFix = gui.Checkbox(gui.Reference("MISC", "ENHANCEMENT", "Namestealer"), "msc_namestealer_fix", "Fix Name Steal", false)
 -------------- Ghost Mode
 local ghost_view = gui.Checkbox(gui.Reference("VISUALS", "MISC", "Yourself Extra"), 'vis_ghost', 'Ghost View', false)
+-------------- Fake ducking indicator
+local fake_duck_indicator = gui.Checkbox(VEO_Ref, 'esp_enemy_fakeduck', 'Is Fakeducking', false)
+local fake_duck_indicator_color = gui.ColorEntry('clr_esp_enemy_fakeduck', 'Fake duck [LUA]', 100, 200, 100, 255)
 -------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------- 
@@ -170,7 +116,7 @@ local function is_enemy(index) if entities_GetByIndex(index) == nil then return 
 local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.4.4.1"
+local currentVersion = "1.4.4.2"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 
 function autoupdater()
@@ -200,33 +146,24 @@ for k, v in pairs(grenades) do if v[1] - g_curtime() + 1.65 > 0 then if v[2] == 
 cb_Register("Draw", DrawTimers) cb_Register("DrawESP", GFTimers) cb_Register("FireGameEvent", Timers)
 
 -------------------- Auto Buy
-local SecondaryWeapon, PrimaryWeapon, buy_armor = "", "", ""
 function auto_buy(e)
-if not AB_E:GetValue() or GetLocalPlayer() == nil or e:GetName() ~= 'player_spawn' or PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() then return end money = GetLocalPlayer():GetProp("m_iAccount")
-if (SecondaryWeapons:GetValue() == 0) then SecondaryWeapon = ""
+if not AB_E:GetValue() or e:GetName() ~= 'player_spawn' then return end if PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() then return end money = GetLocalPlayer():GetProp('m_iAccount') if money >= AB_buyAbove:GetValue()*1000 or money < 1 then PWb = true end
+if PWb then if (SecondaryWeapons:GetValue() == 0) then SecondaryWeapon = ""
 elseif (SecondaryWeapons:GetValue() == 1) then SecondaryWeapon = 'buy "elite"; '
 elseif (SecondaryWeapons:GetValue() == 2) then SecondaryWeapon = 'buy "p250"; '
 elseif (SecondaryWeapons:GetValue() == 3) then SecondaryWeapon = 'buy "tec9"; '
 elseif (SecondaryWeapons:GetValue() == 4) then SecondaryWeapon = 'buy "deagle"; ' end
-if money >= 3000 or money < 1 then PWb = true end
-if PWb then if (PrimaryWeapons:GetValue() == 0) then PrimaryWeapon = ""
+if (PrimaryWeapons:GetValue() == 0) then PrimaryWeapon = ""
 elseif (PrimaryWeapons:GetValue() == 1) then PrimaryWeapon = 'buy "ak47"; '
 elseif (PrimaryWeapons:GetValue() == 2) then PrimaryWeapon = 'buy "ssg08"; '
 elseif (PrimaryWeapons:GetValue() == 3) then PrimaryWeapon = 'buy "sg556"; '
 elseif (PrimaryWeapons:GetValue() == 4) then PrimaryWeapon = 'buy "awp"; '
 elseif (PrimaryWeapons:GetValue() == 5) then PrimaryWeapon = 'buy "scar20"; ' end 
-if Kev:GetValue() then buy_armor = 'buy "vest"; ' end
-if Kev_Hel:GetValue() then buy_armor = 'buy "vest"; buy "vesthelm"; ' end
-current_buy = (PrimaryWeapon.. SecondaryWeapon.. buy_armor)
-if Defuser:GetValue() then client_exec('buy "defuser"', true) end
-if GNade:GetValue() then client_exec('buy "hegrenade"; ') end
-if MNade:GetValue() then client_exec('buy "molotov"; buy "incgrenade"; ') end
-if SNade:GetValue() then client_exec('buy "smokegrenade"; ') end
-if FNade:GetValue() then client_exec('buy "flashbang"') end
-if Zeus:GetValue() then client_exec('buy "taser"', true) end PWb = false client_exec(current_buy, true) end end
+local buy_items = table_concat({SecondaryWeapon or '', PrimaryWeapon or '', Kev:GetValue() and 'buy "vest"; ' or '', Kev_Hel:GetValue() and 'buy "vesthelm"; ' or '', Defuser:GetValue() and 'buy "defuser"; ' or '', GNade:GetValue() and 'buy "hegrenade"; ' or '', MNade:GetValue() and 'buy "molotov"; buy "incgrenade"; ' or '', SNade:GetValue() and 'buy "smokegrenade"; ' or '', FNade:GetValue() and 'buy "flashbang"; ' or '', Zeus:GetValue() and 'buy "taser"; ' or ''}, '')
+PWb = false client_exec(buy_items, true) end end
 cb_Register("FireGameEvent", auto_buy)
 
--------------------- View Model Extender | Spectator list fix / made by anue | Disable Post Processing | full bright | Engine Radar | Disable Fake angle ghost while in air/freeze time | Working Stattrak | ghost view
+-------------------- View Model Extender | Spectator list fix / made by anue | Disable Post Processing | full bright | Engine Radar | Disable Fake angle ghost while in air/freeze time | Working Stattrak | ghost view | fake duck indicator
 function VM_E() if VM_e:GetValue() then client_SetConVar("viewmodel_offset_x", xS:GetValue(), true) client_SetConVar("viewmodel_offset_y", yS:GetValue(), true) client_SetConVar("viewmodel_offset_z", zS:GetValue(), true) client_SetConVar("viewmodel_fov", vfov:GetValue(), true) else client_SetConVar("viewmodel_offset_x", xO, true) client_SetConVar("viewmodel_offset_y", yO, true) client_SetConVar("viewmodel_offset_z", zO, true) client_SetConVar("viewmodel_fov", fO, true) end end cb_Register("Draw", VM_E)
 function speclistfix(E) if not gui_GetValue("msc_showspec") or E:GetName() ~= "round_start" then return end client_exec("cl_fullupdate", true) end cb_Register("FireGameEvent", speclistfix)
 function Dis_PP() if DPP:GetValue() then client_SetConVar("mat_postprocess_enable", 0, true) else client_SetConVar("mat_postprocess_enable", 1, true) end end cb_Register("Draw", Dis_PP)
@@ -237,6 +174,8 @@ function Disable_FakeAAGhost(UserCMD) if gui.GetValue("vis_fakeghost") ~= 0 then
 function Disable_FakeAAGhost2(event) if fakeghost == "in_air" or fakeghost == "Off" then return end if event:GetName() == "round_end" then gui.SetValue("vis_fakeghost", 0) FakeAAGhost2_round_end = true end if event:GetName() == "round_freeze_end" then gui.SetValue("vis_fakeghost", fakeghostval) FakeAAGhost2_round_end = false end end cb_Register("FireGameEvent", Disable_FakeAAGhost2)
 function StatTrak(e) if not Working_Stattrak:GetValue() or not gui_GetValue("skin_active") then return end if e:GetName() == "player_death" and PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() and is_enemy(PlayerIndexByUserID(e:GetInt("userid"))) then if e:GetString("weapon") ~= "inferno" and e:GetString("weapon") ~= "hegrenade" and e:GetString("weapon") ~= "smokegrenade" and e:GetString("weapon") ~= "flashbang" and e:GetString("weapon") ~= "decoy" and e:GetString("weapon") ~= "knife" and e:GetString("weapon") ~= "knife_t" then wep = string_format("skin_%s_stattrak", e:GetString("weapon")) if tonumber(gui_GetValue(wep)) > 0 then gui_SetValue(wep, math_floor(gui_GetValue(wep)) + 1) end end end if e:GetName() == "round_prestart" then client_exec("cl_fullupdate", true) end end cb_Register("FireGameEvent", StatTrak)
 function ghostview() if GetLocalPlayer() == nil then return end if ghost_view:GetValue() then ghost = 1 else ghost = 0 end if GetLocalPlayer():GetProp('m_bIsPlayerGhost') ~= ghost then GetLocalPlayer():SetProp('m_bIsPlayerGhost', ghost) end end cb_Register("Draw", 'ghost view', ghostview)
+local function is_fakeducking(entity) local storedTick, crouchedTicks = 0, {} local duckamount = entity:GetProp('m_flDuckAmount') if not duckamount then return false end local duckspeed = entity:GetProp('m_flDuckSpeed') if not duckspeed then return false end local on_ground = entity:GetProp('m_fFlags') == 257 or entity:GetProp('m_fFlags') == 259 or entity:GetProp('m_fFlags') == 261 or entity:GetProp('m_fFlags') == 263 if crouchedTicks[entity:GetIndex()] == nil then crouchedTicks[entity:GetIndex()] = 0 end if storedTick ~= g_tickcount() then crouchedTicks[entity:GetIndex()] = crouchedTicks[entity:GetIndex()] + 1 storedTick = g_tickcount() end return duckspeed == 8 and duckamount <= 0.9 and duckamount > 0.01 and on_ground and crouchedTicks[entity:GetIndex()] >= 5 end
+function fakeduck(b) if not fake_duck_indicator:GetValue() or b:GetEntity() == nil or not b:GetEntity():IsPlayer() or not b:GetEntity():IsAlive() then return end if is_fakeducking(b:GetEntity()) then b:Color(fake_duck_indicator_color:GetValue()) b:AddTextBottom('FD') end end callbacks.Register('DrawESP', fakeduck)
 
 -------------------- Scoped Fov Fix
 function scopefov()
@@ -374,7 +313,7 @@ if not RecoilCrosshair:GetValue() or GetLocalPlayer() == nil or GetLocalPlayer()
 local r, g, b, a = gui_GetValue("clr_esp_crosshair_recoil") local recoil_scale = client_GetConVar("weapon_recoil_scale") local fov = gui_GetValue("vis_view_fov") if fov == 0 then fov = 90 end local weapon = GetLocalPlayer():GetPropEntity("m_hActiveWeapon") if weapon == nil then return end local weapon_name = weapon:GetClass() 
 if weapon_name == "CWeaponAWP" or weapon_name == "CWeaponSSG08" or weapon:GetProp("m_flRecoilIndex") == 0 or gui_GetValue("rbot_active") and gui_GetValue("rbot_antirecoil") then return end local aim_punch_angle_pitch, aim_punch_angle_yaw = GetLocalPlayer():GetPropVector("localdata", "m_Local", "m_aimPunchAngle") 
 if -aim_punch_angle_pitch >= 0.07 and -aim_punch_angle_pitch >= 0.07 then if gui_GetValue("vis_norecoil") then x = x - (((screenX/fov)* aim_punch_angle_yaw)*1.2)*(recoil_scale*0.5) y = y + (((screenY/fov)* aim_punch_angle_pitch)*2)*(recoil_scale*0.5) else x = x - (((screenX/fov)* aim_punch_angle_yaw)*0.6)*(recoil_scale*0.5) y = y + ((screenY/fov)* aim_punch_angle_pitch)*(recoil_scale*0.5) end 
-draw_Color(r, g, b, a) draw.OutlinedCircle(x, y, 3) end end
+draw_Color(r, g, b, a) draw_OutlinedCircle(x, y, 3) end end
 cb_Register("Draw", RCC)
 
 -------------------- Name Steal fix
