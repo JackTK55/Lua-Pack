@@ -1,3 +1,61 @@
+--[[
+add this 
+Fake ducking indication
+
+local reference = gui.Reference("VISUALS", "ENEMIES", "Options");
+local enable = gui.Checkbox(reference, "fakeduckflag_enable", "Is Fakeducking", 0 );
+local storedTick = 0
+local crouched_ticks = { }
+
+local function toBits(num)
+    local t = { }
+    while num > 0 do
+        rest = math.fmod(num,2)
+        t[#t+1] = rest
+        num = (num-rest) / 2
+    end
+
+    return t
+end
+
+
+callbacks.Register("DrawESP", "FD_Indicator", function(Builder)
+    local g_Local = entities.GetLocalPlayer()
+    local Entity = Builder:GetEntity()
+
+    if g_Local == nil or Entity == nil or not Entity:IsPlayer() or not Entity:IsAlive() then
+        return
+    end
+    if enable:GetValue() then
+    
+    local index = Entity:GetIndex()
+    local m_flDuckAmount = Entity:GetProp("m_flDuckAmount")
+    local m_flDuckSpeed = Entity:GetProp("m_flDuckSpeed")
+    local m_fFlags = Entity:GetProp("m_fFlags")
+
+    if crouched_ticks[index] == nil then 
+        crouched_ticks[index] = 0
+    end
+
+    if m_flDuckSpeed ~= nil and m_flDuckAmount ~= nil then
+        if m_flDuckSpeed == 8 and m_flDuckAmount <= 0.9 and m_flDuckAmount > 0.01 and toBits(m_fFlags)[1] == 1 then
+            if storedTick ~= globals.TickCount() then
+                crouched_ticks[index] = crouched_ticks[index] + 1
+                storedTick = globals.TickCount()
+            end
+
+            if crouched_ticks[index] >= 5 then 
+                Builder:Color(255, 255, 0, 255)
+                Builder:AddTextTop("Fake Duck")
+            end
+        else
+            crouched_ticks[index] = 0
+        end
+      end
+    end
+end)
+	--]]
+
 -- stuff
 local draw_Line, draw_TextShadow, draw_Color, draw_Text, g_tickinterval, string_format, http_Get, string_gsub, file_Open, math_random, math_exp, math_rad, math_max, math_abs, math_tan, math_sin, math_cos, math_fmod, draw_GetTextSize, draw_FilledRect, draw_RoundedRect, draw_RoundedRectFill, draw_CreateFont, draw_SetFont, client_WorldToScreen, draw_GetScreenSize, client_GetConVar, client_SetConVar, client_exec, PlayerNameByUserID, PlayerIndexByUserID, entities_GetByIndex, GetLocalPlayer, gui_SetValue, gui_GetValue, LocalPlayerIndex, c_AllowListener, cb_Register, g_tickcount, g_realtime, g_curtime, g_absoluteframetime, g_maxclients, math_floor, math_ceil, math_sqrt, GetPlayerResources, entities_FindByClass, IsButtonPressed, client_ChatSay, table_insert, table_remove, vector_Distance, draw_OutlinedCircle = draw.Line, draw.TextShadow, draw.Color, draw.Text, globals.TickInterval, string.format, http.Get, string.gsub, file.Open, math.random, math.exp, math.rad, math.max, math.abs, math.tan, math.sin, math.cos, math.fmod, draw.GetTextSize, draw.FilledRect, draw.RoundedRect, draw.RoundedRectFill, draw.CreateFont, draw.SetFont, client.WorldToScreen, draw.GetScreenSize, client.GetConVar, client.SetConVar, client.Command, client.GetPlayerNameByUserID, client.GetPlayerIndexByUserID, entities.GetByIndex, entities.GetLocalPlayer, gui.SetValue, gui.GetValue, client.GetLocalPlayerIndex, client.AllowListener, callbacks.Register, globals.TickCount, globals.RealTime, globals.CurTime, globals.AbsoluteFrameTime, globals.MaxClients, math.floor, math.ceil, math.sqrt, entities.GetPlayerResources, entities.FindByClass, input.IsButtonPressed, client.ChatSay, table.insert, table.remove, vector.Distance, draw.OutlinedCircle
 -------------- References
@@ -46,7 +104,7 @@ local yS = gui.Slider(VMStuff, "VM_Y", "Y", yO, -100, 100)
 local zS = gui.Slider(VMStuff, "VM_Z", "Z", zO, -20, 20)
 local vfov = gui.Slider(VMStuff, "VM_fov", "Viewmodel FOV", fO, 0, 120)
 -------------- Sniper Crosshair
-local ComboCrosshair = gui.Combobox(G_VM, "vis_sniper_crosshair", "Sniper Crosshair", "Off", "Engine Crosshair", "Aimware Crosshair", "Draw Crosshair")
+local ComboCrosshair = gui.Combobox(G_VM, "vis_sniper_crosshair", "Sniper Crosshair", "Off", "Engine Crosshair", 'Engine Crosshair(+scoped)', "Aimware Crosshair", "Draw Crosshair")
 -------------- Bullet impacts
 local BulletImpacts_combo = gui.Combobox(G_VM, "vis_bullet_impact", "Bullet Impact", "Off", "Everyone", "Enemy Only", "Team Only", "Local Only")
 local BulletImpacts_color = gui.ColorEntry('clr_vis_bullet_impact', 'Bullet Impacts [LUA]', 255,255,255,255)
@@ -112,7 +170,7 @@ local function is_enemy(index) if entities_GetByIndex(index) == nil then return 
 local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.4.4"
+local currentVersion = "1.4.4.1"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 
 function autoupdater()
@@ -144,7 +202,7 @@ cb_Register("Draw", DrawTimers) cb_Register("DrawESP", GFTimers) cb_Register("Fi
 -------------------- Auto Buy
 local SecondaryWeapon, PrimaryWeapon, buy_armor = "", "", ""
 function auto_buy(e)
-if not AB_E:GetValue() or GetLocalPlayer() == nil or e:GetName() ~= 'player_spawn' or PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() then return end
+if not AB_E:GetValue() or GetLocalPlayer() == nil or e:GetName() ~= 'player_spawn' or PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() then return end money = GetLocalPlayer():GetProp("m_iAccount")
 if (SecondaryWeapons:GetValue() == 0) then SecondaryWeapon = ""
 elseif (SecondaryWeapons:GetValue() == 1) then SecondaryWeapon = 'buy "elite"; '
 elseif (SecondaryWeapons:GetValue() == 2) then SecondaryWeapon = 'buy "p250"; '
@@ -195,9 +253,10 @@ if GetLocalPlayer() == nil then return end local Weapon = GetLocalPlayer():GetPr
 if cWep == "CWeaponAWP" or cWep == "CWeaponSSG08" or cWep == "CWeaponSCAR20" or cWep == "CWeaponG3SG1" then drawCrosshair = true else drawCrosshair = false end local screenCenterX, screenY = draw_GetScreenSize() local scX, scY = screenCenterX / 2, screenY / 2
 if drawCrosshair and ComboCrosshair:GetValue() == 0 then return
 elseif drawCrosshair and ComboCrosshair:GetValue() == 1 then gui_SetValue("esp_crosshair", false) if Scoped then client_SetConVar("weapon_debug_spread_show", 0, true) else client_SetConVar("weapon_debug_spread_show", 3, true) end
-elseif drawCrosshair and ComboCrosshair:GetValue() == 2 then if Scoped then gui_SetValue("esp_crosshair", false) else client_SetConVar("weapon_debug_spread_show", 0, true) gui_SetValue("esp_crosshair", true) end 
-elseif not drawCrosshair and ComboCrosshair:GetValue() == 2 then gui_SetValue("esp_crosshair", false)
-elseif drawCrosshair and ComboCrosshair:GetValue() == 3 then client_SetConVar("weapon_debug_spread_show", 0, true) gui_SetValue("esp_crosshair", false) draw_Color(255,255,255,255) draw_Line(scX, scY - 8, scX, scY + 8) --[[ line down ]] draw_Line(scX - 8, scY, scX + 8, scY) --[[ line across ]] end end
+elseif drawCrosshair and ComboCrosshair:GetValue() == 2 then gui_SetValue("esp_crosshair", false) client_SetConVar("weapon_debug_spread_show", 3, true)
+elseif drawCrosshair and ComboCrosshair:GetValue() == 3 then if Scoped then gui_SetValue("esp_crosshair", false) else client_SetConVar("weapon_debug_spread_show", 0, true) gui_SetValue("esp_crosshair", true) end 
+elseif not drawCrosshair and ComboCrosshair:GetValue() == 3 then gui_SetValue("esp_crosshair", false)
+elseif drawCrosshair and ComboCrosshair:GetValue() == 4 then client_SetConVar("weapon_debug_spread_show", 0, true) gui_SetValue("esp_crosshair", false) draw_Color(255,255,255,255) draw_Line(scX, scY - 8, scX, scY + 8) --[[ line down ]] draw_Line(scX - 8, scY, scX + 8, scY) --[[ line across ]] end end
 cb_Register("Draw", ifCrosshair)
 
 -------------------- HitLog
