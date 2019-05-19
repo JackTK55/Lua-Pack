@@ -70,8 +70,6 @@ function auto_buy(e)
 		PWb = false 
 		client_exec(buy_items, true) 
 	end
-		
-	client_exec(SecondaryWeapon, true)
 end
 
 callbacks.Register("FireGameEvent", auto_buy)
