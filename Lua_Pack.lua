@@ -116,7 +116,7 @@ local function is_enemy(index) if entities_GetByIndex(index) == nil then return 
 local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.4.4.2"
+local currentVersion = "1.4.4.3"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 
 function autoupdater()
@@ -146,22 +146,12 @@ for k, v in pairs(grenades) do if v[1] - g_curtime() + 1.65 > 0 then if v[2] == 
 cb_Register("Draw", DrawTimers) cb_Register("DrawESP", GFTimers) cb_Register("FireGameEvent", Timers)
 
 -------------------- Auto Buy
+local primary_weapon, secondary_weapon = {'', 'buy "ak47"; ', 'buy "ssg08"; ', 'buy "sg556"; ', 'buy "awp"; ', 'buy "scar20"; '}, {'', 'buy "elite"; ', 'buy "p250"; ', 'buy "tec9"; ', 'buy "deagle"; '}
 function auto_buy(e)
-if not AB_E:GetValue() or e:GetName() ~= 'player_spawn' then return end if PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() then return end money = GetLocalPlayer():GetProp('m_iAccount') if money >= AB_buyAbove:GetValue()*1000 or money < 1 then PWb = true end
-if PWb then if (SecondaryWeapons:GetValue() == 0) then SecondaryWeapon = ""
-elseif (SecondaryWeapons:GetValue() == 1) then SecondaryWeapon = 'buy "elite"; '
-elseif (SecondaryWeapons:GetValue() == 2) then SecondaryWeapon = 'buy "p250"; '
-elseif (SecondaryWeapons:GetValue() == 3) then SecondaryWeapon = 'buy "tec9"; '
-elseif (SecondaryWeapons:GetValue() == 4) then SecondaryWeapon = 'buy "deagle"; ' end
-if (PrimaryWeapons:GetValue() == 0) then PrimaryWeapon = ""
-elseif (PrimaryWeapons:GetValue() == 1) then PrimaryWeapon = 'buy "ak47"; '
-elseif (PrimaryWeapons:GetValue() == 2) then PrimaryWeapon = 'buy "ssg08"; '
-elseif (PrimaryWeapons:GetValue() == 3) then PrimaryWeapon = 'buy "sg556"; '
-elseif (PrimaryWeapons:GetValue() == 4) then PrimaryWeapon = 'buy "awp"; '
-elseif (PrimaryWeapons:GetValue() == 5) then PrimaryWeapon = 'buy "scar20"; ' end 
-local buy_items = table_concat({SecondaryWeapon or '', PrimaryWeapon or '', Kev:GetValue() and 'buy "vest"; ' or '', Kev_Hel:GetValue() and 'buy "vesthelm"; ' or '', Defuser:GetValue() and 'buy "defuser"; ' or '', GNade:GetValue() and 'buy "hegrenade"; ' or '', MNade:GetValue() and 'buy "molotov"; buy "incgrenade"; ' or '', SNade:GetValue() and 'buy "smokegrenade"; ' or '', FNade:GetValue() and 'buy "flashbang"; ' or '', Zeus:GetValue() and 'buy "taser"; ' or ''}, '')
-PWb = false client_exec(buy_items, true) end end
-cb_Register("FireGameEvent", auto_buy)
+if not AB_E:GetValue() or e:GetName() == nil or e:GetName() ~= 'player_spawn' or GetLocalPlayer() == nil or PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() then return end local money = GetLocalPlayer():GetProp('m_iAccount')
+local buy_items = table_concat({primary_weapon[PrimaryWeapons:GetValue() + 1] or '', secondary_weapon[SecondaryWeapons:GetValue() + 1] or '', Kev:GetValue() and 'buy "vest"; ' or '', Kev_Hel:GetValue() and 'buy "vesthelm"; ' or '', Defuser:GetValue() and 'buy "defuser"; ' or '', GNade:GetValue() and 'buy "hegrenade"; ' or '', MNade:GetValue() and 'buy "molotov"; buy "incgrenade"; ' or '', SNade:GetValue() and 'buy "smokegrenade"; ' or '', FNade:GetValue() and 'buy "flashbang"; ' or '', Zeus:GetValue() and 'buy "taser"; ' or ''}, '')
+if money >= AB_buyAbove:GetValue()*1000 or money < 1 then client_exec(buy_items, true) end end
+callbacks.Register("FireGameEvent", auto_buy)
 
 -------------------- View Model Extender | Spectator list fix / made by anue | Disable Post Processing | full bright | Engine Radar | Disable Fake angle ghost while in air/freeze time | Working Stattrak | ghost view | fake duck indicator
 function VM_E() if VM_e:GetValue() then client_SetConVar("viewmodel_offset_x", xS:GetValue(), true) client_SetConVar("viewmodel_offset_y", yS:GetValue(), true) client_SetConVar("viewmodel_offset_z", zS:GetValue(), true) client_SetConVar("viewmodel_fov", vfov:GetValue(), true) else client_SetConVar("viewmodel_offset_x", xO, true) client_SetConVar("viewmodel_offset_y", yO, true) client_SetConVar("viewmodel_offset_z", zO, true) client_SetConVar("viewmodel_fov", fO, true) end end cb_Register("Draw", VM_E)
@@ -174,7 +164,7 @@ function Disable_FakeAAGhost(UserCMD) if gui.GetValue("vis_fakeghost") ~= 0 then
 function Disable_FakeAAGhost2(event) if fakeghost == "in_air" or fakeghost == "Off" then return end if event:GetName() == "round_end" then gui.SetValue("vis_fakeghost", 0) FakeAAGhost2_round_end = true end if event:GetName() == "round_freeze_end" then gui.SetValue("vis_fakeghost", fakeghostval) FakeAAGhost2_round_end = false end end cb_Register("FireGameEvent", Disable_FakeAAGhost2)
 function StatTrak(e) if not Working_Stattrak:GetValue() or not gui_GetValue("skin_active") then return end if e:GetName() == "player_death" and PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() and is_enemy(PlayerIndexByUserID(e:GetInt("userid"))) then if e:GetString("weapon") ~= "inferno" and e:GetString("weapon") ~= "hegrenade" and e:GetString("weapon") ~= "smokegrenade" and e:GetString("weapon") ~= "flashbang" and e:GetString("weapon") ~= "decoy" and e:GetString("weapon") ~= "knife" and e:GetString("weapon") ~= "knife_t" then wep = string_format("skin_%s_stattrak", e:GetString("weapon")) if tonumber(gui_GetValue(wep)) > 0 then gui_SetValue(wep, math_floor(gui_GetValue(wep)) + 1) end end end if e:GetName() == "round_prestart" then client_exec("cl_fullupdate", true) end end cb_Register("FireGameEvent", StatTrak)
 function ghostview() if GetLocalPlayer() == nil then return end if ghost_view:GetValue() then ghost = 1 else ghost = 0 end if GetLocalPlayer():GetProp('m_bIsPlayerGhost') ~= ghost then GetLocalPlayer():SetProp('m_bIsPlayerGhost', ghost) end end cb_Register("Draw", 'ghost view', ghostview)
-local function is_fakeducking(entity) local storedTick, crouchedTicks = 0, {} local duckamount = entity:GetProp('m_flDuckAmount') if not duckamount then return false end local duckspeed = entity:GetProp('m_flDuckSpeed') if not duckspeed then return false end local on_ground = entity:GetProp('m_fFlags') == 257 or entity:GetProp('m_fFlags') == 259 or entity:GetProp('m_fFlags') == 261 or entity:GetProp('m_fFlags') == 263 if crouchedTicks[entity:GetIndex()] == nil then crouchedTicks[entity:GetIndex()] = 0 end if storedTick ~= g_tickcount() then crouchedTicks[entity:GetIndex()] = crouchedTicks[entity:GetIndex()] + 1 storedTick = g_tickcount() end return duckspeed == 8 and duckamount <= 0.9 and duckamount > 0.01 and on_ground and crouchedTicks[entity:GetIndex()] >= 5 end
+local function is_fakeducking(entity) local storedTick, crouchedTicks = 0, {} local duckamount = entity:GetProp('m_flDuckAmount') local duckspeed = entity:GetProp('m_flDuckSpeed') local on_ground = entity:GetProp('m_fFlags') == 257 or entity:GetProp('m_fFlags') == 259 or entity:GetProp('m_fFlags') == 261 or entity:GetProp('m_fFlags') == 263 if crouchedTicks[entity:GetIndex()] == nil then crouchedTicks[entity:GetIndex()] = 0 end if storedTick ~= g_tickcount() then crouchedTicks[entity:GetIndex()] = crouchedTicks[entity:GetIndex()] + 1 storedTick = g_tickcount() end return duckspeed == 8 and duckamount <= 0.9 and duckamount > 0.01 and on_ground and crouchedTicks[entity:GetIndex()] >= 5 end
 function fakeduck(b) if not fake_duck_indicator:GetValue() or b:GetEntity() == nil or not b:GetEntity():IsPlayer() or not b:GetEntity():IsAlive() then return end if is_fakeducking(b:GetEntity()) then b:Color(fake_duck_indicator_color:GetValue()) b:AddTextBottom('FD') end end cb_Register('DrawESP', fakeduck)
 
 -------------------- Scoped Fov Fix
@@ -214,15 +204,16 @@ cb_Register("Draw", draw_hitlog) cb_Register("FireGameEvent", hitlog)
 -------------------- Bomb Timer & defuse timer & Bomb Damage
 local function get_site_name(site) local a_x, a_y, a_z = GetPlayerResources():GetProp("m_bombsiteCenterA") local b_x, b_y, b_z = GetPlayerResources():GetProp("m_bombsiteCenterB") local site_x1, site_y1, site_z1 = site:GetMins() local site_x2, site_y2, site_z2 = site:GetMaxs() local site_x, site_y, site_z = lerp_pos(site_x1, site_y1, site_z1, site_x2, site_y2, site_z2, 0.5) local distance_a, distance_b = vector_Distance(site_x, site_y, site_z, a_x, a_y, a_z), vector_Distance(site_x, site_y, site_z, b_x, b_y, b_z) return distance_b > distance_a and "A" or "B" end
 function bombEvents(e)
-if not BombTimer:GetValue() or e:GetName() ~= "bomb_beginplant" and e:GetName() ~= "bomb_abortplant" and e:GetName() ~= "bomb_planted" and e:GetName() ~= "bomb_begindefuse" and e:GetName() ~= "bomb_abortdefuse" and e:GetName() ~= "bomb_defused" and e:GetName() ~= "round_officially_ended" and e:GetName() ~= "round_prestart" then return end
+if not BombTimer:GetValue() or e:GetName() ~= "bomb_beginplant" and e:GetName() ~= "bomb_abortplant" and e:GetName() ~= "bomb_planted" and e:GetName() ~= "bomb_begindefuse" and e:GetName() ~= "bomb_abortdefuse" and e:GetName() ~= "bomb_defused" and e:GetName() ~= 'bomb_exploded' and e:GetName() ~= "round_officially_ended" and e:GetName() ~= "round_prestart" then return end
 if e:GetName() == "bomb_beginplant" then planter = PlayerNameByUserID(e:GetInt("userid")) plantPercent = 0 plantingStarted = g_curtime() plantingSite = get_site_name(entities_GetByIndex(e:GetInt("site"))) drawPlant = true ScreenX,ScreenY = 20,60 end
 if e:GetName() == "bomb_abortplant" then drawPlant = false ScreenX,ScreenY = 8,3 end
 if e:GetName() == "bomb_planted" then drawPlant = false plantedPercent = 0 plantedAt = g_curtime() drawBombPlanted = true ScreenX,ScreenY = 20,60 end
 if e:GetName() == "bomb_begindefuse" then defuser = PlayerNameByUserID(e:GetInt("userid")) defusePercent = 0 defuseStarted = g_curtime() drawDefuse = true ScreenX,ScreenY = 20,90 end
 if e:GetName() == "bomb_abortdefuse" then drawDefuse = false ScreenX,ScreenY = 20,60 end
 if e:GetName() == "bomb_defused" then drawBombPlanted = false drawDefuse = false ScreenX,ScreenY = 8,3 end
-if e:GetName() == "round_officially_ended" then drawBombPlanted = false drawDefuse = false drawPlant = false ScreenX,ScreenY = 8,3 end 
-if e:GetName() == "round_prestart" then drawBombPlanted, drawDefuse, drawPlant = false, false, false ScreenX,ScreenY = 8,3 hit_logs = {} end end
+if e:GetName() == 'bomb_exploded' then drawBombPlanted, drawDefuse = false, false ScreenX,ScreenY = 8,3 end
+if e:GetName() == "round_officially_ended" then drawBombPlanted, drawDefuse, drawPlant = false, false, false ScreenX,ScreenY = 8,3 end 
+if e:GetName() == "round_prestart" then drawBombPlanted, drawDefuse, drawPlant = false, false, false ScreenX,ScreenY = 8,3 end end
 function drawBombTimers()
 if not BombTimer:GetValue() then return end local screenX, screenY = draw_GetScreenSize()
 if drawPlant then local plantTime = string_format("%s - %0.1fs", planter, plantingStarted - g_curtime() + 3.125) local plantingInfo = string_format("%s - Planting", plantingSite) local plantPercent = (g_curtime() - plantingStarted) / 3.125 draw_SetFont(Vf30) local tW, tH = draw_GetTextSize(plantingInfo) draw_Color(124, 195, 13, 255) draw_Text(20, 0, plantingInfo) draw_Color(255, 255, 255, 255) draw_Text(20, tH, plantTime) if plantPercent < 1 and plantPercent > 0 then local plantingBar = (1 - plantPercent) * screenY draw_Color(13, 13, 13, 70) draw_FilledRect(0, 0, 16, screenY) draw_Color(0, 150, 0, 255) draw_FilledRect(1, plantingBar, 15, screenY+plantingBar) end end
@@ -329,7 +320,7 @@ local damagedone, killed = 0, 0
 function KillsAndDamage(e)
 if e:GetName() == "player_hurt" then if PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() and not is_enemy(PlayerIndexByUserID(e:GetInt("userid"))) then damagedone = damagedone + e:GetInt("dmg_health") end end
 if e:GetName() == "player_death" then if PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() and not is_enemy(PlayerIndexByUserID(e:GetInt("userid"))) then killed = killed + 1 end end
-if e:GetName() == "player_connect_full" then damagedone, killed = 0, 0 end end
+if e:GetName() == "player_connect_full" then if PlayerIndexByUserID(e:GetInt("userid")) == LocalPlayerIndex() then damagedone, killed = 0, 0 end end end
 function DrawsTKsDMG() if not TeamDamageShow:GetValue() or GetLocalPlayer() == nil then return end local X, Y = draw_GetScreenSize() draw_Color(255,255,255,255) draw_SetFont(Tf13) draw_TextShadow(5, Y/2-40, "Damage Done: ".. damagedone) draw_TextShadow(5, Y/2-30, "Teammates Killed: ".. killed) end 
 cb_Register("Draw", DrawsTKsDMG) cb_Register("FireGameEvent", KillsAndDamage)
 
@@ -346,4 +337,4 @@ function showimpacts() if BulletImpacts_combo:GetValue() == 0 or GetLocalPlayer(
 cb_Register("Draw", showimpacts) cb_Register("FireGameEvent", bulletimpact)
 
 
-c_AllowListener("round_freeze_end") c_AllowListener("round_end") c_AllowListener("round_prestart") c_AllowListener("round_start") c_AllowListener("bomb_beginplant") c_AllowListener("bomb_abortplant") c_AllowListener("bomb_planted") c_AllowListener("bomb_defused") c_AllowListener("bomb_begindefuse") c_AllowListener("bomb_abortdefuse") c_AllowListener("round_officially_ended") c_AllowListener("player_spawn") c_AllowListener("player_hurt") c_AllowListener("player_death") c_AllowListener("player_connect_full") c_AllowListener("smokegrenade_detonate") c_AllowListener("molotov_detonate") c_AllowListener("inferno_startburn") c_AllowListener("inferno_expire") c_AllowListener("inferno_extinguish") c_AllowListener("grenade_thrown") c_AllowListener("bullet_impact")
+c_AllowListener("round_freeze_end") c_AllowListener("round_end") c_AllowListener("round_prestart") c_AllowListener("round_start") c_AllowListener("bomb_beginplant") c_AllowListener("bomb_abortplant") c_AllowListener("bomb_planted") c_AllowListener("bomb_defused") c_AllowListener('bomb_exploded') c_AllowListener("bomb_begindefuse") c_AllowListener("bomb_abortdefuse") c_AllowListener("round_officially_ended") c_AllowListener("player_spawn") c_AllowListener("player_hurt") c_AllowListener("player_death") c_AllowListener("player_connect_full") c_AllowListener("smokegrenade_detonate") c_AllowListener("molotov_detonate") c_AllowListener("inferno_startburn") c_AllowListener("inferno_expire") c_AllowListener("inferno_extinguish") c_AllowListener("grenade_thrown") c_AllowListener("bullet_impact")
