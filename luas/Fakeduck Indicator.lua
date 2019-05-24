@@ -1,3 +1,5 @@
+local g_tickcount = globals.TickCount
+
 local fake_duck_indicator = gui.Checkbox(gui.Reference('VISUALS', 'ENEMIES', 'Options'), 'esp_enemy_fakeduck_ind', 'Is Fakeducking', false)
 local fake_duck_indicator_color = gui.ColorEntry('clr_esp_enemy_fakeduck_ind', 'Fake duck', 255, 255, 0, 255)
 
