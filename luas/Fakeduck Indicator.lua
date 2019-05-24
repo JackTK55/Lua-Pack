@@ -30,7 +30,7 @@ function fakeduck(b)
 
 	if is_fakeducking(b:GetEntity()) then
 		b:Color(fake_duck_indicator_color:GetValue())
-		b:AddTextBottom('Fake Ducking')
+		b:AddTextBottom('FD')
 	end
 end
 
