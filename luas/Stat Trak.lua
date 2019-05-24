@@ -14,29 +14,28 @@ end
 local bad_weapons = {'inferno', 'hegrenade', 'smokegrenade', 'flashbang', 'decoy', 'knife', 'knife_t', 'taser'}
 
 function StatTrak(e) 
-	if not stat_trak:GetValue() or not gui_GetValue("skin_active") then 
-		return 
-	end 
-
-	if e:GetName() == "player_death" and entities_GetByIndex(PlayerIndexByUserID(e:GetInt("userid"))):GetTeamNumber() ~= GetLocalPlayer():GetTeamNumber() and
-	PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() then 
-
-		if not table_contains(bad_weapons, e:GetString("weapon")) then 	
-			enabled = string_format("skin_%s_enable", e:GetString("weapon"))
-			wep = string_format("skin_%s_stattrak", e:GetString("weapon"))
-			
-			if gui_GetValue(enabled) then
-				if tonumber(gui_GetValue(wep)) > 0 then 
-					gui_SetValue(wep, math_floor(gui_GetValue(wep)) + 1) 
-				end 
-			end
-		end 
+	if not stat_trak:GetValue() or not gui_GetValue("skin_active") then
+		return
 	end
- 
-	if e:GetName() == "round_prestart" then 
-		client_exec("cl_fullupdate", true) 
-	end 
-end 
+
+	if e:GetName() == "player_death" and entities_GetByIndex(PlayerIndexByUserID(e:GetInt("userid"))):GetTeamNumber() ~= GetLocalPlayer():GetTeamNumber() and 
+	   PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() then
+
+		if not table_contains(bad_weapons, e:GetString("weapon")) then
+			local skin_enabled = gui_GetValue(string_format("skin_%s_enable", e:GetString("weapon")))
+			local skin_stattrak = string_format("skin_%s_stattrak", e:GetString("weapon"))
+			local stattrak_val = tonumber(gui_GetValue(skin_stattrak))
+
+			if skin_enabled and stattrak_val > 0 then
+				gui_SetValue(skin_stattrak, math_floor(stattrak_val) + 1)
+			end
+		end
+	end
+
+	if e:GetName() == "round_prestart" then
+		client_exec("cl_fullupdate", true)
+	end
+end
 
 callbacks.Register("FireGameEvent", StatTrak)
 client.AllowListener('round_prestart')
