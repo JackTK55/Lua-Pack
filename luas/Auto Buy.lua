@@ -15,6 +15,7 @@ local MNade = gui.Checkbox(AB_M, "AB_MNade", "Molotov", false)
 local SNade = gui.Checkbox(AB_M, "AB_SNade", "Smoke", false)
 local FNade = gui.Checkbox(AB_M, "AB_FNade", "Flashbang", false)
 local Zeus = gui.Checkbox(AB_M, "AB_Zeus", "Zeus", false)
+local AB_buyAbove = gui.Slider(AB_GB, 'AB_buyAboveAmount', 'Buy if $ is Above (value*1000)', 3.7, 0, 16)
 
 callbacks.Register('Draw', 'autobuy show menu', function()
 	if AB_Show:GetValue() then
@@ -24,51 +25,19 @@ callbacks.Register('Draw', 'autobuy show menu', function()
 	end
 end)
 
+local primary_weapon = {'', 'buy "ak47"; ', 'buy "ssg08"; ', 'buy "sg556"; ', 'buy "awp"; ', 'buy "scar20"; '}
+local secondary_weapon = {'', 'buy "elite"; ', 'buy "p250"; ', 'buy "tec9"; ', 'buy "deagle"; '}
+
 function auto_buy(e)
-	if not AB_E:GetValue() or e:GetName() ~= 'player_spawn' or PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() then
+	if not AB_E:GetValue() or e:GetName() == nil or e:GetName() ~= 'player_spawn' or GetLocalPlayer() == nil or PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() then
 		return
 	end
 
-	money = GetLocalPlayer():GetProp('m_iAccount') 
-	if money >= 3000 or money < 1 then 
-		PWb = true 
-	end
+	local money = GetLocalPlayer():GetProp('m_iAccount')
+	local buy_items = table_concat({primary_weapon[PrimaryWeapons:GetValue()] or '', secondary_weapon[SecondaryWeapons:GetValue()] or '', Kev:GetValue() and 'buy "vest"; ' or '', Kev_Hel:GetValue() and 'buy "vesthelm"; ' or '', Defuser:GetValue() and 'buy "defuser"; ' or '', GNade:GetValue() and 'buy "hegrenade"; ' or '', MNade:GetValue() and 'buy "molotov"; buy "incgrenade"; ' or '', SNade:GetValue() and 'buy "smokegrenade"; ' or '', FNade:GetValue() and 'buy "flashbang"; ' or '', Zeus:GetValue() and 'buy "taser"; ' or ''}, '')
 
-	if (SecondaryWeapons:GetValue() == 0) then 
-		SecondaryWeapon = ""
-	elseif (SecondaryWeapons:GetValue() == 1) then 
-		SecondaryWeapon = 'buy "elite"; '
-	elseif (SecondaryWeapons:GetValue() == 2) then 
-		SecondaryWeapon = 'buy "p250"; '
-	elseif (SecondaryWeapons:GetValue() == 3) then 
-		SecondaryWeapon = 'buy "tec9"; '
-	elseif (SecondaryWeapons:GetValue() == 4) then 
-		SecondaryWeapon = 'buy "deagle"; ' 
-	end
-
-	if PWb then 
-		if (PrimaryWeapons:GetValue() == 0) then 
-			PrimaryWeapon = ""
-			
-		elseif (PrimaryWeapons:GetValue() == 1) then 
-			PrimaryWeapon = 'buy "ak47"; '
-			
-		elseif (PrimaryWeapons:GetValue() == 2) then 
-			PrimaryWeapon = 'buy "ssg08"; '
-			
-		elseif (PrimaryWeapons:GetValue() == 3) then 
-			PrimaryWeapon = 'buy "sg556"; '
-			
-		elseif (PrimaryWeapons:GetValue() == 4) then 
-			PrimaryWeapon = 'buy "awp"; '
-			
-		elseif (PrimaryWeapons:GetValue() == 5) then 
-			PrimaryWeapon = 'buy "scar20"; ' 
-		end 
-		
-		local buy_items = table_concat({SecondaryWeapon or '', PrimaryWeapon or '', Kev:GetValue() and 'buy "vest"; ' or '', Kev_Hel:GetValue() and 'buy "vesthelm"; ' or '', Defuser:GetValue() and 'buy "defuser"; ' or '', GNade:GetValue() and 'buy "hegrenade"; ' or '', MNade:GetValue() and 'buy "molotov"; buy "incgrenade"; ' or '', SNade:GetValue() and 'buy "smokegrenade"; ' or '', FNade:GetValue() and 'buy "flashbang"; ' or '', Zeus:GetValue() and 'buy "taser"; ' or ''}, '')
-		PWb = false 
-		client_exec(buy_items, true) 
+	if money >= AB_buyAbove:GetValue()*1000 or money < 1 then
+		client_exec(buy_items, true)
 	end
 end
 
