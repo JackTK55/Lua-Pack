@@ -65,15 +65,7 @@ function bombEvents(e)
 		drawDefuse = false
 	end
 
-	if e:GetName() == "bomb_defused" then
-		drawBombPlanted, drawDefuse = false, false
-	end
-
-	if e:GetName() == "round_officially_ended" then
-		drawBombPlanted, drawDefuse, drawPlant = false, false, false
-	end
-
-	if e:GetName() == "round_prestart" then
+	if e:GetName() == "bomb_defused" or e:GetName() == "round_officially_ended" or e:GetName() == "round_prestart" then
 		drawBombPlanted, drawDefuse, drawPlant = false, false, false
 	end
 end
