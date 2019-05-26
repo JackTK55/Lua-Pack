@@ -152,7 +152,7 @@ cb_Register("Draw", DrawTimers) cb_Register("DrawESP", GFTimers) cb_Register("Fi
 -------------------- Auto Buy
 local primary_weapon, secondary_weapon = {'', 'buy "ak47"; ', 'buy "ssg08"; ', 'buy "sg556"; ', 'buy "awp"; ', 'buy "scar20"; '}, {'', 'buy "elite"; ', 'buy "p250"; ', 'buy "tec9"; ', 'buy "deagle"; '}
 function auto_buy(e)
-if not AB_E:GetValue() or e:GetName() == nil or e:GetName() ~= 'player_spawn' or GetLocalPlayer() == nil or PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() then return end local money = GetLocalPlayer():GetProp('m_iAccount')
+if not AB_E:GetValue() or e:GetName() == nil or e:GetName() ~= 'player_spawn' or GetLocalPlayer() == nil then return end if PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() then return end local money = GetLocalPlayer():GetProp('m_iAccount')
 local buy_items = table_concat({primary_weapon[PrimaryWeapons:GetValue() + 1] or '', secondary_weapon[SecondaryWeapons:GetValue() + 1] or '', Kev:GetValue() and 'buy "vest"; ' or '', Kev_Hel:GetValue() and 'buy "vesthelm"; ' or '', Defuser:GetValue() and 'buy "defuser"; ' or '', GNade:GetValue() and 'buy "hegrenade"; ' or '', MNade:GetValue() and 'buy "molotov"; buy "incgrenade"; ' or '', SNade:GetValue() and 'buy "smokegrenade"; ' or '', FNade:GetValue() and 'buy "flashbang"; ' or '', Zeus:GetValue() and 'buy "taser"; ' or ''}, '')
 if money >= AB_buyAbove:GetValue()*1000 or money < 1 then client_exec(buy_items, true) end end
 callbacks.Register("FireGameEvent", auto_buy)
