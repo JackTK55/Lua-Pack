@@ -120,7 +120,7 @@ local function is_enemy(index) if entities_GetByIndex(index) == nil then return 
 local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.4.5"
+local currentVersion = "1.4.5.1"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 
 function autoupdater()
