@@ -1,3 +1,11 @@
+--[[
+recode recoil crosshair: find unknowncheats link
+
+recode zeus bot: 
+
+idk what else	
+	--]]
+
 -- stuff
 local draw_Line, draw_TextShadow, draw_Color, draw_Text, g_tickinterval, string_format, http_Get, string_gsub, file_Open, math_random, math_exp, math_rad, math_max, math_abs, math_tan, math_sin, math_cos, math_fmod, draw_GetTextSize, draw_FilledRect, draw_RoundedRect, draw_RoundedRectFill, draw_CreateFont, draw_SetFont, client_WorldToScreen, draw_GetScreenSize, client_GetConVar, client_SetConVar, client_exec, PlayerNameByUserID, PlayerIndexByUserID, entities_GetByIndex, GetLocalPlayer, gui_SetValue, gui_GetValue, LocalPlayerIndex, c_AllowListener, cb_Register, g_tickcount, g_realtime, g_curtime, g_absoluteframetime, g_maxclients, math_floor, math_ceil, math_sqrt, GetPlayerResources, entities_FindByClass, IsButtonPressed, client_ChatSay, table_insert, table_remove, vector_Distance, draw_OutlinedCircle, table_concat = draw.Line, draw.TextShadow, draw.Color, draw.Text, globals.TickInterval, string.format, http.Get, string.gsub, file.Open, math.random, math.exp, math.rad, math.max, math.abs, math.tan, math.sin, math.cos, math.fmod, draw.GetTextSize, draw.FilledRect, draw.RoundedRect, draw.RoundedRectFill, draw.CreateFont, draw.SetFont, client.WorldToScreen, draw.GetScreenSize, client.GetConVar, client.SetConVar, client.Command, client.GetPlayerNameByUserID, client.GetPlayerIndexByUserID, entities.GetByIndex, entities.GetLocalPlayer, gui.SetValue, gui.GetValue, client.GetLocalPlayerIndex, client.AllowListener, callbacks.Register, globals.TickCount, globals.RealTime, globals.CurTime, globals.AbsoluteFrameTime, globals.MaxClients, math.floor, math.ceil, math.sqrt, entities.GetPlayerResources, entities.FindByClass, input.IsButtonPressed, client.ChatSay, table.insert, table.remove, vector.Distance, draw.OutlinedCircle, table.concat
 -------------- References
@@ -49,8 +57,14 @@ local vfov = gui.Slider(VMStuff, "VM_fov", "Viewmodel FOV", fO, 0, 120)
 -------------- Sniper Crosshair
 local ComboCrosshair = gui.Combobox(G_VM, "vis_sniper_crosshair", "Sniper Crosshair", "Off", "Engine Crosshair", 'Engine Crosshair(+scoped)', "Aimware Crosshair", "Draw Crosshair")
 -------------- Bullet impacts
-local BulletImpacts_combo = gui.Combobox(G_VM, "vis_bullet_impact", "Bullet Impact", "Off", "Everyone", "Enemy Only", "Team Only", "Local Only")
-local BulletImpacts_color = gui.ColorEntry('clr_vis_bullet_impact', 'Bullet Impacts [LUA]', 255,255,255,255)
+local BulletImpacts_M = gui.Multibox(gui.Reference('VISUALS', 'MISC', 'Assistance'), 'Bullet Impact')
+local BulletImpacts_Local = gui.Checkbox(BulletImpacts_M, "vis_bullet_impact_local", "Local", false)
+local BulletImpacts_Enemy = gui.Checkbox(BulletImpacts_M, "vis_bullet_impact_enemy", "Enemy", false)
+local BulletImpacts_Team = gui.Checkbox(BulletImpacts_M, "vis_bullet_impact_team", "Team", false)
+local BulletImpacts_color_Local = gui.ColorEntry('clr_vis_bullet_impact_local', 'Bullet Impacts Local', 255,255,255,255)
+local BulletImpacts_color_Enemy = gui.ColorEntry('clr_vis_bullet_impact_enemy', 'Bullet Impacts Enemy', 255,140,140,255)
+local BulletImpacts_color_Team = gui.ColorEntry('clr_vis_bullet_impact_team', 'Bullet Impacts Team', 140,140,255,255)
+local BulletImpacts_Time = gui.Slider(gui.Reference('VISUALS', 'MISC', 'Assistance'), 'vis_bullet_impact_time', 'Bullet Impact Time', 4, 0, 10)
 -------------- Scoped FOV Fix
 local s_fovfix = gui.Checkbox(G_VM, "vis_fixfov", "Fix Scoped FOV", false)
 local fov_value, vm_fov_value = gui_GetValue("vis_view_fov"), gui_GetValue("vis_view_model_fov")
@@ -93,6 +107,7 @@ local zeusbot = gui.Checkbox(gui.Reference("LEGIT", "Extra"), "lbot_zeusbot_enab
 local trige, trigm, trigaf, trighc = gui_GetValue("lbot_trg_enable"), gui_GetValue("lbot_trg_mode"), gui_GetValue("lbot_trg_autofire"), gui_GetValue("lbot_trg_hitchance")
 -------------- Recoil Crosshair
 local RecoilCrosshair = gui.Checkbox(G_VM, "vis_recoilcrosshair", "Recoil Crosshair", false)
+local RecoilCrosshair_color = gui.ColorEntry("clr_vis_recoilcrosshair", "Recoil Crosshair", 255,255,255,255)
 -------------- Disable Fake angle ghost while in air/freezetime
 local fakeangleghost = gui.Combobox(gui.Reference("VISUALS", "MISC", "Yourself Extra"), "vis_disable_fakeangleghost", "Disable Fake Angle Ghost", "Off", "In Air", "On Freeze Period", "Both")
 -------------- Name Steal fix
@@ -101,18 +116,18 @@ local StealNameFix = gui.Checkbox(gui.Reference("MISC", "ENHANCEMENT", "Namestea
 local ghost_view = gui.Checkbox(gui.Reference("VISUALS", "MISC", "Yourself Extra"), 'vis_ghost', 'Ghost View', false)
 -------------- Fake ducking indicator
 local fake_duck_indicator = gui.Checkbox(VEO_Ref, 'esp_enemy_fakeduck', 'Is Fakeducking', false)
-local fake_duck_indicator_color = gui.ColorEntry('clr_esp_enemy_fakeduck', 'Fake duck [LUA]', 100, 200, 100, 255)
+local fake_duck_indicator_color = gui.ColorEntry('clr_esp_enemy_fakeduck', 'Fake duck', 100, 200, 100, 255)
 -------------- Disable Fog
 local disable_fog = gui.Checkbox(gui.Reference('VISUALS', 'MISC', 'World'), 'vis_nofog', 'No Fog', false)
 -------------- Disable Shadows
 local disable_shadows = gui.Checkbox(gui.Reference('VISUALS', 'MISC', 'World'), 'vis_noshadows', 'No Shadows', false)
 -------------------------------------------------------------------------------------------------------------------------------------------------------
 
-------------------------- 
+-------------------------
 local frame_rate = 0.0
 local function get_abs_fps() frame_rate = 0.9 * frame_rate + (1.0 - 0.9) * g_absoluteframetime() return math_floor((1.0 / frame_rate) + 0.5) end
 local function lerp_pos(x1, y1, z1, x2, y2, z2, percentage) local x = (x2 - x1) * percentage + x1 local y = (y2 - y1) * percentage + y1 local z = (z2 - z1) * percentage + z1 return x, y, z end
-local function distance3D(x1, y1, z1, x2, y2, z2) return math_floor(vector_Distance(x1, y1, z1, x2, y2, z2)) end
+local function distance3D(a, b) distance = vector_Distance(a, b) return {['normal']=distance, ['u']=string_format('%.0fu', distance), ['ft']=string_format('%.0fft', distance*0.083333), ['m']=string_format('%.1fm', distance/39.370)} end
 cb_Register("Draw", "Shows Menus", function() local menu_opened = gui.Reference("MENU"):IsActive() if AB_Show:GetValue() then AB_W:SetActive(menu_opened) else AB_W:SetActive(0) end if ViewModelShown:GetValue() then VM_W:SetActive(menu_opened) else VM_W:SetActive(0) end if CC_Show:GetValue() then CC_W:SetActive(menu_opened) else CC_W:SetActive(0) end end)
 local function is_enemy(index) if entities_GetByIndex(index) == nil then return end return entities_GetByIndex(index):GetTeamNumber() ~= GetLocalPlayer():GetTeamNumber() end
 
@@ -120,7 +135,7 @@ local function is_enemy(index) if entities_GetByIndex(index) == nil then return 
 local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.4.5.1"
+local currentVersion = "1.4.5.3"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 
 function autoupdater()
@@ -155,22 +170,22 @@ function auto_buy(e)
 if not AB_E:GetValue() or e:GetName() == nil or e:GetName() ~= 'player_spawn' or GetLocalPlayer() == nil then return end if PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() then return end local money = GetLocalPlayer():GetProp('m_iAccount')
 local buy_items = table_concat({primary_weapon[PrimaryWeapons:GetValue() + 1] or '', secondary_weapon[SecondaryWeapons:GetValue() + 1] or '', Kev:GetValue() and 'buy "vest"; ' or '', Kev_Hel:GetValue() and 'buy "vesthelm"; ' or '', Defuser:GetValue() and 'buy "defuser"; ' or '', GNade:GetValue() and 'buy "hegrenade"; ' or '', MNade:GetValue() and 'buy "molotov"; buy "incgrenade"; ' or '', SNade:GetValue() and 'buy "smokegrenade"; ' or '', FNade:GetValue() and 'buy "flashbang"; ' or '', Zeus:GetValue() and 'buy "taser"; ' or ''}, '')
 if money >= AB_buyAbove:GetValue()*1000 or money < 1 then client_exec(buy_items, true) end end
-callbacks.Register("FireGameEvent", auto_buy)
+cb_Register("FireGameEvent", auto_buy)
 
 -------------------- View Model Extender | Spectator list fix / made by anue | Disable Post Processing | full bright | Engine Radar | Disable Fake angle ghost while in air/freeze time | Working Stattrak | ghost view | fake duck indicator | disable fog | disable shadows
 function VM_E() if VM_e:GetValue() then client_SetConVar("viewmodel_offset_x", xS:GetValue(), true) client_SetConVar("viewmodel_offset_y", yS:GetValue(), true) client_SetConVar("viewmodel_offset_z", zS:GetValue(), true) client_SetConVar("viewmodel_fov", vfov:GetValue(), true) else client_SetConVar("viewmodel_offset_x", xO, true) client_SetConVar("viewmodel_offset_y", yO, true) client_SetConVar("viewmodel_offset_z", zO, true) client_SetConVar("viewmodel_fov", fO, true) end end cb_Register("Draw", VM_E)
-function speclistfix(E) if not gui_GetValue("msc_showspec") or E:GetName() ~= "round_start" then return end client_exec("cl_fullupdate", true) end cb_Register("FireGameEvent", speclistfix)
-function Dis_PP() if DPP:GetValue() then client_SetConVar("mat_postprocess_enable", 0, true) else client_SetConVar("mat_postprocess_enable", 1, true) end end cb_Register("Draw", Dis_PP)
-function full_bright() if fBright:GetValue() then client_SetConVar("mat_fullbright", 1, true) else client_SetConVar("mat_fullbright", 0, true) end end cb_Register("Draw", full_bright)
-function engineradar() for index, player in pairs(entities_FindByClass("CCSPlayer")) do player:SetProp("m_bSpotted", ERadar:GetValue()) end end cb_Register("Draw", engineradar)
+function speclistfix(E) if not gui_GetValue("msc_showspec") or E:GetName() ~= "round_prestart" then return end client_exec("cl_fullupdate", true) end cb_Register("FireGameEvent", speclistfix)
+function Dis_PP() client_SetConVar("mat_postprocess_enable", DPP:GetValue() and 0 or 1, true) end cb_Register("Draw", Dis_PP)
+function full_bright() client_SetConVar("mat_fullbright", fBright:GetValue() and 1 or 0, true) end cb_Register("Draw", full_bright)
+function engineradar() if ERadar:GetValue() then ER_val = 1 else ER_val = 0 end for i, player in pairs(entities_FindByClass("CCSPlayer")) do player:SetProp("m_bSpotted", ER_val) end end cb_Register("Draw", engineradar)
 function fakeangleghostval() if fakeangleghost:GetValue() == 0 then fakeghost = "Off" elseif fakeangleghost:GetValue() == 1 then fakeghost = "in_air" elseif fakeangleghost:GetValue() == 2 then fakeghost = "in_freeze" elseif fakeangleghost:GetValue() == 3 then fakeghost = "in_freeze_and_air" end end cb_Register("Draw", fakeangleghostval) local FakeAAGhost2_round_end = false
-function Disable_FakeAAGhost(UserCMD) if gui.GetValue("vis_fakeghost") ~= 0 then fakeghostval = gui.GetValue("vis_fakeghost") end if fakeghost == "in_freeze" or fakeghost == "Off" then return end if GetLocalPlayer():GetProp("m_fFlags") == 256 then gui.SetValue("vis_fakeghost", 0) else if not FakeAAGhost2_round_end then gui.SetValue("vis_fakeghost", fakeghostval) end end end cb_Register("CreateMove", Disable_FakeAAGhost)
-function Disable_FakeAAGhost2(event) if fakeghost == "in_air" or fakeghost == "Off" then return end if event:GetName() == "round_end" then gui.SetValue("vis_fakeghost", 0) FakeAAGhost2_round_end = true end if event:GetName() == "round_freeze_end" then gui.SetValue("vis_fakeghost", fakeghostval) FakeAAGhost2_round_end = false end end cb_Register("FireGameEvent", Disable_FakeAAGhost2)
+function Disable_FakeAAGhost(UserCMD) if gui_GetValue("vis_fakeghost") ~= 0 then fakeghostval = gui_GetValue("vis_fakeghost") end if fakeghost == "in_freeze" or fakeghost == "Off" then return end if GetLocalPlayer():GetProp("m_fFlags") == 256 then gui_SetValue("vis_fakeghost", 0) else if not FakeAAGhost2_round_end then gui_SetValue("vis_fakeghost", fakeghostval) end end end cb_Register("CreateMove", Disable_FakeAAGhost)
+function Disable_FakeAAGhost2(e) if fakeghost == "in_air" or fakeghost == "Off" then return end if e:GetName() == "round_end" then gui_SetValue("vis_fakeghost", 0) FakeAAGhost2_round_end = true end if e:GetName() == "round_freeze_end" then gui_SetValue("vis_fakeghost", fakeghostval) FakeAAGhost2_round_end = false end end cb_Register("FireGameEvent", Disable_FakeAAGhost2)
 function StatTrak(e) if not Working_Stattrak:GetValue() or not gui_GetValue("skin_active") then return end if e:GetName() == "player_death" and PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() and is_enemy(PlayerIndexByUserID(e:GetInt("userid"))) then if e:GetString("weapon") ~= "inferno" and e:GetString("weapon") ~= "hegrenade" and e:GetString("weapon") ~= "smokegrenade" and e:GetString("weapon") ~= "flashbang" and e:GetString("weapon") ~= "decoy" and e:GetString("weapon") ~= "knife" and e:GetString("weapon") ~= "knife_t" then wep = string_format("skin_%s_stattrak", e:GetString("weapon")) if tonumber(gui_GetValue(wep)) > 0 then gui_SetValue(wep, math_floor(gui_GetValue(wep)) + 1) end end end if e:GetName() == "round_prestart" then client_exec("cl_fullupdate", true) end end cb_Register("FireGameEvent", StatTrak)
 function ghostview() if GetLocalPlayer() == nil then return end if ghost_view:GetValue() then ghost = 1 else ghost = 0 end if GetLocalPlayer():GetProp('m_bIsPlayerGhost') ~= ghost then GetLocalPlayer():SetProp('m_bIsPlayerGhost', ghost) end end cb_Register("Draw", 'ghost view', ghostview)
-local function toBits(num) local t = {} while num > 0 do rest = math.fmod(num,2) t[#t+1] = rest num = (num-rest) / 2 end return t end
+local function toBits(num) local t = {} while num > 0 do rest = math_fmod(num,2) t[#t+1] = rest num = (num-rest) / 2 end return t end
 function fakeduck(b) if not fake_duck_indicator:GetValue() or b:GetEntity() == nil or not b:GetEntity():IsPlayer() or not b:GetEntity():IsAlive() then return end local entity, index, storedTick, crouchedTicks = b:GetEntity(), b:GetEntity():GetIndex(), 0, {} local duckamount = entity:GetProp('m_flDuckAmount') local duckspeed = entity:GetProp('m_flDuckSpeed') if crouchedTicks[index] == nil then crouchedTicks[index] = 0 end if duckspeed == 8 and duckamount <= 0.9 and duckamount > 0.01 and toBits(entity:GetProp('m_fFlags'))[1] == 1 then if storedTick ~= g_tickcount() then crouchedTicks[index] = crouchedTicks[index] + 1 storedTick = g_tickcount() end if crouchedTicks[index] >= 5 then b:Color(fake_duck_indicator_color:GetValue()) b:AddTextBottom('FD') end else crouchedTicks[index] = 0 end end cb_Register('DrawESP', fakeduck)
-function dis_fog() if entities_FindByClass('CFogController')[1] == nil then return end local fogcontrol = entities_FindByClass('CFogController')[1] if disable_fog:GetValue() then if fogcontrol:GetProp('m_fog.enable') ~= 0 then fogcontrol:SetProp('m_fog.enable', 0) end else if fogcontrol:GetProp('m_fog.enable') ~= 1 then fogcontrol:SetProp('m_fog.enable', 1) end end end cb_Register('Draw', dis_fog)
+function dis_fog() local disableFog = disable_fog:GetValue() and 0 or 1 for i, fog in pairs(entities_FindByClass('CFogController')) do if fog:GetProp('m_fog.enable') ~= disableFog then fog:SetProp('m_fog.enable', disableFog) end end end  cb_Register('Draw', dis_fog)
 function dis_shadows() if disable_shadows:GetValue() then if client_GetConVar('cl_csm_static_prop_shadows') ~= 0 or client_GetConVar('cl_csm_shadows') ~= 0 or client_GetConVar('cl_csm_world_shadows') ~= 0 or client_GetConVar('cl_foot_contact_shadows') ~= 0 or client_GetConVar('cl_csm_viewmodel_shadows') ~= 0 or client_GetConVar('cl_csm_rope_shadows') ~= 0 or client_GetConVar('cl_csm_sprite_shadows') ~= 0 then client_SetConVar('cl_csm_static_prop_shadows', 0, true) client_SetConVar('cl_csm_shadows', 0, true) client_SetConVar('cl_csm_world_shadows', 0, true) client_SetConVar('cl_foot_contact_shadows', 0, true) client_SetConVar('cl_csm_viewmodel_shadows', 0, true) client_SetConVar('cl_csm_rope_shadows', 0, true) client_SetConVar('cl_csm_sprite_shadows', 0, true) end else if client_GetConVar('cl_csm_static_prop_shadows') ~= 1 or client_GetConVar('cl_csm_shadows') ~= 1 or client_GetConVar('cl_csm_world_shadows') ~= 1 or client_GetConVar('cl_foot_contact_shadows') ~= 1 or client_GetConVar('cl_csm_viewmodel_shadows') ~= 1 or client_GetConVar('cl_csm_rope_shadows') ~= 1 or client_GetConVar('cl_csm_sprite_shadows') ~= 1 then client_SetConVar('cl_csm_static_prop_shadows', 1, true) client_SetConVar('cl_csm_shadows', 1, true) client_SetConVar('cl_csm_world_shadows', 1, true) client_SetConVar('cl_foot_contact_shadows', 1, true) client_SetConVar('cl_csm_viewmodel_shadows', 1, true) client_SetConVar('cl_csm_rope_shadows', 1, true) client_SetConVar('cl_csm_sprite_shadows', 1, true) end end end cb_Register('Draw', dis_shadows)
 
 -------------------- Scoped Fov Fix
@@ -252,32 +267,30 @@ cb_Register("Draw", on_aspect_ratio_changed)
 -------------------- Esp on Dead
 function ESP_Always_OnDead() 
 if not espdead:GetValue() or GetLocalPlayer() == nil then return end
-if GetLocalPlayer():GetHealth() <= 0 then gui_SetValue("esp_enemy_box", 3) gui_SetValue("esp_enemy_weapon", 1) gui_SetValue("esp_enemy_health", 2) gui_SetValue("esp_enemy_glow", 2) gui_SetValue("esp_enemy_skeleton", true) gui_SetValue("esp_enemy_name", true)
+if not GetLocalPlayer():IsAlive() then gui_SetValue("esp_enemy_box", 3) gui_SetValue("esp_enemy_weapon", 1) gui_SetValue("esp_enemy_health", 2) gui_SetValue("esp_enemy_glow", 2) gui_SetValue("esp_enemy_skeleton", true) gui_SetValue("esp_enemy_name", true)
 else gui_SetValue("esp_enemy_box", 0) gui_SetValue("esp_enemy_weapon", 0) gui_SetValue("esp_enemy_health", 0) gui_SetValue("esp_enemy_glow", 0) gui_SetValue("esp_enemy_skeleton", false) gui_SetValue("esp_enemy_name", false) end end
 cb_Register("Draw", ESP_Always_OnDead)
 
 -------------------- Enemy & Team Tracers
 function Tracers()
-if not tracersEnemy:GetValue() and not tracersTeam:GetValue() then return end
-if GetLocalPlayer() == nil then return end local sX, sY = draw_GetScreenSize() local lpTeamNum = GetLocalPlayer():GetTeamNumber() local players = entities_FindByClass("CCSPlayer") for i = 1, #players do local player = players[i] local pX, pY, pZ = client_WorldToScreen(player:GetAbsOrigin()) playerteam = player:GetTeamNumber()
-if playerteam == lpTeamNum then r,g,b,z = 0,0,255,255 else r,g,b,a = 255,0,0,255 end 
-if tracersEnemy:GetValue() then if player:GetTeamNumber() ~= lpTeamNum and player:IsAlive() and pX ~= nil and pY ~= nil then draw_Color(r,g,b,a) draw_Line(sX/2, sY, pX, pY) end end
-if tracersTeam:GetValue() then if player:GetTeamNumber() == lpTeamNum and player:IsAlive() and pX ~= nil and pY ~= nil and player:GetIndex() ~= LocalPlayerIndex() then draw_Color(r,g,b,a) draw_Line(sX/2, sY, pX, pY) end end end end
+if GetLocalPlayer() == nil or (not tracersEnemy:GetValue() and not tracersTeam:GetValue()) then return end
+local sX, sY = draw_GetScreenSize() local players = entities_FindByClass("CCSPlayer") for i = 1, #players do local player = players[i] local pX, pY, pZ = client_WorldToScreen(player:GetAbsOrigin()) local playerindex = player:GetIndex()
+if tracersEnemy:GetValue() then if is_enemy(playerindex) and player:IsAlive() and pX ~= nil and pY ~= nil then draw_Color(255,0,0,255) draw_Line(sX/2, sY, pX, pY) end end
+if tracersTeam:GetValue() then if not is_enemy(playerindex) and player:IsAlive() and pX ~= nil and pY ~= nil and playerindex ~= LocalPlayerIndex() then draw_Color(0,0,255,255) draw_Line(sX/2, sY, pX, pY) end end end end
 cb_Register("Draw", Tracers)
 
 -------------------- Enemy & Team & Other Distance
 function Distance(builder)
-playerteam = builder:GetEntity():GetTeamNumber()
 if not enemy_distance:GetValue() and not team_distance:GetValue() and not other_distance:GetValue() then return end
-local ent = builder:GetEntity() local ppX, ppY, ppZ = ent:GetAbsOrigin() local lX, lY, lZ = GetLocalPlayer():GetAbsOrigin() local dist = math_floor(distance3D(ppX, ppY, ppZ, lX, lY, lZ)* 0.0833)
-if enemy_distance:GetValue() and ent:IsAlive() and ent:IsPlayer() and playerteam ~= GetLocalPlayer():GetTeamNumber() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end
-if team_distance:GetValue() and ent:IsAlive() and ent:IsPlayer() and playerteam == GetLocalPlayer():GetTeamNumber() and ent:GetIndex() ~= LocalPlayerIndex() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end
-if other_distance:GetValue() and not ent:IsPlayer() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist.. "ft") end end
+local ent = builder:GetEntity() local dist = distance3D({GetLocalPlayer():GetAbsOrigin()}, {ent:GetAbsOrigin()})['ft'] local playerindex = ent:GetIndex()
+if enemy_distance:GetValue() and ent:IsAlive() and ent:IsPlayer() and is_enemy(playerindex) then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist) end
+if team_distance:GetValue() and ent:IsAlive() and ent:IsPlayer() and not is_enemy(playerindex) and ent:GetIndex() ~= LocalPlayerIndex() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist) end
+if other_distance:GetValue() and not ent:IsPlayer() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist) end end
 cb_Register("DrawESP", "Distance ESP", Distance)
 
 -------------------- Knife on Left Hand
 function on_knife_righthand()
-if not K_O_L_H:GetValue() then return end if GetLocalPlayer() == nil or GetLocalPlayer():GetHealth() <= 0 then client_exec("cl_righthand 1", true) return end
+if not K_O_L_H:GetValue() then return end if GetLocalPlayer() == nil or not GetLocalPlayer():IsAlive() then client_exec("cl_righthand 1", true) return end
 local wep = GetLocalPlayer():GetPropEntity("m_hActiveWeapon") if wep == nil then return end local cwep = wep:GetClass()
 if cwep == "CKnife" then client_exec("cl_righthand 0", true) else client_exec("cl_righthand 1", true) end end
 cb_Register("Draw", on_knife_righthand) 
@@ -294,20 +307,20 @@ cb_Register("Draw", zeuslegit)
 -------------------- Spectator list
 function SpecList()
 if not SpectatorList:GetValue() or GetLocalPlayer() == nil then return end local specX, specY = draw_GetScreenSize() local inbetween = 5 local players = entities_FindByClass("CCSPlayer") for i = 1, #players do local player = players[i] local playername = player:GetName() local playerindex = player:GetIndex() local bot = GetPlayerResources():GetPropInt("m_iPing", playerindex) == 0
-if player:GetHealth() <= 0 and not bot and player:GetPropEntity("m_hObserverTarget") ~= nil and playername ~= "GOTV" and playername ~= GetLocalPlayer():GetName() then 
+if not player:IsAlive() and not bot and player:GetPropEntity("m_hObserverTarget") ~= nil and playername ~= "GOTV" and playername ~= GetLocalPlayer():GetName() then 
 local SpecTargetIndex = player:GetPropEntity("m_hObserverTarget"):GetIndex() 
-if GetLocalPlayer():GetHealth() > 0 then if SpecTargetIndex == LocalPlayerIndex() then draw_SetFont(Vf12) local tW, tH = draw_GetTextSize(playername) draw_Color(255,255,255,255) draw_TextShadow( specX - 5 - tW, inbetween, playername) inbetween = inbetween + tH + 5 end
-elseif GetLocalPlayer():GetHealth() <= 0 then if GetLocalPlayer():GetPropEntity("m_hObserverTarget") ~= nil then local imSpeccing = GetLocalPlayer():GetPropEntity("m_hObserverTarget"):GetIndex() 
+if GetLocalPlayer():IsAlive() then if SpecTargetIndex == LocalPlayerIndex() then draw_SetFont(Vf12) local tW, tH = draw_GetTextSize(playername) draw_Color(255,255,255,255) draw_TextShadow( specX - 5 - tW, inbetween, playername) inbetween = inbetween + tH + 5 end
+elseif not GetLocalPlayer():IsAlive() then if GetLocalPlayer():GetPropEntity("m_hObserverTarget") ~= nil then local imSpeccing = GetLocalPlayer():GetPropEntity("m_hObserverTarget"):GetIndex() 
 if SpecTargetIndex == imSpeccing then draw_SetFont(Vf12) local tW, tH = draw_GetTextSize(playername) draw_Color(255,255,255,255) draw_TextShadow(specX - 5 - tW, inbetween, playername) inbetween = inbetween + tH + 5 end end end end end end
 cb_Register("Draw", SpecList)
 
 -------------------- Recoil Crosshair
 function RCC()
-if not RecoilCrosshair:GetValue() or GetLocalPlayer() == nil or GetLocalPlayer():GetHealth() <= 0 then return end local screenX, screenY = draw_GetScreenSize() local x = screenX/2 local y = screenY/2
-local r, g, b, a = gui_GetValue("clr_esp_crosshair_recoil") local recoil_scale = client_GetConVar("weapon_recoil_scale") local fov = gui_GetValue("vis_view_fov") if fov == 0 then fov = 90 end local weapon = GetLocalPlayer():GetPropEntity("m_hActiveWeapon") if weapon == nil then return end local weapon_name = weapon:GetClass() 
+if not RecoilCrosshair:GetValue() or GetLocalPlayer() == nil or not GetLocalPlayer():IsAlive() then return end local screenX, screenY = draw_GetScreenSize() local x = screenX/2 local y = screenY/2
+local recoil_scale = client_GetConVar("weapon_recoil_scale") local fov = gui_GetValue("vis_view_fov") if fov == 0 then fov = 90 end local weapon = GetLocalPlayer():GetPropEntity("m_hActiveWeapon") if weapon == nil then return end local weapon_name = weapon:GetClass() 
 if weapon_name == "CWeaponAWP" or weapon_name == "CWeaponSSG08" or weapon:GetProp("m_flRecoilIndex") == 0 or gui_GetValue("rbot_active") and gui_GetValue("rbot_antirecoil") then return end local aim_punch_angle_pitch, aim_punch_angle_yaw = GetLocalPlayer():GetPropVector("localdata", "m_Local", "m_aimPunchAngle") 
 if -aim_punch_angle_pitch >= 0.07 and -aim_punch_angle_pitch >= 0.07 then if gui_GetValue("vis_norecoil") then x = x - (((screenX/fov)* aim_punch_angle_yaw)*1.2)*(recoil_scale*0.5) y = y + (((screenY/fov)* aim_punch_angle_pitch)*2)*(recoil_scale*0.5) else x = x - (((screenX/fov)* aim_punch_angle_yaw)*0.6)*(recoil_scale*0.5) y = y + ((screenY/fov)* aim_punch_angle_pitch)*(recoil_scale*0.5) end 
-draw_Color(r, g, b, a) draw_OutlinedCircle(x, y, 3) end end
+draw_Color(RecoilCrosshair_color:GetValue()) draw_OutlinedCircle(x, y, 3) end end
 cb_Register("Draw", RCC)
 
 -------------------- Name Steal fix
@@ -330,13 +343,11 @@ cb_Register("Draw", DrawsTKsDMG) cb_Register("FireGameEvent", KillsAndDamage)
 -------------------- ghetto Bullet impacts
 local bulletimpacts = {}
 function bulletimpact(e)
-if e:GetName() ~= "bullet_impact" then return end x = e:GetFloat("x") y = e:GetFloat("y") z = e:GetFloat("z") player_index = PlayerIndexByUserID(e:GetInt("userid"))
-if BulletImpacts_combo:GetValue() == 0 then return
-elseif BulletImpacts_combo:GetValue() == 1 then table_insert(bulletimpacts, {g_curtime(), x, y, z})
-elseif BulletImpacts_combo:GetValue() == 2 then if is_enemy(player_index) then table_insert(bulletimpacts, {g_curtime(), x, y, z}) end
-elseif BulletImpacts_combo:GetValue() == 3 then if not is_enemy(player_index) then table_insert(bulletimpacts, {g_curtime(), x, y, z}) end
-elseif BulletImpacts_combo:GetValue() == 4 then if player_index == LocalPlayerIndex() then table_insert(bulletimpacts, {g_curtime(), x, y, z}) end end end
-function showimpacts() if BulletImpacts_combo:GetValue() == 0 or GetLocalPlayer() == nil then return end local r, g, b, a = BulletImpacts_color:GetValue() for k, v in pairs(bulletimpacts) do if g_curtime() - v[1] > tonumber(client_GetConVar("sv_showimpacts_time")) then table_remove(bulletimpacts, k) else local X, Y = client_WorldToScreen(v[2], v[3], v[4]) if X ~= nil and Y ~= nil then draw_Color(r, g, b, a) draw_RoundedRect(X-3, Y-3, X+3, Y+3) end end end end
+if e:GetName() ~= "bullet_impact" or (not BulletImpacts_Local:GetValue() and not BulletImpacts_Enemy:GetValue() and not BulletImpacts_Team:GetValue()) then return end x = e:GetFloat("x") y = e:GetFloat("y") z = e:GetFloat("z") player_index = PlayerIndexByUserID(e:GetInt("userid"))
+if BulletImpacts_Local:GetValue() then if player_index == LocalPlayerIndex() then table_insert(bulletimpacts, {g_curtime(), x, y, z, BulletImpacts_color_Local:GetValue()}) end end
+if BulletImpacts_Enemy:GetValue() then if is_enemy(player_index) then table_insert(bulletimpacts, {g_curtime(), x, y, z, BulletImpacts_color_Enemy:GetValue()}) end end
+if BulletImpacts_Team:GetValue() then if not is_enemy(player_index) and player_index ~= LocalPlayerIndex() then table_insert(bulletimpacts, {g_curtime(), x, y, z, BulletImpacts_color_Team:GetValue()}) end end end
+function showimpacts() if GetLocalPlayer() == nil or (not BulletImpacts_Local:GetValue() and not BulletImpacts_Enemy:GetValue() and not BulletImpacts_Team:GetValue()) then return end for k, v in pairs(bulletimpacts) do if g_curtime() - v[1] > BulletImpacts_Time:GetValue() then table_remove(bulletimpacts, k) else local X, Y = client_WorldToScreen(v[2], v[3], v[4]) if X ~= nil and Y ~= nil then draw_Color(v[5], v[6], v[7], v[8]) draw_RoundedRect(X-3, Y-3, X+3, Y+3) end end end end
 cb_Register("Draw", showimpacts) cb_Register("FireGameEvent", bulletimpact)
 
 
