@@ -116,6 +116,8 @@ local storedTick, crouchedTicks = 0, {}
 local disable_fog = gui.Checkbox(gui.Reference('VISUALS', 'MISC', 'World'), 'vis_nofog', 'No Fog', false)
 -------------- Disable Shadows
 local disable_shadows = gui.Checkbox(gui.Reference('VISUALS', 'MISC', 'World'), 'vis_noshadows', 'No Shadows', false)
+-------------- Fix Bomb Planting
+local fixbombplant = gui.Checkbox(G_M1, 'msc_bombplant_fix', 'Fix Bomb Planting', false)
 -------------- Freelook [ BETA ] & [ Work in Progress ]
 --local freelook_key = gui.Keybox(gui.Reference('SETTINGS', 'Miscellaneous'), 'vis_freelook_key', 'Freelook', 0)
 -------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -132,7 +134,7 @@ local function is_enemy(index) if entities_GetByIndex(index) == nil then return 
 local scriptName = GetScriptName()
 local scriptFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/Lua_Pack.lua"
 local versionFile = "https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/version.txt"
-local currentVersion = "1.4.5.4"
+local currentVersion = "1.4.5.5"
 local updateAvailable, newVersionCheck, updateDownloaded = false, true, false
 
 function autoupdater()
@@ -169,7 +171,7 @@ local buy_items = table_concat({primary_weapon[PrimaryWeapons:GetValue() + 1] or
 if money >= AB_buyAbove:GetValue()*1000 or money < 1 then client_exec(buy_items, true) end end
 cb_Register("FireGameEvent", auto_buy)
 
--------------------- View Model Extender | Spectator list fix / made by anue | Disable Post Processing | full bright | Engine Radar | Disable Fake angle ghost while in air/freeze time | Working Stattrak | ghost view | fake duck indicator | disable fog | disable shadows
+-------------------- View Model Extender | Spectator list fix / made by anue | Disable Post Processing | full bright | Engine Radar | Disable Fake angle ghost while in air/freeze time | Working Stattrak | ghost view | fake duck indicator | disable fog | disable shadows | Knife on Left Hand | Fix Bomb Planting
 function VM_E() if VM_e:GetValue() then client_SetConVar("viewmodel_offset_x", xS:GetValue(), true) client_SetConVar("viewmodel_offset_y", yS:GetValue(), true) client_SetConVar("viewmodel_offset_z", zS:GetValue(), true) client_SetConVar("viewmodel_fov", vfov:GetValue(), true) else client_SetConVar("viewmodel_offset_x", xO, true) client_SetConVar("viewmodel_offset_y", yO, true) client_SetConVar("viewmodel_offset_z", zO, true) client_SetConVar("viewmodel_fov", fO, true) end end cb_Register("Draw", VM_E)
 function speclistfix(E) if not gui_GetValue("msc_showspec") or E:GetName() ~= "round_prestart" then return end client_exec("cl_fullupdate", true) end cb_Register("FireGameEvent", speclistfix)
 function Dis_PP() client_SetConVar("mat_postprocess_enable", DPP:GetValue() and 0 or 1, true) end cb_Register("Draw", Dis_PP)
@@ -182,6 +184,8 @@ function ghostview() if GetLocalPlayer() == nil then return end if ghost_view:Ge
 function fakeduck(b) if not fake_duck_indicator:GetValue() or GetLocalPlayer() == nil or b:GetEntity() == nil or not b:GetEntity():IsPlayer() or not b:GetEntity():IsAlive() then return end local entity, index = b:GetEntity(), b:GetEntity():GetIndex() local duckamount = entity:GetProp('m_flDuckAmount') local duckspeed = entity:GetProp('m_flDuckSpeed') local on_ground = entity:GetProp('m_fFlags') == 257 or entity:GetProp('m_fFlags') == 259 or entity:GetProp('m_fFlags') == 261 or entity:GetProp('m_fFlags') == 263 if crouchedTicks[index] == nil then crouchedTicks[index] = 0 end if duckspeed == 8 and duckamount > 0.01 and duckamount <= 0.9 and on_ground then if storedTick ~= g_tickcount() then crouchedTicks[index] = crouchedTicks[index] + 1 storedTick = g_tickcount() end if crouchedTicks[index] >= 5 then b:Color(fake_duck_indicator_color:GetValue()) b:AddTextBottom('FD') end else crouchedTicks[index] = 0 end end cb_Register('DrawESP', fakeduck)
 function dis_fog() local disableFog = disable_fog:GetValue() and 0 or 1 for i, fog in pairs(entities_FindByClass('CFogController')) do if fog:GetProp('m_fog.enable') ~= disableFog then fog:SetProp('m_fog.enable', disableFog) end end end  cb_Register('Draw', dis_fog)
 function dis_shadows() if disable_shadows:GetValue() then if client_GetConVar('cl_csm_static_prop_shadows') ~= 0 or client_GetConVar('cl_csm_shadows') ~= 0 or client_GetConVar('cl_csm_world_shadows') ~= 0 or client_GetConVar('cl_foot_contact_shadows') ~= 0 or client_GetConVar('cl_csm_viewmodel_shadows') ~= 0 or client_GetConVar('cl_csm_rope_shadows') ~= 0 or client_GetConVar('cl_csm_sprite_shadows') ~= 0 then client_SetConVar('cl_csm_static_prop_shadows', 0, true) client_SetConVar('cl_csm_shadows', 0, true) client_SetConVar('cl_csm_world_shadows', 0, true) client_SetConVar('cl_foot_contact_shadows', 0, true) client_SetConVar('cl_csm_viewmodel_shadows', 0, true) client_SetConVar('cl_csm_rope_shadows', 0, true) client_SetConVar('cl_csm_sprite_shadows', 0, true) end else if client_GetConVar('cl_csm_static_prop_shadows') ~= 1 or client_GetConVar('cl_csm_shadows') ~= 1 or client_GetConVar('cl_csm_world_shadows') ~= 1 or client_GetConVar('cl_foot_contact_shadows') ~= 1 or client_GetConVar('cl_csm_viewmodel_shadows') ~= 1 or client_GetConVar('cl_csm_rope_shadows') ~= 1 or client_GetConVar('cl_csm_sprite_shadows') ~= 1 then client_SetConVar('cl_csm_static_prop_shadows', 1, true) client_SetConVar('cl_csm_shadows', 1, true) client_SetConVar('cl_csm_world_shadows', 1, true) client_SetConVar('cl_foot_contact_shadows', 1, true) client_SetConVar('cl_csm_viewmodel_shadows', 1, true) client_SetConVar('cl_csm_rope_shadows', 1, true) client_SetConVar('cl_csm_sprite_shadows', 1, true) end end end cb_Register('Draw', dis_shadows)
+function on_knife_righthand() if not K_O_L_H:GetValue() or GetLocalPlayer() == nil then return end if GetLocalPlayer():GetWeaponType() == 0 and GetLocalPlayer():GetWeaponID() ~= 31 and GetLocalPlayer():IsAlive() then client_exec("cl_righthand 0", true) else client_exec("cl_righthand 1", true) end end cb_Register("Draw", on_knife_righthand) 
+function fix_bombplant(cmd) if not fixbombplant:GetValue() or not GetLocalPlayer():IsAlive() then return end if not cmd:GetButtons() | (1 << 5) or not cmd:GetButtons() | (1 << 0) then return end local weapon = GetLocalPlayer():GetPropEntity('m_hActiveWeapon') if weapon == nil then return end local weapon_class = weapon:GetClass() if weapon_class == 'CC4' and GetLocalPlayer():GetPropInt('m_bInBombZone') == 1 then cmd:SetButtons((1 << 0)) cmd:SetButtons((1 << 5)) end end cb_Register('CreateMove', fix_bombplant)
 --function freelooking(cmd) if freelook_key:GetValue() == 0 then return end if IsButtonDown(freelook_key:GetValue()) then cmd:SetViewAngles(old_pitch, old_yaw, old_roll) else old_pitch, old_yaw, old_roll = cmd:GetViewAngles() end end cb_Register('CreateMove', freelooking)
 
 -------------------- Scoped Fov Fix
@@ -283,13 +287,6 @@ if enemy_distance:GetValue() and ent:IsAlive() and ent:IsPlayer() and is_enemy(p
 if team_distance:GetValue() and ent:IsAlive() and ent:IsPlayer() and not is_enemy(playerindex) and ent:GetIndex() ~= LocalPlayerIndex() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist) end
 if other_distance:GetValue() and not ent:IsPlayer() then builder:Color(255, 255, 255, 255) builder:AddTextBottom(dist) end end
 cb_Register("DrawESP", "Distance ESP", Distance)
-
--------------------- Knife on Left Hand
-function on_knife_righthand()
-if not K_O_L_H:GetValue() then return end if GetLocalPlayer() == nil or not GetLocalPlayer():IsAlive() then client_exec("cl_righthand 1", true) return end
-local wep = GetLocalPlayer():GetPropEntity("m_hActiveWeapon") if wep == nil then return end local cwep = wep:GetClass()
-if cwep == "CKnife" then client_exec("cl_righthand 0", true) else client_exec("cl_righthand 1", true) end end
-cb_Register("Draw", on_knife_righthand) 
 
 -------------------- Zeusbot
 function zeuslegit()
