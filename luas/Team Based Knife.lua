@@ -9,11 +9,7 @@ local knife_t = gui.Combobox(knife_G, "knife_T", "T Knife", "Bayonet", "Flip Kni
 local update = gui.Button(knife_G, 'Update', function() client_exec('cl_fullupdate', true) end)
 
 callbacks.Register("Draw", "Knife Changer Menu", function()
-	if Knife_Changer:GetValue() then
-		Knife_W:SetActive(gui.Reference("MENU"):IsActive())
-	else
-		Knife_W:SetActive(0)
-	end
+	Knife_W:SetActive(Knife_Changer:GetValue() and gui.Reference("MENU"):IsActive() or 0)
 end)
 
 callbacks.Register('Draw', function()
