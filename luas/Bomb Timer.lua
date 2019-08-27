@@ -4,7 +4,7 @@ local BombTimer = gui.Checkbox(gui.Reference("VISUALS", "OTHER", "Options"), "es
 
 local Vf30 = draw.CreateFont("Verdana", 30)
 
-local function lerp_pos(x1, y1, z1, x2, y2, z2, percentage)
+local lerp_pos = function(x1, y1, z1, x2, y2, z2, percentage)
 	local x = (x2 - x1) * percentage + x1
 	local y = (y2 - y1) * percentage + y1
 	local z = (z2 - z1) * percentage + z1
@@ -12,7 +12,7 @@ local function lerp_pos(x1, y1, z1, x2, y2, z2, percentage)
 	return x, y, z
 end
 
-local function get_site_name(site)
+local get_site_name = function(site)
 	local a_x, a_y, a_z = GetPlayerResources():GetProp("m_bombsiteCenterA")
 	local b_x, b_y, b_z = GetPlayerResources():GetProp("m_bombsiteCenterB")
 
