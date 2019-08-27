@@ -12,6 +12,7 @@ function hitlog(e)
 	if not HitLog:GetValue() or e:GetName() ~= "player_hurt" then
 		return
 	end
+	local hit_logs_n = #hit_logs
 
 	if PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() then
 		log = string_format("Hit %s in the %s for %s damage (%s health remaining)",
@@ -21,7 +22,7 @@ function hitlog(e)
 							e:GetString("health")
 						)
 
-		table_insert(hit_logs, {g_curtime(), log})
+		hit_logs[hit_logs_n + 1] = {g_curtime(), log}
 	end
 end
 
