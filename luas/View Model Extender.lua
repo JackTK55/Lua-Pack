@@ -25,21 +25,8 @@ local yC = gui.Editbox(VMCache, "VM_Yc", yO)
 gui.Text(VMCache, 'Z')
 local zC = gui.Editbox(VMCache, "VM_Zc", zO)
 
-local menu_opened = true
 callbacks.Register("Draw", "View Model Extender", function()
-	if input.IsButtonPressed(gui.GetValue("msc_menutoggle")) then
-		menu_opened = not menu_opened
-	end
-
-	if menu_opened then
-		if ViewModelShown:GetValue() then
-			VM_W:SetActive(1)
-		else
-			VM_W:SetActive(0)
-		end
-	else
-		VM_W:SetActive(0)
-	end
+	VM_W:SetActive(ViewModelShown:GetValue() and gui.Reference('MENU'):IsActive())
 
 	if VM_e:GetValue() then
 		client_SetConVar("viewmodel_offset_x", xS:GetValue(), true)
