@@ -18,11 +18,7 @@ local Zeus = gui.Checkbox(AB_M, "AB_Zeus", "Zeus", false)
 local AB_buyAbove = gui.Slider(AB_GB, 'AB_buyAboveAmount', 'Buy if $ is Above (value*1000)', 3.7, 0, 16)
 
 callbacks.Register('Draw', 'autobuy show menu', function()
-	if AB_Show:GetValue() then
-		AB_W:SetActive(gui.Reference('MENU'):IsActive())
-	else
-		AB_W:SetActive(0)
-	end
+	AB_W:SetActive(AB_Show:GetValue() and gui.Reference('MENU'):IsActive())
 end)
 
 local primary_weapon = {'', 'buy "ak47"; ', 'buy "ssg08"; ', 'buy "sg556"; ', 'buy "awp"; ', 'buy "scar20"; '}
