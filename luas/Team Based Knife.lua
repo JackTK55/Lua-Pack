@@ -6,12 +6,12 @@ local knife_G = gui.Groupbox(Knife_W, "Team Knife Changer", 16, 15)
 local active = gui.Checkbox(knife_G, 'knife_active', 'Active', false)
 local knife_ct = gui.Combobox(knife_G, "knife_CT", "CT Knife", "Bayonet", "Flip Knife", "Gut Knife", "Karambit", "M9 Bayonet", "Huntsman Knife", "Falchion Knife", "Bowie Knife", "Butterfly Knife", "Shadow Daggers", "Ursus Knife", "Navaja Knife", "Stiletto Knife", "Talon Knife")
 local knife_t = gui.Combobox(knife_G, "knife_T", "T Knife", "Bayonet", "Flip Knife", "Gut Knife", "Karambit", "M9 Bayonet", "Huntsman Knife", "Falchion Knife", "Bowie Knife", "Butterfly Knife", "Shadow Daggers", "Ursus Knife", "Navaja Knife", "Stiletto Knife", "Talon Knife")
-local update = gui.Button(knife_G, 'Update', function() 
+local update = gui.Button(knife_G, 'Update', function()
 	client_exec('cl_fullupdate', true)
 end)
 
 callbacks.Register('Draw', function()
-	Knife_W:SetActive(Knife_Changer:GetValue() and gui.Reference("MENU"):IsActive() or 0)
+	Knife_W:SetActive(Knife_Changer:GetValue() and gui.Reference("MENU"):IsActive())
 
 	if not active:GetValue() then
 		return
@@ -30,7 +30,6 @@ callbacks.Register('Draw', function()
 			gui_SetValue("skin_knife", knife_ct:GetValue())
 		end
 	end
-
 end)
 
 callbacks.Register("FireGameEvent", function(e)
