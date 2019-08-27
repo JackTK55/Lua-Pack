@@ -1,4 +1,4 @@
-local PlayerIndexByUserID, LocalPlayerIndex, PlayerNameByUserID, table_insert, g_curtime, draw_SetFont, draw_GetTextSize, draw_Color, draw_TextShadow, table_remove, string_format = client.GetPlayerIndexByUserID, client.GetLocalPlayerIndex, client.GetPlayerNameByUserID, table.insert, globals.CurTime, draw.SetFont, draw.GetTextSize, draw.Color, draw.TextShadow, table.remove, string.format
+local PlayerIndexByUserID, LocalPlayerIndex, PlayerNameByUserID, g_curtime, draw_SetFont, draw_GetTextSize, draw_Color, draw_TextShadow, table_remove, string_format = client.GetPlayerIndexByUserID, client.GetLocalPlayerIndex, client.GetPlayerNameByUserID, globals.CurTime, draw.SetFont, draw.GetTextSize, draw.Color, draw.TextShadow, table.remove, string.format
 
 local HitLog = gui.Checkbox(gui.Reference("MISC", "GENERAL", "Main"), "msc_hitlog", "Hit Log", false)
 
@@ -34,7 +34,7 @@ function draw_hitlog()
 	local ScreenY = 3
 
 	for k, v in pairs(hit_logs) do
-		a = (v[1] - g_curtime() + 12) / 12
+		local a = (v[1] - g_curtime() + 12) / 12
 
 		if 255*a > 67.5 then
 			draw_SetFont(Tf13)
