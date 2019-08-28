@@ -22,6 +22,8 @@ function bulletimpact(e)
 end
 
 function showimpacts() 
+	client.SetConVar('sv_showimpacts', BulletImpacts_Local:GetValue() and 2 or 0, true)
+	
 	if GetLocalPlayer() == nil or not BulletImpacts_Local:GetValue() then 
 		return 
 	end 
