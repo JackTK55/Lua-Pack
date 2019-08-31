@@ -25,7 +25,7 @@ local primary_weapon = {'', 'buy "ak47"; ', 'buy "ssg08"; ', 'buy "sg556"; ', 'b
 local secondary_weapon = {'', 'buy "elite"; ', 'buy "p250"; ', 'buy "tec9"; ', 'buy "deagle"; '}
 
 function auto_buy(e)
-	if not AB_E:GetValue() or e:GetName() == nil or e:GetName() ~= 'player_spawn' or GetLocalPlayer() == nil or PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() then
+	if not AB_E:GetValue() or e:GetName() ~= 'player_spawn' or PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() then
 		return
 	end
 
