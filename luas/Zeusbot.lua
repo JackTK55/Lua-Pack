@@ -27,6 +27,7 @@ callbacks.Register("Draw", 'Uses Triggerbot to autoshoot Zeus', function()
 			gui_SetValue("lbot_trg_autofire", trigaf)
 			gui_SetValue("lbot_trg_hitchance", trighc)
 			gui_SetValue("lbot_trg_mode", trigm)
+			set_values = false
 		end
 	end 
 end)
