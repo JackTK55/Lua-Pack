@@ -17,8 +17,7 @@ callbacks.Register("Draw", "Fixes Scoped FOV", function()
 		set_fov = true
 	else
 		if not set_fov then
-			new_fov_val = gui_GetValue("vis_view_fov")
-			new_vmfov_val = gui_GetValue("vis_view_model_fov")
+			new_fov_val, new_vmfov_val = gui_GetValue("vis_view_fov"), gui_GetValue("vis_view_model_fov")
 		else
 			gui_SetValue("vis_view_fov", new_fov_val)
 			gui_SetValue("vis_view_model_fov", new_vmfov_val)
