@@ -20,10 +20,11 @@ function StatTrak(e)
 
 	if e:GetName() == "player_death" and entities_GetByIndex(PlayerIndexByUserID(e:GetInt("userid"))):GetTeamNumber() ~= GetLocalPlayer():GetTeamNumber() and 
 	   PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() then
-
-		if not table_contains(bad_weapons, e:GetString("weapon")) then
-			local skin_enabled = gui_GetValue(string_format("skin_%s_enable", e:GetString("weapon")))
-			local skin_stattrak = string_format("skin_%s_stattrak", e:GetString("weapon"))
+		
+		local weapon = e:GetString("weapon")
+		if not table_contains(bad_weapons, weapon) then
+			local skin_enabled = gui_GetValue(string_format("skin_%s_enable", weapon))
+			local skin_stattrak = string_format("skin_%s_stattrak", weapon)
 			local stattrak_val = tonumber(gui_GetValue(skin_stattrak))
 
 			if skin_enabled and stattrak_val > 0 then
