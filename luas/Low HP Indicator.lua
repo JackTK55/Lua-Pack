@@ -15,7 +15,9 @@ function drawLowHP()
 		if player:GetTeamNumber() ~= entities.GetLocalPlayer():GetTeamNumber() then
 			local playername = player:GetName()
 			local HP = player:GetProp("m_iHealth")
-			local str = string.format("%s Has %i HP", playername, HP)
+			local location = player:GetProp('m_szLastPlaceName')
+
+			local str = string.format("%s - %s (%i HP)", location, playername, HP)
 			draw.SetFont(font)
 			local tW, tH = draw.GetTextSize(playername)
 			if HP < 5 and HP > 0 then
