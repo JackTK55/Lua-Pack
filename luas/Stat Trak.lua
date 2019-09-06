@@ -2,10 +2,10 @@ local file_Open, gui_GetValue, gui_SetValue, entities_GetByIndex, PlayerIndexByU
 local stat_trak = gui.Checkbox(gui.Reference("MISC", "GENERAL", "Main"), "msc_stattrak_count", "Stattrak Counter", false)
 local stat_trak_saving = gui.Checkbox(gui.Reference("MISC", "GENERAL", "Main"), "msc_stattrak_saving", "Save Stattrak to File", false)
 
-local bad_weapons = {'inferno', 'hegrenade', 'smokegrenade', 'flashbang', 'decoy', 'knife', 'knife_t', 'taser'}
 local current_tracked, killed_someone = {}, false
-local weapons_table = {'skin_deagle_stattrak', 'skin_elite_stattrak', 'skin_fiveseven_stattrak', 'skin_glock_stattrak', 'skin_ak47_stattrak', 'skin_aug_stattrak', 'skin_awp_stattrak', 'skin_famas_stattrak', 'skin_g3sg1_stattrak', 'skin_galilar_stattrak', 'skin_m249_stattrak', 'skin_m4a1_stattrak', 'skin_mac10_stattrak', 'skin_p90_stattrak', 'skin_mp5sd_stattrak', 'skin_ump45_stattrak', 'skin_xm1014_stattrak', 'skin_bizon_stattrak', 'skin_mag7_stattrak', 'skin_negev_stattrak', 'skin_sawedoff_stattrak', 'skin_tec9_stattrak', 'skin_hkp2000_stattrak', 'skin_mp7_stattrak', 'skin_mp9_stattrak', 'skin_nova_stattrak', 'skin_p250_stattrak', 'skin_shield_stattrak', 'skin_scar20_stattrak', 'skin_sg556_stattrak', 'skin_ssg08_stattrak', 'skin_m4a1_silencer_stattrak', 'skin_usp_silencer_stattrak', 'skin_cz75a_stattrak', 'skin_revolver_stattrak', 'skin_bayonet_stattrak', 'skin_knife_flip_stattrak', 'skin_knife_gut_stattrak', 'skin_knife_karambit_stattrak', 'skin_knife_m9_bayonet_stattrak', 'skin_knife_tactical_stattrak', 'skin_knife_falchion_stattrak', 'skin_knife_survival_bowie_stattrak', 'skin_knife_butterfly_stattrak', 'skin_knife_push_stattrak', 'skin_knife_ursus_stattrak', 'skin_knife_gypsy_jackknife_stattrak', 'skin_knife_stiletto_stattrak', 'skin_knife_widowmaker_stattrak'}
-local knife_table = {[500] = 'bayonet', [505] = 'knife_flip', [506] = 'knife_gut', [507] = 'knife_karambit', [508] = 'knife_m9_bayonet', [509] = 'knife_tactical', [512] = 'knife_falchion', [514] = 'knife_survival_bowie', [515] = 'knife_butterfly', [516] = 'knife_push', [519] = 'knife_ursus', [520] = 'knife_gypsy_jackknife', [522] = 'knife_stiletto', [523] = 'knife_widowmaker'}
+local bad_weapons = {'inferno', 'hegrenade', 'smokegrenade', 'flashbang', 'decoy', 'knife', 'knife_t', 'taser'}
+local weapons_table = {'deagle', 'elite', 'fiveseven', 'glock', 'ak47', 'aug', 'awp', 'famas', 'g3sg1', 'galilar', 'm249', 'm4a1', 'mac10', 'p90', 'mp5sd', 'ump45', 'xm1014', 'bizon', 'mag7', 'negev', 'sawedoff', 'tec9', 'hkp2000', 'mp7', 'mp9', 'nova', 'p250', 'shield', 'scar20', 'sg556', 'ssg08', 'm4a1_silencer', 'usp_silencer', 'cz75a', 'revolver', 'bayonet', 'knife_flip', 'knife_gut', 'knife_karambit', 'knife_m9_bayonet', 'knife_tactical', 'knife_falchion', 'knife_survival_bowie', 'knife_butterfly', 'knife_push', 'knife_ursus', 'knife_gypsy_jackknife', 'knife_stiletto', 'knife_widowmaker'}
+local knife_table = {[500]='bayonet', [505]='knife_flip', [506]='knife_gut', [507]='knife_karambit', [508]='knife_m9_bayonet', [509]='knife_tactical', [512]='knife_falchion', [514]='knife_survival_bowie', [515]='knife_butterfly', [516]='knife_push', [519]='knife_ursus', [520]='knife_gypsy_jackknife', [522]='knife_stiletto', [523]='knife_widowmaker'}
 
 local get_knife_from_id = function(knife)
 	for id, name in pairs(knife_table) do
@@ -20,8 +20,8 @@ local update_settings = function(action)
 	if action == 'load' then
 		local settings_file = file_Open('stattrak_values.dat', 'r')
 
-		if settings_file == nil then 
-			return 
+		if settings_file == nil then
+			return
 		end
 
 			local settings = settings_file:Read()
@@ -29,13 +29,13 @@ local update_settings = function(action)
 		settings_file:Close()
 
 		for i=1, #weapons_table do
-			local weapon = weapons_table[i]
+			local weapon = string_format('skin_%s_stattrak', weapons_table[i])
 			current_tracked[weapon] = gui_GetValue(weapon)
 		end
 	end
 
-	if not stat_trak_saving:GetValue() then 
-		return 
+	if not stat_trak_saving:GetValue() then
+		return
 	end
 
 	if action == 'save' then
@@ -44,13 +44,13 @@ local update_settings = function(action)
 			local data = string_format('%s %i;', weapon, value)
 			settings_file:Write(data)
 		end
-		
+
 		settings_file:Close()
 	end
 end
 update_settings('load')
 
-local function table_contains(table, item)
+local table_contains = function(table, item)
     for i=1, #table do
         if table[i] == item then
             return true
@@ -60,11 +60,11 @@ local function table_contains(table, item)
 end
 
 function StatTrak(e)
-	if not stat_trak:GetValue() or not gui_GetValue("skin_active") then
+	if not stat_trak:GetValue() or not gui_GetValue("skin_active") or (e:GetName() ~= 'player_death' and e:GetName() ~= 'round_prestart') then
 		return
 	end
 
-	if e:GetName() == "player_death" and entities_GetByIndex(PlayerIndexByUserID(e:GetInt("userid"))):GetTeamNumber() ~= GetLocalPlayer():GetTeamNumber() and 
+	if e:GetName() == "player_death" and entities_GetByIndex(PlayerIndexByUserID(e:GetInt("userid"))):GetTeamNumber() ~= GetLocalPlayer():GetTeamNumber() and
 	   PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() then
 
 		local weapon = e:GetString("weapon")
@@ -95,5 +95,6 @@ function StatTrak(e)
 	end
 end
 
-callbacks.Register("FireGameEvent", StatTrak)
+client.AllowListener('player_death')
 client.AllowListener('round_prestart')
+callbacks.Register("FireGameEvent", StatTrak)
