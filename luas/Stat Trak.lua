@@ -50,9 +50,9 @@ local update_settings = function(action)
 end
 update_settings('load')
 
-local table_contains = function(table, item)
-    for i=1, #table do
-        if table[i] == item then
+local table_contains = function(t, m)
+    for i=1, #t do
+        if t[i] == m then
             return true
         end
     end
