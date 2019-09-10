@@ -1,9 +1,10 @@
 local GetLocalPlayer, string_format, gui_GetValue, gui_SetValue, PlayerIndexByUserID, LocalPlayerIndex = entities.GetLocalPlayer, string.format, gui.GetValue, gui.SetValue, client.GetPlayerIndexByUserID, client.GetLocalPlayerIndex
 local ESP_On_Dead = gui.Checkbox(gui.Reference('VISUALS', 'ENEMIES', 'Filter'), 'lua_esp_on_dead', 'ESP On Dead', false)
-local alive_esp, dead_esp = {}, {}
+local alive_esp, dead_esp, visibility, ` = {}, {}, nil, false
 
 local window = gui.Window('esp_on_dead_window', 'Esp On Dead', 200, 200, 242, 520)
 local group = gui.Groupbox(window, 'Options', 16, 16, 212, 457)
+local ESP_On_Dead_enabled = gui.Checkbox(group, 'lua_esp_on_dead_enabled', 'Active', false)
 local esp_elements = {
 	box = gui.Combobox(group, 'esp_on_dead_box', 'Box', 'Off', '2D', '3D', 'Edges', 'Machine', 'Pentagon', 'Hexagon'),
 	box_outline = gui.Checkbox(group, 'esp_on_dead_box_outline', 'Box Outline', false),
@@ -32,11 +33,8 @@ local esp_elements = {
 	damage = gui.Checkbox(group, 'esp_on_dead_damage', 'Damage', false)
 }
 
-callbacks.Register('Draw', 'esp on dead', function()
-	window:SetActive( ESP_On_Dead:GetValue() and gui.Reference('MENU'):IsActive() )
-	if not ESP_On_Dead:GetValue() then 
-		return 
-	end
+local set_tables = function()
+	visibility = gui_GetValue('esp_visibility_enemy')
 
 	for var, val in pairs(esp_elements) do
 		local aw_var = string_format('esp_enemy_%s', var)
@@ -44,43 +42,68 @@ callbacks.Register('Draw', 'esp on dead', function()
 		local lua_var = string_format('esp_on_dead_%s', var)
 		local lua_val = gui_GetValue(lua_var)
 
-		if not GetLocalPlayer():IsAlive() then
-			return 
-		end
-
 		dead_esp[aw_var] = lua_val
 		alive_esp[aw_var] = aw_val
 	end
+end
+
+local esp_switch = function(from_table, to_table)
+	for var, val in pairs(esp_elements) do
+		local aw_var = string_format('esp_enemy_%s', var)
+		local lua_var = string_format('esp_on_dead_%s', var)
+		gui_SetValue(lua_var, from_table[aw_var])
+	end
+
+	for var, val in pairs(to_table) do
+		gui_SetValue(var, val)
+	end
+end
+
+callbacks.Register('Draw', 'Esp On dead', function()
+	window:SetActive( ESP_On_Dead:GetValue() and gui.Reference('MENU'):IsActive() )
+
+	if not ESP_On_Dead_enabled:GetValue() then
+		return
+	end
+
+	if GetLocalPlayer() == nil then 
+		return
+	end
+
+	local dead = not GetLocalPlayer():IsAlive()
+
+	if dead then
+		return
+	end
+
+	set_tables()
 end)
 
 callbacks.Register('FireGameEvent', 'player death/spawn', function(e)
-	if not ESP_On_Dead:GetValue() or not gui_GetValue('esp_filter_enemy') or (e:GetName() ~= 'player_death' and e:GetName() ~= 'player_spawn') or PlayerIndexByUserID(e:GetInt('userid')) ~= LocalPlayerIndex() then 
+	local event_name = e:GetName()
+	local no_esp = not gui_GetValue('esp_filter_enemy') or not gui_GetValue('esp_active')
+
+	if not ESP_On_Dead_enabled:GetValue() or no_esp or (event_name ~= 'player_death' and event_name ~= 'player_spawn') or PlayerIndexByUserID(e:GetInt('userid')) ~= LocalPlayerIndex() then 
 		return 
 	end
-
-	if e:GetName() == 'player_death' then
-		for var, val in pairs(esp_elements) do
-			local aw_var = string_format('esp_enemy_%s', var)
-			local lua_var = string_format('esp_on_dead_%s', var)
-			gui_SetValue(lua_var, alive_esp[aw_var])
+	
+	if loaded then
+		if event_name == 'player_death' then
+			gui_SetValue('esp_visibility_enemy', 0)
+			esp_switch(alive_esp, dead_esp) -- switch from alive esp to dead esp
 		end
 
-		for variable, value in pairs(dead_esp) do
-			gui_SetValue(variable, value)
-		end
-	end
-
-	if e:GetName() == 'player_spawn' then
-		for var, val in pairs(esp_elements) do
-			local aw_var = string_format('esp_enemy_%s', var)
-			local lua_var = string_format('esp_on_dead_%s', var)
-			gui_SetValue(lua_var, dead_esp[aw_var])
-		end
-
-		for variable, value in pairs(alive_esp) do
-			gui_SetValue(variable, value)
+		if event_name == 'player_spawn' then
+			gui_SetValue('esp_visibility_enemy', visibility)
+			esp_switch(dead_esp, alive_esp) -- switch from dead esp to alive esp
 		end
 	end
+
+	if not loaded then
+		set_tables()
+		loaded = true
+	end
+
 end)
 
 client.AllowListener('player_spawn')
