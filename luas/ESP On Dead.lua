@@ -1,6 +1,6 @@
 local GetLocalPlayer, string_format, gui_GetValue, gui_SetValue, PlayerIndexByUserID, LocalPlayerIndex = entities.GetLocalPlayer, string.format, gui.GetValue, gui.SetValue, client.GetPlayerIndexByUserID, client.GetLocalPlayerIndex
 local ESP_On_Dead = gui.Checkbox(gui.Reference('VISUALS', 'ENEMIES', 'Filter'), 'lua_esp_on_dead', 'ESP On Dead', false)
-local alive_esp, dead_esp, visibility, ` = {}, {}, nil, false
+local alive_esp, dead_esp, visibility, loaded = {}, {}, nil, false
 
 local window = gui.Window('esp_on_dead_window', 'Esp On Dead', 200, 200, 242, 520)
 local group = gui.Groupbox(window, 'Options', 16, 16, 212, 457)
