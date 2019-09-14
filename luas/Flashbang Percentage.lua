@@ -28,9 +28,10 @@ callbacks.Register('Draw', 'Hides Flashbangs and shows a percentage of how much 
 	end
 
 	local X, Y = draw_GetScreenSize()
+	local flashDuration, flashed_at = flashed[0][1], flashed[0][2]
 
-	local dur_left = (flashed[0][2] - g_curtime()) + flashed[0][1]
-	local percent = (dur_left / flashed[0][1]) * 100
+	local dur_left = (flashed_at - g_curtime()) + flashDuration
+	local percent = (dur_left / flashDuration) * 100
 	if dur_left > 0.0 then
 		draw_SetFont(Font)
 		local str = string_format('%0.0f', percent)
