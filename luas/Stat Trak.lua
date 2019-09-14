@@ -1,4 +1,4 @@
-local file_Open, gui_GetValue, gui_SetValue, entities_GetByIndex, PlayerIndexByUserID, GetLocalPlayer, LocalPlayerIndex, string_format, math_floor, client_exec = file.Open, gui.GetValue, gui.SetValue, entities.GetByIndex, client.GetPlayerIndexByUserID, entities.GetLocalPlayer, client.GetLocalPlayerIndex, string.format, math.floor, client.Command
+local file_Open, gui_GetValue, gui_SetValue, GetByUserID, PlayerIndexByUserID, LocalPlayer, LocalPlayerIndex, string_format, math_floor, client_exec = file.Open, gui.GetValue, gui.SetValue, entities.GetByUserID, client.GetPlayerIndexByUserID, entities.GetLocalPlayer, client.GetLocalPlayerIndex, string.format, math.floor, client.Command
 local stat_trak = gui.Checkbox(gui.Reference("MISC", "GENERAL", "Main"), "msc_stattrak_count", "Stattrak Counter", false)
 local stat_trak_saving = gui.Checkbox(gui.Reference("MISC", "GENERAL", "Main"), "msc_stattrak_saving", "Save Stattrak to File", false)
 
@@ -59,42 +59,45 @@ local table_contains = function(t, m)
     return false
 end
 
-function StatTrak(e)
-	if not stat_trak:GetValue() or not gui_GetValue("skin_active") or (e:GetName() ~= 'player_death' and e:GetName() ~= 'round_prestart') then
+local killed_enemy = function(att, id)
+	return GetByUserID(id):GetTeamNumber() ~= LocalPlayer():GetTeamNumber() and PlayerIndexByUserID(att) == LocalPlayerIndex() and PlayerIndexByUserID(id) ~= LocalPlayerIndex()
+end
+
+callbacks.Register("FireGameEvent", 'StatTrak', function(e)
+	local e_name = e:GetName()
+	if not stat_trak:GetValue() or not gui_GetValue("skin_active") or (e_name ~= 'player_death' and e_name ~= 'round_prestart') then
 		return
 	end
 
-	if e:GetName() == "player_death" and entities_GetByIndex(PlayerIndexByUserID(e:GetInt("userid"))):GetTeamNumber() ~= GetLocalPlayer():GetTeamNumber() and
-	   PlayerIndexByUserID(e:GetInt("attacker")) == LocalPlayerIndex() and PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() then
+	if e_name == "player_death" and killed_enemy(e:GetInt("attacker"), e:GetInt("userid")) then
 
 		local weapon = e:GetString("weapon")
 
 		if weapon == 'knife' or weapon == 'knife_t' then
-			weapon = get_knife_from_id(GetLocalPlayer():GetWeaponID())
+			weapon = get_knife_from_id(LocalPlayer():GetWeaponID())
 		end
 
 		if not table_contains(bad_weapons, weapon) then
 			local skin_enabled = gui_GetValue(string_format("skin_%s_enable", weapon))
 			local _weapon = string_format("skin_%s_stattrak", weapon)
-			local stattrak_val = tonumber(gui_GetValue(_weapon))
+			local stattrak_val = gui_GetValue(_weapon)
 
 			if skin_enabled and stattrak_val > 0 then
-				gui_SetValue(_weapon, math_floor(stattrak_val) + 1)
+				gui_SetValue(_weapon, stattrak_val + 1)
 				current_tracked[_weapon] = gui_GetValue(_weapon)
 				killed_someone = true
 			end
 		end
 	end
 
-	if e:GetName() == "round_prestart" then
+	if e_name == "round_prestart" then
 		if killed_someone then
 			client_exec("cl_fullupdate", true)
 			update_settings('save')
 			killed_someone = false
 		end
 	end
-end
+end)
 
 client.AllowListener('player_death')
 client.AllowListener('round_prestart')
-callbacks.Register("FireGameEvent", StatTrak)
