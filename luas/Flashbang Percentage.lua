@@ -12,7 +12,7 @@ callbacks.Register('FireGameEvent', function(e)
 
 	local index = GetPlayerIndexByUserID(e:GetInt('userid'))
 	if index == LocalPlayerIndex() then
-		flashed[0] = {e:GetFloat('blind_duration'), g_curtime()}
+		flashed = {e:GetFloat('blind_duration'), g_curtime()}
 	end
 end)
 
@@ -23,12 +23,12 @@ callbacks.Register('Draw', 'Hides Flashbangs and shows a percentage of how much 
 
 	GetLocalPlayer():SetProp('m_flFlashMaxAlpha', Flash_percentage:GetValue() and 0 or 255)
 
-	if not Flash_percentage:GetValue() or flashed[0] == nil then 
-		return 
+	if not Flash_percentage:GetValue() or flashed[1] == nil then 
+		return
 	end
 
 	local X, Y = draw_GetScreenSize()
-	local flashDuration, flashed_at = flashed[0][1], flashed[0][2]
+	local flashDuration, flashed_at = flashed[1], flashed[2]
 
 	local dur_left = (flashed_at - g_curtime()) + flashDuration
 	local percent = (dur_left / flashDuration) * 100
@@ -39,6 +39,6 @@ callbacks.Register('Draw', 'Hides Flashbangs and shows a percentage of how much 
 		draw_Color(255,255,255,255)
 		draw_Text(X/2 - (tW/2), Y/2 - (tH/2) - 100, str..'%')
 	else
-		flashed[0] = nil
+		flashed[1] = nil
 	end
 end)
