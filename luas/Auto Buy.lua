@@ -24,8 +24,8 @@ end)
 local primary_weapon = {'', 'buy "ak47"; ', 'buy "ssg08"; ', 'buy "sg556"; ', 'buy "awp"; ', 'buy "scar20"; '}
 local secondary_weapon = {'', 'buy "elite"; ', 'buy "p250"; ', 'buy "tec9"; ', 'buy "deagle"; '}
 
-function auto_buy(e)
-	if not AB_E:GetValue() or e:GetName() ~= 'player_spawn' or PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() then
+callbacks.Register("FireGameEvent", 'Auto Buy', function(e)
+	if not AB_E:GetValue() or GetLocalPlayer() == nil or e:GetName() ~= 'player_spawn' or PlayerIndexByUserID(e:GetInt("userid")) ~= LocalPlayerIndex() then
 		return
 	end
 
@@ -37,5 +37,4 @@ function auto_buy(e)
 	end
 end
 
-callbacks.Register("FireGameEvent", auto_buy)
 client.AllowListener('player_spawn')
