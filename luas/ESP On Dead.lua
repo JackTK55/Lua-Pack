@@ -90,12 +90,12 @@ callbacks.Register('FireGameEvent', 'player death/spawn', function(e)
 	if loaded then
 		if event_name == 'player_death' then
 			gui_SetValue('esp_visibility_enemy', 0)
-			esp_switch(alive_esp, dead_esp) -- switch from alive esp to dead esp
+			esp_switch(alive_esp, dead_esp)
 		end
 
 		if event_name == 'player_spawn' then
 			gui_SetValue('esp_visibility_enemy', visibility)
-			esp_switch(dead_esp, alive_esp) -- switch from dead esp to alive esp
+			esp_switch(dead_esp, alive_esp)
 		end
 	end
 
