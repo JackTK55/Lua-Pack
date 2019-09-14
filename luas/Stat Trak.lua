@@ -65,6 +65,7 @@ end
 
 callbacks.Register("FireGameEvent", 'StatTrak', function(e)
 	local e_name = e:GetName()
+
 	if not stat_trak:GetValue() or not gui_GetValue("skin_active") or (e_name ~= 'player_death' and e_name ~= 'round_prestart') then
 		return
 	end
