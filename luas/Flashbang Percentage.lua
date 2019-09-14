@@ -5,9 +5,13 @@ local Font = draw.CreateFont("Tahoma", 15)
 local flashed_at = 0
 
 callbacks.Register('Draw', 'Hides Flashbangs and shows a percentage of how much time is left', function()
-	GetLocalPlayer():SetProp('m_flFlashMaxAlpha', Flash_percentage:GetValue() and 0 or 255)
+	if GetLocalPlayer() == nil then 
+		return
+	end
 	
-	if GetLocalPlayer() == nil or not Flash_percentage:GetValue() then 
+	GetLocalPlayer():SetProp('m_flFlashMaxAlpha', Flash_percentage:GetValue() and 0 or 255)
+
+	if not Flash_percentage:GetValue() then 
 		return 
 	end
 
