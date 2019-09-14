@@ -39,8 +39,7 @@ local set_tables = function()
 	for var, val in pairs(esp_elements) do
 		local aw_var = string_format('esp_enemy_%s', var)
 		local aw_val = gui_GetValue(aw_var)
-		local lua_var = string_format('esp_on_dead_%s', var)
-		local lua_val = gui_GetValue(lua_var)
+		local lua_val = val:GetValue()
 
 		dead_esp[aw_var] = lua_val
 		alive_esp[aw_var] = aw_val
@@ -66,13 +65,7 @@ callbacks.Register('Draw', 'Esp On dead', function()
 		return
 	end
 
-	if GetLocalPlayer() == nil then 
-		return
-	end
-
-	local dead = not GetLocalPlayer():IsAlive()
-
-	if dead then
+	if GetLocalPlayer() == nil or not GetLocalPlayer():IsAlive() then 
 		return
 	end
 
@@ -86,16 +79,16 @@ callbacks.Register('FireGameEvent', 'player death/spawn', function(e)
 	if not ESP_On_Dead_enabled:GetValue() or no_esp or (event_name ~= 'player_death' and event_name ~= 'player_spawn') or PlayerIndexByUserID(e:GetInt('userid')) ~= LocalPlayerIndex() then 
 		return 
 	end
-	
+
 	if loaded then
 		if event_name == 'player_death' then
 			gui_SetValue('esp_visibility_enemy', 0)
-			esp_switch(alive_esp, dead_esp) -- switch from alive esp to dead esp
+			esp_switch(alive_esp, dead_esp)
 		end
 
 		if event_name == 'player_spawn' then
 			gui_SetValue('esp_visibility_enemy', visibility)
-			esp_switch(dead_esp, alive_esp) -- switch from dead esp to alive esp
+			esp_switch(dead_esp, alive_esp)
 		end
 	end
 
