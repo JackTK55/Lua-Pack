@@ -80,7 +80,7 @@ callbacks.Register("FireGameEvent", 'StatTrak', function(e)
 		if not table_contains(bad_weapons, weapon) then
 			local skin_enabled = gui_GetValue(string_format("skin_%s_enable", weapon))
 			local _weapon = string_format("skin_%s_stattrak", weapon)
-			local stattrak_val = gui_GetValue(_weapon)
+			local stattrak_val = tonumber(gui_GetValue(_weapon))
 
 			if skin_enabled and stattrak_val > 0 then
 				gui_SetValue(_weapon, stattrak_val + 1)
