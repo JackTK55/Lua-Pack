@@ -35,6 +35,6 @@ callbacks.Register("FireGameEvent", 'Auto Buy', function(e)
 	if money >= AB_buyAbove:GetValue()*1000 or money < 1 then
 		client_exec(buy_items, true)
 	end
-end
+end)
 
 client.AllowListener('player_spawn')
