@@ -5,7 +5,7 @@ local Font = draw.CreateFont("Tahoma", 15)
 local flashed = {}
 
 client.AllowListener('player_blind')
-callbacks.Register('FireGameEvent', function(e)
+callbacks.Register('FireGameEvent', 'Getting duration and current time you are flashed', function(e)
 	if not Flash_percentage:GetValue() or e:GetName() ~= 'player_blind' then 
 		return 
 	end
