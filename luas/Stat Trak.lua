@@ -67,7 +67,7 @@ end
 
 u('player_death')
 u('round_prestart')
-local function Stattrak(z)
+local function A(z)
 	local y = z:GetName()
 
 	if not j:GetValue() or not b("skin_active") or (y ~= 'player_death' and y ~= 'round_prestart') then
@@ -104,4 +104,4 @@ local function Stattrak(z)
 	end
 end
 
-callbacks.Register("FireGameEvent", Stattrak)
+callbacks.Register("FireGameEvent", A)
