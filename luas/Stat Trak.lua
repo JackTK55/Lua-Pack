@@ -1,3 +1,7 @@
+--[[
+	To make it work look at image below:
+		https://i.imgur.com/GTinFTk.png
+--]]
 local a,b,c,d,e,f,g,h,i,u,x=file.Open,gui.GetValue,gui.SetValue,entities.GetByUserID,client.GetPlayerIndexByUserID,entities.GetLocalPlayer,client.GetLocalPlayerIndex,string.format,gui.Command,client.AllowListener,client.Command
 local j = gui.Checkbox(gui.Reference("MISC","GENERAL","Main"),"msc_stattrak_count","Stattrak Counter",false)
 local k = gui.Checkbox(gui.Reference("MISC","GENERAL","Main"),"msc_stattrak_saving","Save Stattrak to File",false)
