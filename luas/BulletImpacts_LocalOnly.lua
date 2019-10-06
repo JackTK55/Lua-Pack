@@ -1,4 +1,4 @@
-local PlayerIndexByUserID, LocalPlayerIndex, g_curtime, table_remove, client_WorldToScreen, draw_Color, draw_RoundedRect = client.GetPlayerIndexByUserID, client.GetLocalPlayerIndex, globals.CurTime, table.remove, client.WorldToScreen, draw.Color, draw.RoundedRect
+local GetLocalPlayer, PlayerIndexByUserID, LocalPlayerIndex, g_curtime, table_remove, client_WorldToScreen, draw_Color, draw_RoundedRect = entities.GetLocalPlayer, client.GetPlayerIndexByUserID, client.GetLocalPlayerIndex, globals.CurTime, table.remove, client.WorldToScreen, draw.Color, draw.RoundedRect
 
 local BulletImpacts_Local = gui.Checkbox(gui.Reference('VISUALS', 'MISC', 'Assistance'), "vis_bullet_impact_local", "Bullet Impacts Local", false)
 local BulletImpacts_color_Local = gui.ColorEntry('clr_vis_bullet_impact_local', 'Bullet Impacts Local', 255,255,255,255)
