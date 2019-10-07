@@ -1,4 +1,4 @@
-local PlayerIndexByUserID, LocalPlayerIndex, g_curtime, table_remove, client_WorldToScreen, draw_Color, draw_RoundedRect = client.GetPlayerIndexByUserID, client.GetLocalPlayerIndex, globals.CurTime, table.remove, client.WorldToScreen, draw.Color, draw.RoundedRect
+local GetLocalPlayer, PlayerIndexByUserID, LocalPlayerIndex, g_curtime, table_remove, client_WorldToScreen, draw_Color, draw_RoundedRect = entities.GetLocalPlayer, client.GetPlayerIndexByUserID, client.GetLocalPlayerIndex, globals.CurTime, table.remove, client.WorldToScreen, draw.Color, draw.RoundedRect
 
 local BulletImpacts_Local = gui.Checkbox(gui.Reference('VISUALS', 'MISC', 'Assistance'), "vis_bullet_impact_local", "Bullet Impacts Local", false)
 local BulletImpacts_color_Local = gui.ColorEntry('clr_vis_bullet_impact_local', 'Bullet Impacts Local', 255,255,255,255)
@@ -30,8 +30,8 @@ function showimpacts()
 
 	for k, v in pairs(bulletimpacts) do
 		if g_curtime() - v[1] > BulletImpacts_Time:GetValue() then 
-			table_remove(bulletimpacts, k) 
-		else 
+			bulletimpacts[k] = nil
+		else
 			local X, Y = client_WorldToScreen(v[2], v[3], v[4]) 
 			if X ~= nil and Y ~= nil then 
 				draw_Color(v[5], v[6], v[7], v[8]) 
