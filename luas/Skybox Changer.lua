@@ -1,6 +1,7 @@
 --[[ 
-	download for skyboxes 		  			 --> https://mega.nz/#!TZd1hawL!g_Os7eFUtFCLyBdraWWZMnROkGKeovy-1mZlLXerHxQ
-	drag all of the .vmt and .vtf files here --> steamapps\common\Counter-Strike Global Offensive\csgo\materials\skybox
+	Download for skyboxes 		  			 --> https://mega.nz/#!TZd1hawL!g_Os7eFUtFCLyBdraWWZMnROkGKeovy-1mZlLXerHxQ
+	Drag all of the .vmt and .vtf files here --> steamapps\common\Counter-Strike Global Offensive\csgo\materials\skybox
+	If the skybox folder doesn't exist, create it.
 ]]
 
 local a,b,c=gui.GetValue,client.GetConVar,client.SetConVar
