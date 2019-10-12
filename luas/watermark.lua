@@ -1,6 +1,6 @@
 local a,b,c,d,e,f,g,h,i,j,k,l,m,n=input.IsButtonDown,client.GetLocalPlayerIndex,entities.GetPlayerResources,draw.Color,draw.FilledRect,draw.TextShadow,common.Time,entities.GetLocalPlayer,string.format,os.date,draw.GetTextSize,client.GetConVar('name'),math.sin,draw.GetScreenSize
 
-local x,x2 = false,true
+local x,x2 = false,true -- if you just want to have the date set x2 to false
 local y,z,o = 0,0,{}
 local v = '%A, %B %d, %H:%M:%S' -- date format
 
