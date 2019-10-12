@@ -1,13 +1,6 @@
 local a,b,c,d,e,f,g,h,i,j,k,l,m,n=input.IsButtonDown,client.GetLocalPlayerIndex,entities.GetPlayerResources,draw.Color,draw.FilledRect,draw.TextShadow,common.Time,entities.GetLocalPlayer,string.format,os.date,draw.GetTextSize,client.GetConVar('name'),math.sin,draw.GetScreenSize
 
-local A = gui.Multibox(gui.Reference('SETTINGS', 'Miscellaneous'), 'Watermark Options')
-local B = gui.Checkbox(A, 'lua_wm_kills', 'Kills', false)
-local C = gui.Checkbox(A, 'lua_wm_assists', 'Assists', false)
-local D = gui.Checkbox(A, 'lua_wm_deaths', 'Deaths', false)
-local E = gui.Checkbox(A, 'lua_wm_kd', 'KD', false)
-local F = gui.Checkbox(A, 'lua_wm_ping', 'Ping', false)
-
-local x = false -- show stuff
+local x = false -- auto show stuff
 local y,z,o = 0,0,{}
 local v = '%A, %B %d, %H:%M:%S' -- date format
 
@@ -25,36 +18,17 @@ local function p()
 		u = i('%.2f', d/f)
 	end
 
-	o = {}
-
-	if B:GetValue() then
-		o[#o + 1] = 'Kills: '.. d
-	end
-	
-	if C:GetValue() then
-		o[#o + 1] = 'Assists: '.. e
-	end
-	
-	if D:GetValue() then
-		o[#o + 1] = 'Deaths: '.. f
-	end
-	
-	if E:GetValue() then
-		o[#o + 1] = 'K/D: '.. u
-	end
-	
-	if F:GetValue() then
-		o[#o + 1] = 'Ping: '.. g
-	end
-	
+	o = {
+		'Kills: '.. d,
+		'Assists: '.. e,
+		'Deaths: '.. f,
+		'K/D: '.. u,
+		'Ping: '.. g
+	}
 end
 
 local function q()
 	p()
-
-	if #o == 0 then
-		return
-	end
 
 	local a,_ = n()
 	local c = a / 2
@@ -78,7 +52,7 @@ local function r()
 	local c = a / 2
 
 	local v,w = k('Welcome back')
-	local g, h = v / 2, z + (w / 2)-2
+	local g, h = v / 2, z + (w / 2) - 2
 	
 	local x,_ = k(l)
 	local i = x / 2
