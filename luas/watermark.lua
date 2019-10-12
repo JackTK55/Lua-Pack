@@ -1,6 +1,6 @@
 local a,b,c,d,e,f,g,h,i,j,k,l,m,n=input.IsButtonDown,client.GetLocalPlayerIndex,entities.GetPlayerResources,draw.Color,draw.FilledRect,draw.TextShadow,common.Time,entities.GetLocalPlayer,string.format,os.date,draw.GetTextSize,client.GetConVar('name'),math.sin,draw.GetScreenSize
 
-local x = false -- auto show stuff
+local x,x2 = false,true
 local y,z,o = 0,0,{}
 local v = '%A, %B %d, %H:%M:%S' -- date format
 
@@ -79,7 +79,7 @@ local function s()
 		y = 60
 		z = y + 21
 
-		if a('tab') or x then
+		if (a('tab') or x) and x2 then
 			q()
 		end
 	else
