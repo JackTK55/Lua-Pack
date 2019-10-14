@@ -5,25 +5,26 @@ local BulletImpacts_color_Local = gui.ColorEntry('clr_vis_bullet_impact_local', 
 local BulletImpacts_Time = gui.Slider(gui.Reference('VISUALS', 'MISC', 'Assistance'), 'vis_bullet_impact_time', 'Bullet Impact Time', 4, 0, 10)
 local bulletimpacts = {}
 
+client.AllowListener('bullet_impact')
 function bulletimpact(e)
 	if e:GetName() ~= "bullet_impact" or not BulletImpacts_Local:GetValue() then 
 		return 
 	end
 
-	local x = e:GetFloat("x") 
-	local y = e:GetFloat("y") 
-	local z = e:GetFloat("z") 
+	local x = e:GetFloat("x")
+	local y = e:GetFloat("y")
+	local z = e:GetFloat("z")
 	local player_index = PlayerIndexByUserID(e:GetInt("userid"))
 	local bulletimpacts_n = #bulletimpacts
 
-	if player_index == LocalPlayerIndex() then 
+	if player_index == LocalPlayerIndex() then
 		bulletimpacts[bulletimpacts_n + 1] = {g_curtime(), x, y, z, BulletImpacts_color_Local:GetValue()}
-	end 
+	end
 end
 
 function showimpacts() 
 --	client.SetConVar('sv_showimpacts', BulletImpacts_Local:GetValue() and 2 or 0, true)
-	
+
 	if GetLocalPlayer() == nil or not BulletImpacts_Local:GetValue() then 
 		return 
 	end 
@@ -43,4 +44,3 @@ end
 
 callbacks.Register("Draw", showimpacts)
 callbacks.Register("FireGameEvent", bulletimpact)
-client.AllowListener('bullet_impact')
