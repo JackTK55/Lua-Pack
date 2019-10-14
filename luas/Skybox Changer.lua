@@ -19,9 +19,9 @@ local function g()
 	e:SetActive(gui.Reference('MENU'):IsActive())
 
 	local h = d[f:GetValue() + 1]
-    if a("msc_restrict") ~= 1 and b("sv_skyname") ~= h then
+	if a("msc_restrict") ~= 1 and b("sv_skyname") ~= h then
 		c('sv_skyname', h, true)
-    end
+	end
 end
 
 callbacks.Register("Draw", g)
