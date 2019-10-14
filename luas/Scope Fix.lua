@@ -1,7 +1,7 @@
 local GetLocalPlayer, gui_GetValue, gui_SetValue = entities.GetLocalPlayer, gui.GetValue, gui.SetValue
 
 local s_fovfix = gui.Checkbox(gui.Reference("VISUALS", "Shared"), "vis_fixfov", "Fix Scoped FOV", false)
-local new_fov_val, new_vmfov_val, is_scoped
+local new_fov_val, new_vmfov_val, scoped, is_scoped
 local set_fov = false
 
 callbacks.Register("Draw", "Fixes Scoped FOV", function()
@@ -9,7 +9,8 @@ callbacks.Register("Draw", "Fixes Scoped FOV", function()
 		return
 	end
 
-	local is_scoped = GetLocalPlayer():GetProp("m_bIsScoped") == 1 or GetLocalPlayer():GetProp("m_bIsScoped") == 257
+	local scoped = GetLocalPlayer():GetProp("m_bIsScoped")
+	local is_scoped = scoped == 1 or scoped == 257
 
 	if is_scoped then
 		gui_SetValue("vis_view_fov", 0)
