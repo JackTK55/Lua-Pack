@@ -1,34 +1,34 @@
-local g_tickcount = globals.TickCount
-
 local fake_duck_indicator = gui.Checkbox(gui.Reference('VISUALS', 'ENEMIES', 'Options'), 'esp_enemy_fakeduck_ind', 'Is Fakeducking', false)
 local fake_duck_indicator_color = gui.ColorEntry('clr_esp_enemy_fakeduck_ind', 'Fake duck', 255, 255, 0, 255)
+local g_tickcount = globals.TickCount
 
-local function is_fakeducking(entity)
-	local storedTick = 0
-	local crouchedTicks = {}
+local function is_fakeducking(ent)
+	local storedTick, crouchedTicks = 0, {}
 
-	local duckamount = entity:GetProp('m_flDuckAmount')
-	local duckspeed = entity:GetProp('m_flDuckSpeed')
-	local on_ground = entity:GetProp('m_fFlags') == 257 or entity:GetProp('m_fFlags') == 259 or entity:GetProp('m_fFlags') == 261 or entity:GetProp('m_fFlags') == 263
+	local index = ent:GetIndex()
+	local duckamount, duckspeed = ent:GetProp('m_flDuckAmount'), ent:GetProp('m_flDuckSpeed')
+	local flag = ent:GetProp('m_fFlags')
+	local on_ground = flag == 257 or flag == 259 or flag == 261 or flag == 263
 
-	if crouchedTicks[entity:GetIndex()] == nil then
-		crouchedTicks[entity:GetIndex()] = 0
+	if crouchedTicks[index] == nil then
+		crouchedTicks[index] = 0
 	end
 
 	if storedTick ~= g_tickcount() then
-		crouchedTicks[entity:GetIndex()] = crouchedTicks[entity:GetIndex()] + 1
+		crouchedTicks[index] = crouchedTicks[index] + 1
 		storedTick = g_tickcount()
 	end
 
-	return duckspeed == 8 and duckamount <= 0.9 and duckamount > 0.01 and on_ground and crouchedTicks[entity:GetIndex()] >= 5
+	return duckspeed == 8 and duckamount <= 0.9 and duckamount > 0.01 and on_ground and crouchedTicks[index] >= 5
 end
 
-function fakeduck(b)
-	if not fake_duck_indicator:GetValue() or b:GetEntity() == nil or not b:GetEntity():IsPlayer() or not b:GetEntity():IsAlive() then
+local function fakeduck(b)
+	local ent = b:GetEntity()
+	if not fake_duck_indicator:GetValue() or ent == nil or not ent:IsPlayer() or not ent:IsAlive() then
 		return
 	end
 
-	if is_fakeducking(b:GetEntity()) then
+	if is_fakeducking(ent) then
 		b:Color(fake_duck_indicator_color:GetValue())
 		b:AddTextBottom('FD')
 	end
