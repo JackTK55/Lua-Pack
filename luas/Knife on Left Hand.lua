@@ -1,7 +1,5 @@
 local a,b,c = entities.GetLocalPlayer,client.Command,string.format
-
 local d = gui.Checkbox(gui.Reference("MISC","GENERAL","Main"),"msc_knifelefthand","Knife On Left Hand",false)
-
 local function i()
 	if not d:GetValue() or a() == nil then
 		return
@@ -14,5 +12,4 @@ local function i()
 
 	b(h, true)
 end
-
 callbacks.Register("Draw",i)
