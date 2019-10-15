@@ -1,27 +1,29 @@
-local GetLocalPlayer, gui_GetValue, gui_SetValue = entities.GetLocalPlayer, gui.GetValue, gui.SetValue
+local a,b,c = entities.GetLocalPlayer,gui.GetValue,gui.SetValue
+local d = gui.Checkbox(gui.Reference("VISUALS","Shared"),"vis_fixfov","Fix Scoped FOV",false)
+local e, f, g, h
+local i = false
 
-local s_fovfix = gui.Checkbox(gui.Reference("VISUALS", "Shared"), "vis_fixfov", "Fix Scoped FOV", false)
-local new_fov_val, new_vmfov_val, is_scoped
-local set_fov = false
-
-callbacks.Register("Draw", "Fixes Scoped FOV", function()
-	if not s_fovfix:GetValue() or GetLocalPlayer() == nil then
+local function j()
+	if not d:GetValue() or a() == nil then
 		return
 	end
 
-	local is_scoped = GetLocalPlayer():GetProp("m_bIsScoped") == 1 or GetLocalPlayer():GetProp("m_bIsScoped") == 257
+	local g = a():GetProp("m_bIsScoped")
+	local h = g == 1 or g == 257
 
-	if is_scoped then
-		gui_SetValue("vis_view_fov", 0)
-		gui_SetValue("vis_view_model_fov", 0)
-		set_fov = true
+	if h then
+		c("vis_view_fov", 0)
+		c("vis_view_model_fov", 0)
+		i = true
 	else
-		if not set_fov then
-			new_fov_val, new_vmfov_val = gui_GetValue("vis_view_fov"), gui_GetValue("vis_view_model_fov")
+		if not i then
+			e, f = b("vis_view_fov"), b("vis_view_model_fov")
 		else
-			gui_SetValue("vis_view_fov", new_fov_val)
-			gui_SetValue("vis_view_model_fov", new_vmfov_val)
-			set_fov = false
+			c("vis_view_fov", e)
+			c("vis_view_model_fov", f)
+			i = false
 		end
 	end
-end)
+end
+
+callbacks.Register("Draw",j)
