@@ -3,9 +3,9 @@
 		https://i.imgur.com/GTinFTk.png
 --]]
 local a,b,c,d,e,f,g,h,i,u,x=file.Open,gui.GetValue,gui.SetValue,entities.GetByUserID,client.GetPlayerIndexByUserID,entities.GetLocalPlayer,client.GetLocalPlayerIndex,string.format,gui.Command,client.AllowListener,client.Command
-local A = gui.Reference("MISC","GENERAL","Main")
-local j = gui.Checkbox(A,"msc_stattrak_count","Stattrak Counter",false)
-local k = gui.Checkbox(A,"msc_stattrak_saving","Save Stattrak to File",false)
+local B = gui.Reference("MISC","GENERAL","Main")
+local j = gui.Checkbox(B,"msc_stattrak_count","Stattrak Counter",false)
+local k = gui.Checkbox(B,"msc_stattrak_saving","Save Stattrak to File",false)
 
 local l, m = {}, false
 local n,o,p = {'inferno','hegrenade','smokegrenade','flashbang','decoy','knife','taser','shield'},{'deagle','elite','fiveseven','glock','ak47','aug','awp','famas','g3sg1','galilar','m249','m4a1','mac10','p90','mp5sd','ump45','xm1014','bizon','mag7','negev','sawedoff','tec9','hkp2000','mp7','mp9','nova','p250','shield','scar20','sg556','ssg08','m4a1_silencer','usp_silencer','cz75a','revolver','bayonet','knife_flip','knife_gut','knife_karambit','knife_m9_bayonet','knife_tactical','knife_falchion','knife_survival_bowie','knife_butterfly','knife_push','knife_ursus','knife_gypsy_jackknife','knife_stiletto','knife_widowmaker'},{[500]='bayonet',[505]='knife_flip',[506]='knife_gut',[507]='knife_karambit',[508]='knife_m9_bayonet',[509]='knife_tactical',[512]='knife_falchion',[514]='knife_survival_bowie',[515]='knife_butterfly',[516]='knife_push',[519]='knife_ursus',[520]='knife_gypsy_jackknife',[522]='knife_stiletto',[523]='knife_widowmaker'}
