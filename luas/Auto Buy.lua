@@ -14,8 +14,9 @@ local q,r,s = {'','buy"ak47"','buy"ssg08"','buy"sg556"','buy"awp"','buy"scar20"'
 f('Draw',function() i:SetActive(h:GetValue() and A('MENU'):IsActive()) end)
 
 client.AllowListener('player_spawn')
-f("FireGameEvent",'autobuy',function(y)
+local function w(y)
 	local t, u = y:GetName(), y:GetInt("userid")
+
 	if not k:GetValue() or c() == nil or t ~= 'player_spawn' or a(u) ~= b() then
 		return
 	end
@@ -33,4 +34,6 @@ f("FireGameEvent",'autobuy',function(y)
 	if x >= p:GetValue()*1000 or x < 1 then
 		e(v,true)
 	end
-end)
+end
+
+f("FireGameEvent", w)
