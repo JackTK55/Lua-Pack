@@ -1,7 +1,7 @@
 --[[
     Created by: iSun
     Edited by: zack
-]]--
+]]
 
 local localplayer, localplayerindex, listen, GetPlayerIndexByUserID, g_curtime, client_exec, ref, Checkbox, Combobox, Groupbox = entities.GetLocalPlayer, client.GetLocalPlayerIndex, client.AllowListener, client.GetPlayerIndexByUserID, globals.CurTime, client.Command, gui.Reference, gui.Checkbox, gui.Combobox, gui.Groupbox
 local h_sounds = {"bass.wav", "bf4.wav", "Bowhit.wav", "bruh.wav", "uagay.wav", "rifk.wav", "Cookie.wav", "windows-error.wav", "roblox.mp3", "vitas.wav", "mhit1.mp3", "gachi.wav", "metro2033.mp3", "minecraft.mp3"}
