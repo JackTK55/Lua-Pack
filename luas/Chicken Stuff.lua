@@ -53,7 +53,7 @@ local function ChickenShit()
 			  lua_ChickenColor:GetValue() == 1 and RGB2clr( Chicken_Color:GetValue() ) or
 			  lua_ChickenColor:GetValue() == 2 and RGB2clr( Rainbow() )
 
-	if #chickens == 0 then
+	if chickens[1] == nil then
 		return
 	end
 
