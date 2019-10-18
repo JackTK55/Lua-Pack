@@ -41,6 +41,7 @@ local function ChickenShit()
 	end
 
 	local chickens = FindByClass('CChicken')
+	local enabled = lua_EnableChicken:GetValue()
 	local chicken_model = lua_ChickenModel:GetValue()
 	local chicken_skin = lua_ChickenSkin:GetValue()
 	local chicken_scale = lua_ChickenScale:GetValue()
@@ -64,7 +65,7 @@ local function ChickenShit()
 		local m_nSkin = chicken:GetProp('m_nSkin')
 		local m_flModelScale = chicken:GetProp('m_flModelScale')
 
-		if lua_EnableChicken:GetValue() then
+		if enabled then
 
 			if m_clrRender ~= A then
 				chicken:SetProp('m_clrRender', A)
