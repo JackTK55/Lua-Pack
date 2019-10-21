@@ -1,5 +1,5 @@
 --[[
-	Created by: yu0r [ https://aimware.net/forum/user-1566.html ]
+	Created by: yu0r ( https://aimware.net/forum/user-1566.html )
 	Edited by: zack
 ]]
 
