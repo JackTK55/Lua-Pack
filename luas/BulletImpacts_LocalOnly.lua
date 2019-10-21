@@ -1,4 +1,4 @@
-local LocalPlayer, PlayerIndexByUserID, LocalPlayerIndex, g_curtime, WorldToScreen, Color, OutlinedCircle, OutlinedRect, abs_val, Register = entities.GetLocalPlayer, client.GetPlayerIndexByUserID, client.GetLocalPlayerIndex, globals.CurTime, client.WorldToScreen, draw.Color, draw.OutlinedCircle, draw.OutlinedRect, math.abs, callbacks.Register
+local LocalPlayer,PlayerIndexByUserID,LocalPlayerIndex,g_curtime,WorldToScreen,Color,OutlinedCircle,OutlinedRect,abs,Register = entities.GetLocalPlayer,client.GetPlayerIndexByUserID,client.GetLocalPlayerIndex,globals.CurTime,client.WorldToScreen,draw.Color,draw.OutlinedCircle,draw.OutlinedRect,math.abs,callbacks.Register
 
 local ref = gui.Reference('VISUALS','MISC','Assistance')
 local BulletImpacts_Local = gui.Checkbox(ref,"vis_bullet_impact_local", "Bullet Impacts Local", false)
@@ -16,7 +16,7 @@ local function draw_Thing(a, b, c)
 		return
 	end
 
-	local h = abs_val(Y2 - Y1) / 2
+	local h = abs(Y2 - Y1) / 2
 
 	Color(BulletImpacts_color_Local:GetValue())
 
