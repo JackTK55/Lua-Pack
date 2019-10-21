@@ -1,24 +1,30 @@
-local LocalPlayer, PlayerIndexByUserID, LocalPlayerIndex, g_curtime, WorldToScreen, Color, OutlinedCircle = entities.GetLocalPlayer, client.GetPlayerIndexByUserID, client.GetLocalPlayerIndex, globals.CurTime, client.WorldToScreen, draw.Color, draw.OutlinedCircle
+local LocalPlayer, PlayerIndexByUserID, LocalPlayerIndex, g_curtime, WorldToScreen, Color, OutlinedCircle, OutlinedRect, abs_val = entities.GetLocalPlayer, client.GetPlayerIndexByUserID, client.GetLocalPlayerIndex, globals.CurTime, client.WorldToScreen, draw.Color, draw.OutlinedCircle, draw.OutlinedRect, math.abs
 
-local BulletImpacts_Local = gui.Checkbox(gui.Reference('VISUALS', 'MISC', 'Assistance'), "vis_bullet_impact_local", "Bullet Impacts Local", false)
-local BulletImpacts_color_Local = gui.ColorEntry('clr_vis_bullet_impact_local', 'Bullet Impacts Local', 13,13,255,255)
-local BulletImpacts_Time = gui.Slider(gui.Reference('VISUALS', 'MISC', 'Assistance'), 'vis_bullet_impact_time', 'Bullet Impact Time', 4, 0, 10)
+local ref = gui.Reference('VISUALS','MISC','Assistance')
+local BulletImpacts_Local = gui.Checkbox(ref,"vis_bullet_impact_local", "Bullet Impacts Local", false)
+local BulletImpacts_Type = gui.Combobox(ref,"vis_bullet_impact_type", "Bullet Impacts Type", 'Circle', 'Square')
+local BulletImpacts_color_Local = gui.ColorEntry('clr_vis_bullet_impact_local','Bullet Impacts Local', 255,255,255,255)
+local BulletImpacts_Time = gui.Slider(ref,'vis_bullet_impact_time','Bullet Impact Time', 4, 0, 10)
 local bulletimpacts = {}
 
 local function draw_Thing(a, b, c)
 	local X, Y = WorldToScreen(a, b, c)
-	local _,Y1 = WorldToScreen(a, b, c + 3)
-	local _,Y2 = WorldToScreen(a, b, c - 3)
+	local _,Y1 = WorldToScreen(a, b, c - 2.3)
+	local _,Y2 = WorldToScreen(a, b, c + 2.3)
 
 	if X == nil or Y == nil or Y1 == nil or Y2 == nil then
 		return
 	end
 
-	local h = math.abs(Y2 - Y1) / 2
+	local h = abs_val(Y2 - Y1) / 2
 
 	Color(BulletImpacts_color_Local:GetValue())
-	--OutlinedCircle(X, Y, h)
-	draw.OutlinedRect(X - h, Y - h, X + h, Y + h)
+
+	if BulletImpacts_Type:GetValue() == 0 then
+		OutlinedCircle(X, Y, h)
+	elseif BulletImpacts_Type:GetValue() == 1 then
+		OutlinedRect(X - h, Y - h, X + h, Y + h)
+	end
 end
 
 client.AllowListener('bullet_impact')
@@ -42,7 +48,7 @@ local function showimpacts()
 	if LocalPlayer() == nil or not BulletImpacts_Local:GetValue() then
 		return
 	end
-	
+
 	local val = BulletImpacts_Time:GetValue()
 
 	for k, v in pairs(bulletimpacts) do
