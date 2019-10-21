@@ -1,7 +1,7 @@
 local SS,S,s,r,ref=draw.GetScreenSize,client.SetConVar,false,'r_aspectratio',gui.Reference('MISC','GENERAL','Main')
 
-local enabled = gui.Checkbox(ref,'lua_aspect_ratio_changer_enable', 'Aspect Ratio Changer', false)
-local ratio = gui.Slider(ref, 'lua_aspect_ratio_changer_value', 'Force aspect ratio', 100, 1, 199)
+local enabled = gui.Checkbox(ref,'lua_aspect_ratio_changer_enable','Aspect Ratio Changer',false)
+local ratio = gui.Slider(ref,'lua_aspect_ratio_changer_value','Force aspect ratio',100, 1, 199)
 
 local function on_aspect_ratio_changed()
 	if enabled:GetValue() then
