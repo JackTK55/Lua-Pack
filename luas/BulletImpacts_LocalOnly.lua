@@ -1,45 +1,57 @@
-local GetLocalPlayer, PlayerIndexByUserID, LocalPlayerIndex, g_curtime, table_remove, client_WorldToScreen, draw_Color, draw_RoundedRect = entities.GetLocalPlayer, client.GetPlayerIndexByUserID, client.GetLocalPlayerIndex, globals.CurTime, table.remove, client.WorldToScreen, draw.Color, draw.RoundedRect
+local LocalPlayer, PlayerIndexByUserID, LocalPlayerIndex, g_curtime, WorldToScreen, Color, OutlinedCircle = entities.GetLocalPlayer, client.GetPlayerIndexByUserID, client.GetLocalPlayerIndex, globals.CurTime, client.WorldToScreen, draw.Color, draw.OutlinedCircle
 
 local BulletImpacts_Local = gui.Checkbox(gui.Reference('VISUALS', 'MISC', 'Assistance'), "vis_bullet_impact_local", "Bullet Impacts Local", false)
-local BulletImpacts_color_Local = gui.ColorEntry('clr_vis_bullet_impact_local', 'Bullet Impacts Local', 255,255,255,255)
+local BulletImpacts_color_Local = gui.ColorEntry('clr_vis_bullet_impact_local', 'Bullet Impacts Local', 13,13,255,255)
 local BulletImpacts_Time = gui.Slider(gui.Reference('VISUALS', 'MISC', 'Assistance'), 'vis_bullet_impact_time', 'Bullet Impact Time', 4, 0, 10)
 local bulletimpacts = {}
 
+local function draw_Thing(a, b, c)
+	local X, Y = WorldToScreen(a, b, c)
+	local _,Y1 = WorldToScreen(a, b, c + 3)
+	local _,Y2 = WorldToScreen(a, b, c - 3)
+
+	if X == nil or Y == nil or Y1 == nil or Y2 == nil then
+		return
+	end
+
+	local h = math.abs(Y2 - Y1) / 2
+
+	Color(BulletImpacts_color_Local:GetValue())
+	--OutlinedCircle(X, Y, h)
+	draw.OutlinedRect(X - h, Y - h, X + h, Y + h)
+end
+
 client.AllowListener('bullet_impact')
-function bulletimpact(e)
-	if e:GetName() ~= "bullet_impact" or not BulletImpacts_Local:GetValue() then 
-		return 
+local function bulletimpact(e)
+	if not BulletImpacts_Local:GetValue() or e:GetName() ~= "bullet_impact" then
+		return
 	end
 
 	local x = e:GetFloat("x")
 	local y = e:GetFloat("y")
 	local z = e:GetFloat("z")
 	local player_index = PlayerIndexByUserID(e:GetInt("userid"))
-	local bulletimpacts_n = #bulletimpacts
 
 	if player_index == LocalPlayerIndex() then
-		bulletimpacts[bulletimpacts_n + 1] = {g_curtime(), x, y, z, BulletImpacts_color_Local:GetValue()}
+		bulletimpacts[#bulletimpacts + 1] = {g_curtime(), x, y, z}
 	end
 end
 
-function showimpacts() 
+local function showimpacts()
 --	client.SetConVar('sv_showimpacts', BulletImpacts_Local:GetValue() and 2 or 0, true)
-
-	if GetLocalPlayer() == nil or not BulletImpacts_Local:GetValue() then 
-		return 
-	end 
+	if LocalPlayer() == nil or not BulletImpacts_Local:GetValue() then
+		return
+	end
+	
+	local val = BulletImpacts_Time:GetValue()
 
 	for k, v in pairs(bulletimpacts) do
-		if g_curtime() - v[1] > BulletImpacts_Time:GetValue() then 
-			bulletimpacts[k] = nil
+		if v[1] - g_curtime() + val > 0 then
+			draw_Thing(v[2], v[3], v[4])
 		else
-			local X, Y = client_WorldToScreen(v[2], v[3], v[4]) 
-			if X ~= nil and Y ~= nil then 
-				draw_Color(v[5], v[6], v[7], v[8]) 
-				draw_RoundedRect(X-3, Y-3, X+3, Y+3)
-			end 
+			bulletimpacts[k] = nil
 		end
-	end 
+	end
 end
 
 callbacks.Register("Draw", showimpacts)
