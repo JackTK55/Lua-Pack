@@ -1,52 +1,42 @@
-local client_GetConVar, client_SetConVar, string_format = client.GetConVar, client.SetConVar, string.format
+local G,S,F,E,T,R,C=client.GetConVar,client.SetConVar,string.format,gui.Editbox,gui.Text,gui.Reference,gui.Checkbox
+local s,x,y,z=false,'viewmodel_offset_x','viewmodel_offset_y','viewmodel_offset_z'
 
-local xO = string_format('%.3f', client_GetConVar("viewmodel_offset_x"))
-local yO = string_format('%.3f', client_GetConVar("viewmodel_offset_y"))
-local zO = string_format('%.3f', client_GetConVar("viewmodel_offset_z"))
+local function c()
+	cX = F('%s', G(x):sub(0,5))
+	cY = F('%s', G(y):sub(0,5))
+	cZ = F('%s', G(z):sub(0,5))
+end c()
 
-local ViewModelShown = gui.Checkbox(gui.Reference("MISC", "GENERAL", "Main"), "msc_vme", "Viewmodel Changer", false)
-local VM_W = gui.Window("VM_W", "Viewmodel Extender", 200,200,330,279)
-local VMStuff = gui.Groupbox(VM_W, "Viewmodel Changer", 15, 14, 170, 218)
-local VM_e = gui.Checkbox(VMStuff, "msc_vme", "Enable", false)
-local VM_save_Cache = gui.Checkbox(VMStuff, "msc_vm_save_cache", "Cache Current X,Y,Z", false)
+local function sv(a,b,c)
+	S(x,a,true)
+	S(y,b,true)
+	S(z,c,true)
+end
 
-gui.Text(VMStuff, 'X')
-local xS = gui.Editbox(VMStuff, "VM_X", xO)
-gui.Text(VMStuff, 'Y')
-local yS = gui.Editbox(VMStuff, "VM_Y", yO)
-gui.Text(VMStuff, 'Z')
-local zS = gui.Editbox(VMStuff, "VM_Z", zO)
+local sw = C(R('MISC','GENERAL','Main'),'lua_show_viewmodel_extender','Show Viewmodel Extender',false)
+local w = gui.Window('lua_viewmodel_extender_window','Viewmodel Extender',200,200,201,254)
+local g = gui.Groupbox(w,'Viewmodel Changer',16,16,170,194)
+local e = C(g,'lua_viewmodel_extender_enabled','Enable',false)
 
-local VMCache = gui.Groupbox(VM_W, "Cached Viewmodel", 186, 14, 129, 170)
-gui.Text(VMCache, 'X')
-local xC = gui.Editbox(VMCache, "VM_Xc", xO)
-gui.Text(VMCache, 'Y')
-local yC = gui.Editbox(VMCache, "VM_Yc", yO)
-gui.Text(VMCache, 'Z')
-local zC = gui.Editbox(VMCache, "VM_Zc", zO)
+T(g,'X')
+local sX = E(g,'lua_viewmodel_extender_x',cX)
 
-callbacks.Register("Draw", "View Model Extender", function()
-	VM_W:SetActive(ViewModelShown:GetValue() and gui.Reference('MENU'):IsActive())
+T(g,'Y')
+local sY = E(g,'lua_viewmodel_extender_y',cY)
 
-	if VM_e:GetValue() then
-		client_SetConVar("viewmodel_offset_x", xS:GetValue(), true)
-		client_SetConVar("viewmodel_offset_y", yS:GetValue(), true)
-		client_SetConVar("viewmodel_offset_z", zS:GetValue(), true)
+T(g,'Z')
+local sZ = E(g,'lua_viewmodel_extender_z',cZ)
+
+callbacks.Register('Draw', function()
+	w:SetActive(sw:GetValue() and R('MENU'):IsActive())
+
+	if e:GetValue() then
+		sv(sX:GetValue(), sY:GetValue(), sZ:GetValue())
+		s = true
 	else
-		client_SetConVar("viewmodel_offset_x", xO, true)
-		client_SetConVar("viewmodel_offset_y", yO, true)
-		client_SetConVar("viewmodel_offset_z", zO, true)
+		if s then
+			sv(cX, cY, cZ)
+			s = false
+		end
 	end
-
-	if VM_save_Cache:GetValue() then
-		xO = string_format('%.3f', client_GetConVar("viewmodel_offset_x"))
-		yO = string_format('%.3f', client_GetConVar("viewmodel_offset_y"))
-		zO = string_format('%.3f', client_GetConVar("viewmodel_offset_z"))
-		gui.SetValue('VM_Xc', xO)
-		gui.SetValue('VM_Yc', yO)
-		gui.SetValue('VM_Zc', zO)
-
-		VM_save_Cache:SetValue(0)
-	end
-
 end)
