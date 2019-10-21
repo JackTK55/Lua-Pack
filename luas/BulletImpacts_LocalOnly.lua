@@ -1,4 +1,4 @@
-local LocalPlayer, PlayerIndexByUserID, LocalPlayerIndex, g_curtime, WorldToScreen, Color, OutlinedCircle, OutlinedRect, abs_val = entities.GetLocalPlayer, client.GetPlayerIndexByUserID, client.GetLocalPlayerIndex, globals.CurTime, client.WorldToScreen, draw.Color, draw.OutlinedCircle, draw.OutlinedRect, math.abs
+local LocalPlayer, PlayerIndexByUserID, LocalPlayerIndex, g_curtime, WorldToScreen, Color, OutlinedCircle, OutlinedRect, abs_val, Register = entities.GetLocalPlayer, client.GetPlayerIndexByUserID, client.GetLocalPlayerIndex, globals.CurTime, client.WorldToScreen, draw.Color, draw.OutlinedCircle, draw.OutlinedRect, math.abs, callbacks.Register
 
 local ref = gui.Reference('VISUALS','MISC','Assistance')
 local BulletImpacts_Local = gui.Checkbox(ref,"vis_bullet_impact_local", "Bullet Impacts Local", false)
@@ -45,7 +45,7 @@ end
 
 local function showimpacts()
 --	client.SetConVar('sv_showimpacts', BulletImpacts_Local:GetValue() and 2 or 0, true)
-	if LocalPlayer() == nil or not BulletImpacts_Local:GetValue() then
+	if not BulletImpacts_Local:GetValue() or LocalPlayer() == nil then
 		return
 	end
 
@@ -60,5 +60,5 @@ local function showimpacts()
 	end
 end
 
-callbacks.Register("Draw", showimpacts)
-callbacks.Register("FireGameEvent", bulletimpact)
+Register("Draw", showimpacts)
+Register("FireGameEvent", bulletimpact)
