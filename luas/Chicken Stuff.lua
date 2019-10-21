@@ -10,9 +10,9 @@ local window = gui.Window('lua_chickenshit_window', 'Chicken Stuff', 200, 200, 2
 local lua_groupbox = gui.Groupbox(window, 'Chicken Changer', 16, 16)
 local lua_EnableChicken = Checkbox(lua_groupbox, 'lua_EnableChicken', 'Enable', false)
 
-local lua_ChickenScale = Slider(lua_groupbox, 'lua_ChickenScale', 'Chicken Scale', 1.0, 0.25, 4.0 )
+local lua_ChickenScale = Slider(lua_groupbox, 'lua_ChickenScale', 'Chicken Scale', 1.0, 0.25, 4.0)
 local lua_ChickenColor = Combobox(lua_groupbox, 'lua_ChickenColor', 'Chicken Color','Off','Solid', 'Rainbow')
-local lua_ChickenRainbowSpeed = Slider(lua_groupbox, 'lua_ChickenRainbowSpeed', 'Chicken Color Speed', 1.0, 0.25, 4.0 )
+local lua_ChickenRainbowSpeed = Slider(lua_groupbox, 'lua_ChickenRainbowSpeed', 'Chicken Color Speed', 1.0, 0.25, 4.0)
 local lua_ChickenModel = Combobox(lua_groupbox, 'lua_ChickenModel', 'Holiday Theme','Default Chicken', 'Party Chicken', 'Ghost Chicken', 'Festive Chicken', 'Easter Chicken', 'Jack-o-Chicken')
 local lua_ChickenSkin = Combobox(lua_groupbox, 'lua_ChickenSkin', 'Chicken Skin','Default', 'Other')
 
@@ -35,12 +35,13 @@ end
 
 local function ChickenShit()
 	window:SetActive(show_window:GetValue() and Reference('MENU'):IsActive())
-	
+
 	if GetLocalPlayer() == nil then
 		return
 	end
 
 	local chickens = FindByClass('CChicken')
+	local enabled = lua_EnableChicken:GetValue()
 	local chicken_model = lua_ChickenModel:GetValue()
 	local chicken_skin = lua_ChickenSkin:GetValue()
 	local chicken_scale = lua_ChickenScale:GetValue()
@@ -49,7 +50,7 @@ local function ChickenShit()
 	local chicken_aa = lua_ChickenAA:GetValue()
 
 	local normal_color = RGB2clr( 255, 255, 255 )
-	local A = lua_ChickenColor:GetValue() == 0 and normal_color or 
+	local A = lua_ChickenColor:GetValue() == 0 and normal_color or
 			  lua_ChickenColor:GetValue() == 1 and RGB2clr( Chicken_Color:GetValue() ) or
 			  lua_ChickenColor:GetValue() == 2 and RGB2clr( Rainbow() )
 
@@ -64,7 +65,7 @@ local function ChickenShit()
 		local m_nSkin = chicken:GetProp('m_nSkin')
 		local m_flModelScale = chicken:GetProp('m_flModelScale')
 
-		if lua_EnableChicken:GetValue() then
+		if enabled then
 
 			if m_clrRender ~= A then
 				chicken:SetProp('m_clrRender', A)

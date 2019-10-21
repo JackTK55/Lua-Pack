@@ -19,8 +19,8 @@ local function drawLowHP()
 		if is_enemy and player:IsAlive() then
 			local playername, hp, location = player:GetName(), player:GetPropInt('m_iHealth'), player:GetPropString('m_szLastPlaceName')
 
-			if location == 'unknown' then 
-				location = 'nearby' 
+			if location == 'unknown' then
+				location = 'Nearby'
 			end
 
 			local str = string_format('%s - %s (%i HP)', location, playername, hp)
