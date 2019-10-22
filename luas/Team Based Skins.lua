@@ -19,7 +19,7 @@ local Active3=Checkbox(b,'lua_tbg_active','Active',false)
 local gloves_ct=C(b, 'lua_ct_gloves', 'CT Gloves', 'Bloodhound Gloves', 'Sport Gloves', 'Driver Gloves', 'Hand Wraps', 'Moto Gloves', 'Specialist Gloves', 'Hydra Glove')
 local gloves_t=C(b, 'lua_t_gloves', 'T Gloves', 'Bloodhound Gloves', 'Sport Gloves', 'Driver Gloves', 'Hand Wraps', 'Moto Gloves', 'Specialist Gloves', 'Hydra Glove')
 
-local ac=Button(G(window,'',S,444,168,Bh),'Apply Changes',function() u() end)
+local ac=Button(G(window,'',S,444,168,Bh),'Apply Changes',u)
 
 local window1=Window('lua_tbs_ct_window','CT Skins Window',s,s,wW,wH)
 local c=G(window1,'CT Skins',S,S,gW,gH)
@@ -31,7 +31,7 @@ local ck=G(c,'Knives',tM,bG,w,h)
 local cg=G(c,'Gloves',tR,bG,w,h)
 
 local g=G(window1,'',S,gY,gW,Bh)
-local ac=Button(g,'Apply Changes',function() u() end)
+local ac=Button(g,'Apply Changes',u)
 
 local window2=Window('lua_tbs_t_window','T Skins Window',s,s,wW,wH)
 local t=G(window2,'T Skins',S,S,gW,gH)
@@ -43,7 +43,7 @@ local tk=G(t,'Knives',tM,bG,w,h)
 local tg=G(t,'Gloves',tR,bG,w,h)
 
 local g=G(window2,'',S,gY,gW,Bh)
-local ac=Button(g,'Apply Changes',function() u() end)
+local ac=Button(g,'Apply Changes',u)
 
 local ct_gun={
 	deagle=C(cp,'lua_ct_deagle_skin','Desert Eagle','Urban DDPAT','Blaze','Night','Hypnotic','Mudder','Golden Koi','Cobalt Disruption','Crimson Web','Urban Rubble','Heirloom','Meteorite','Hand Cannon','Pilot','Conspiracy','Naga','Bronze Deco','Midnight Storm','Sunset Storm 1','Sunset Storm 2','Corinthian','Kumicho Dragon','Directive','Oxide Blaze','Code Red','Mecha Industries','Light Rail'),
