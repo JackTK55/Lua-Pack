@@ -1,48 +1,52 @@
-local LocalPlayer,GetValue,SetValue,f,C,LPI,PIbyUID,exec,G,Register,R,Checkbox,Window,Button=entities.GetLocalPlayer,gui.GetValue,gui.SetValue,string.format,gui.Combobox,client.GetLocalPlayerIndex,client.GetPlayerIndexByUserID,client.Command,gui.Groupbox,callbacks.Register,gui.Reference,gui.Checkbox,gui.Window,gui.Button
+local LocalPlayer,GetValue,SetValue,f,C,LPI,PIbyUID,exec,G,Register,R,Checkbox,Window,Button,sK,sG=entities.GetLocalPlayer,gui.GetValue,gui.SetValue,string.format,gui.Combobox,client.GetLocalPlayerIndex,client.GetPlayerIndexByUserID,client.Command,gui.Groupbox,callbacks.Register,gui.Reference,gui.Checkbox,gui.Window,gui.Button,'skin_knife','skin_gloves'
+
+local w,h,gW,gH,tM,tR,bG,Bh,S,wW,wH,gY=200,320,1302,354,214,428,336,68,16,1334,497,382
+local TO=(tR+w+S)-2
+local TK=(TO+w+S)-2
+local TG=(TK+w+S)-2
 
 local function u() exec('cl_fullupdate', true) end
-local w,h,gW,gH,tM,tR,bG,Bh,S,wW,wH,gY,s=200,320,664,692,216,432,338,68,16,696,835,720,50
-local show_window=Checkbox(R('MISC','GENERAL','Main'),'lua_tbs_tbk_tbg_show_window','Show Team Based Skins Window',false)
+local sw=Checkbox(R('MISC','GENERAL','Main'),'lua_tbs_tbk_tbg_show_window','Show Team Based Skins Window',false)
 
-local window=Window('lua_tbs_tbk_tbg_window','Stuff Window',w,w,w,559)
-local g=G(window,'Team Based Skins',S,S)
-local Active=Checkbox(g,'lua_tbs_active','Active',false)
-local enabled=C(g,'lua_tbs_ct_t_show_window','Show Team Skins Window','Off','CT Skins Window','T Skins Window')
+local w1=Window('lua_tbs_tbk_tbg_window','Stuff Window',w,w,w,559)
+local g=G(w1,'Team Based Skins',S,S)
+local A1=Checkbox(g,'lua_tbs_active','Active',false)
+local e=C(g,'lua_tbs_ct_t_show_window','Show Team Skins Window','Off','CT Skins Window','T Skins Window')
 
-local a=G(window,'Team Based Knives',S,130)
-local Active2=Checkbox(a,'lua_tbk_active','Active',false)
+local a=G(w1,'Team Based Knives',S,130)
+local A2=Checkbox(a,'lua_tbk_active','Active',false)
 local knife_ct=C(a, 'lua_ct_knife', 'CT Knife', 'Bayonet', 'Classic Knife', 'Flip Knife', 'Gut Knife', 'Karambit', 'M9 Bayonet', 'Huntsman Knife', 'Falchion Knife', 'Bowie Knife', 'Butterfly Knife', 'Shadow Daggers', 'Ursus Knife', 'Navaja Knife', 'Stiletto Knife', 'Talon Knife')
 local knife_t=C(a, 'lua_t_knife', 'T Knife', 'Bayonet', 'Classic Knife', 'Flip Knife', 'Gut Knife', 'Karambit', 'M9 Bayonet', 'Huntsman Knife', 'Falchion Knife', 'Bowie Knife', 'Butterfly Knife', 'Shadow Daggers', 'Ursus Knife', 'Navaja Knife', 'Stiletto Knife', 'Talon Knife')
 
-local b=G(window,'Team Based Gloves',S,289)
-local Active3=Checkbox(b,'lua_tbg_active','Active',false)
+local b=G(w1,'Team Based Gloves',S,289)
+local A3=Checkbox(b,'lua_tbg_active','Active',false)
 local gloves_ct=C(b, 'lua_ct_gloves', 'CT Gloves', 'Bloodhound Gloves', 'Sport Gloves', 'Driver Gloves', 'Hand Wraps', 'Moto Gloves', 'Specialist Gloves', 'Hydra Glove')
 local gloves_t=C(b, 'lua_t_gloves', 'T Gloves', 'Bloodhound Gloves', 'Sport Gloves', 'Driver Gloves', 'Hand Wraps', 'Moto Gloves', 'Specialist Gloves', 'Hydra Glove')
 
-local ac=Button(G(window,'',S,444,168,Bh),'Apply Changes',u)
+local ac=Button(G(w1,'',S,444,168,Bh),'Apply Changes',u)
 
-local window1=Window('lua_tbs_ct_window','CT Skins Window',s,s,wW,wH)
-local c=G(window1,'CT Skins',S,S,gW,gH)
+local w2=Window('lua_tbs_ct_window','CT Skins Window',0,0,wW,wH)
+local c=G(w2,'CT Skins',S,S,gW,gH)
 local cp=G(c,'Pistols',0,0,w,h)
 local cr=G(c,'Rifles',tM,0,w,h)
 local cs=G(c,'SMGs',tR,0,w,h)
-local co=G(c,'Other',0,bG,w,h)
-local ck=G(c,'Knives',tM,bG,w,h)
-local cg=G(c,'Gloves',tR,bG,w,h)
+local co=G(c,'Other',TO,0,w,h)
+local ck=G(c,'Knives',TK,0,w,h)
+local cg=G(c,'Gloves',TG,0,w,h)
 
-local g=G(window1,'',S,gY,gW,Bh)
+local g=G(w2,'',S,gY,gW,Bh)
 local ac=Button(g,'Apply Changes',u)
 
-local window2=Window('lua_tbs_t_window','T Skins Window',s,s,wW,wH)
-local t=G(window2,'T Skins',S,S,gW,gH)
+local w3=Window('lua_tbs_t_window','T Skins Window',0,0,wW,wH)
+local t=G(w3,'T Skins',S,S,gW,gH)
 local tp=G(t,'Pistols',0,0,w,h)
 local tr=G(t,'Rifles',tM,0,w,h)
 local ts=G(t,'SMGs',tR,0,w,h)
-local to=G(t,'Other',0,bG,w,h)
-local tk=G(t,'Knives',tM,bG,w,h)
-local tg=G(t,'Gloves',tR,bG,w,h)
+local to=G(t,'Other',TO,0,w,h)
+local tk=G(t,'Knives',TK,0,w,h)
+local tg=G(t,'Gloves',TG,0,w,h)
 
-local g=G(window2,'',S,gY,gW,Bh)
+local g=G(w3,'',S,gY,gW,Bh)
 local ac=Button(g,'Apply Changes',u)
 
 local ct_gun={
@@ -181,31 +185,33 @@ local function set(t)
 end
 
 local function set_k(a)
-	if GetValue('skin_knife') - 1 ~= a then
-		SetValue('skin_knife',a)
+	if GetValue(sK) - 1 ~= a then
+		SetValue(sK,a)
 	end
 end
 
 local function set_g(a)
-	if GetValue('skin_gloves') - 1 ~= a then
-		SetValue('skin_gloves',a)
+	if GetValue(sG) - 1 ~= a then
+		SetValue(sG,a)
 	end
 end
 
-local function A()
+Register('Draw', function()
+	local mo = R('MENU'):IsActive()
+	local e0 = sw:GetValue() and mo
+	local e1 = e:GetValue() == 1 and mo
+	local e2 = e:GetValue() == 2 and mo
+
+	w1:SetActive(e0)
+	w2:SetActive(e1)
+	w3:SetActive(e2)
+end)
+
+local function A(c)
 	local lp = LocalPlayer()
-	local menu_open = R('MENU'):IsActive()
-
-	local enabled1 = enabled:GetValue() == 1 and menu_open
-	local enabled2 = enabled:GetValue() == 2 and menu_open
-
-	window:SetActive(show_window:GetValue() and menu_open)
-	window1:SetActive(enabled1)
-	window2:SetActive(enabled2)
-
-	local a1 = Active:GetValue()
-	local a2 = Active2:GetValue()
-	local a3 = Active3:GetValue()
+	local a1 = A1:GetValue()
+	local a2 = A2:GetValue()
+	local a3 = A3:GetValue()
 
 	if lp == nil then
 		return
@@ -213,16 +219,13 @@ local function A()
 
 	if lp:GetTeamNumber() == 1 then
 		return
-
 	elseif lp:GetTeamNumber() == 2 then
 		if a1 then
 			set(t_gun)
 		end
-
 		if a2 then
 			set_k(knife_t:GetValue())
 		end
-
 		if a3 then
 			set_g(gloves_t:GetValue())
 		end
@@ -230,11 +233,9 @@ local function A()
 		if a1 then
 			set(ct_gun)
 		end
-
 		if a2 then
 			set_k(knife_ct:GetValue())
 		end
-
 		if a3 then
 			set_g(gloves_ct:GetValue())
 		end
@@ -243,11 +244,11 @@ end
 
 client.AllowListener('player_spawn')
 Register('FireGameEvent', function(e)
-	if (not Active:GetValue() and not Active2:GetValue() and not Active3:GetValue()) or e:GetName() ~= 'player_spawn' or PIbyUID(e:GetInt('userid')) ~= LPI() then
+	if (not A1:GetValue() and not A2:GetValue() and not A3:GetValue()) or e:GetName() ~= 'player_spawn' or PIbyUID(e:GetInt('userid')) ~= LPI() then
 		return
 	end
 
 	u()
 end)
 
-Register('Draw', A)
+Register('CreateMove', A)
