@@ -1,3 +1,7 @@
+--[[
+	Team Based Skins has many more options -> https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/luas/Team%20Based%20Skins.lua
+]]
+
 local GetLocalPlayer, client_exec, gui_GetValue, gui_SetValue, LocalPlayerIndex, PlayerIndexByUserID = entities.GetLocalPlayer, client.Command, gui.GetValue, gui.SetValue, client.GetLocalPlayerIndex, client.GetPlayerIndexByUserID
 
 local Knife_Changer = gui.Checkbox(gui.Reference("MISC", "GENERAL", "Main"), "msc_knifechanger", "Knife Changer", false)
