@@ -186,13 +186,13 @@ local function set(t)
 end
 
 local function set_k(a)
-	if GetValue(sK) ~= a then
+	if GetValue(sK)-1 ~= a then
 		SetValue(sK,a)
 	end
 end
 
 local function set_g(a)
-	if GetValue(sG) ~= a then
+	if GetValue(sG)-1 ~= a then
 		SetValue(sG,a)
 	end
 end
