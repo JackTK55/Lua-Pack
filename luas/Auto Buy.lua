@@ -25,7 +25,7 @@ local function w(y)
 	v[1], v[2] = q[l:GetValue()+1], r[m:GetValue()+1]
 
 	for z=1,#o do
-		if o[z]:GetValue()then
+		if o[z]:GetValue() then
 			v[#v+1] = s[z]
 		end
 	end
