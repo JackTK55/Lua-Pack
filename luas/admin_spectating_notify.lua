@@ -3,7 +3,7 @@ local MaxClients, GetPlayerInfo, Reg, GetMousePos, IsButtonPressed, GetValue, Co
 local font = draw.CreateFont('Tahoma', 14)
 local list_of_players = {}
 
-local Window = gui.Window('lua_player_list_admin_notify_window', 'Admin Notify', 200, 200, 200, 360)
+local Window = gui.Window('lua_player_list_admin_notify_window', 'Admin Notify', 200, 200, 200, 336)
 local custom_sound = gui.Editbox(Window, 'lua_player_list_admin_notify_sound', 'custom_sound.mp3')
 
 local table_contains=function(t,a) for i=1,#t do if t[i] == a then return true end end return false end
@@ -25,10 +25,10 @@ local get_players = function()
 		if player_info ~= nil and localplayerindex ~= i then
 			player_info['IsSelected'] = false
 			player_info['IsSpectatingMe'] = false
-			local is_bot = player_info['isBot']
-			local is_gotv = player_info['isGOTV']
+			local is_bot = player_info['IsBot']
+			local is_gotv = player_info['IsGOTV']
 
-			if not is_gotv then
+			if not is_gotv and not is_bot then
 				if not table_contains(list_of_players, i) then
 					list_of_players[i] = player_info
 				end
@@ -66,7 +66,7 @@ local update_list = function(x, y, w, h, a)
 
 		if v['IsSelected'] then
 			Color(GetValue('clr_gui_listbox_active'))
-			RectFill(xMath, yMath, w, hMath)
+			RectFill(xMath+2, yMath, w-2, hMath)
 		end
 
 		Color(GetValue('clr_gui_text2'))
@@ -74,12 +74,12 @@ local update_list = function(x, y, w, h, a)
 	end
 
 	Color(GetValue('clr_gui_groupbox_outline'))
-	OutRect(x+16,y+16,w,h-34)
+	OutRect(x+16,y+16,w, (y+12)+(#list_of_players*14))
 end
 
-local group = gui.Groupbox(Window, 'Players', 16, 44, 168, 204)
+local group = gui.Groupbox(Window, 'Players', 16, 44, 168, 180)
 local Custom = gui.Custom(group, 'lua_player_list_admin_notify_custom', 0, 0, 135, 310, update_list)
-local Button = gui.Button(gui.Groupbox(Window, '', 16, 250, 168, 64), 'Refresh', get_players)
+local Button = gui.Button(gui.Groupbox(Window, '', 16, 226, 168, 64), 'Refresh', get_players)
 
 Reg('Draw', function()
 	Window:SetActive(gui.Reference('MENU'):IsActive())
