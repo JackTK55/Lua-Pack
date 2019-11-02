@@ -103,13 +103,13 @@ local function ChickenShit()
 
 		end
 
-		if party_mode ~= enable_party then
-			SetConVar('sv_party_mode', enable_party, true)
-		end
-
 		if chicken_aa then
 			chicken:SetProp('m_nSequence', -509)
 		end
+	end
+
+	if party_mode ~= enable_party then
+		SetConVar('sv_party_mode', enable_party, true)
 	end
 end
 
