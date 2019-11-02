@@ -1,16 +1,16 @@
-local MaxClients, GetPlayerInfo, Reg, GetMousePos, IsButtonPressed, GetValue, Command, get_local_player, GetByUserID, Text, Color, GetTextSize, RectFill, SetFont = globals.MaxClients, client.GetPlayerInfo, callbacks.Register, input.GetMousePos, input.IsButtonPressed, gui.GetValue, client.Command, entities.GetLocalPlayer, entities.GetByUserID, draw.Text, draw.Color, draw.GetTextSize, draw.FilledRect, draw.SetFont
+local MaxClients, GetPlayerInfo, Reg, GetMousePos, IsButtonPressed, GetValue, Command, get_local_player, GetByUserID, Text, Color, GetTextSize, OutRect, RectFill, SetFont = globals.MaxClients, client.GetPlayerInfo, callbacks.Register, input.GetMousePos, input.IsButtonPressed, gui.GetValue, client.Command, entities.GetLocalPlayer, entities.GetByUserID, draw.Text, draw.Color, draw.GetTextSize, draw.OutlinedRect, draw.FilledRect, draw.SetFont
 
 local font = draw.CreateFont('Tahoma', 14)
 local list_of_players = {}
 
-local Window = gui.Window('lua_player_list_admin_notify_window', 'Admin Notify', 200, 200, 151, 214)
+local Window = gui.Window('lua_player_list_admin_notify_window', 'Admin Notify', 200, 200, 200, 360)
 local custom_sound = gui.Editbox(Window, 'lua_player_list_admin_notify_sound', 'custom_sound.mp3')
 
 local table_contains=function(t,a) for i=1,#t do if t[i] == a then return true end end return false end
 local inside_box=function(x,y,x1,y1,x2,y2) local X,Y = x > x1 and x < x2, y > y1 and y < y2 return X and Y end
 
 -- https://github.com/SzymonLisowiec/node-CSGODemoReader#all-possible-events
-local listen_for = {'game_init', 'player_disconnect', 'player_connect', 'game_end', 'player_changename'}
+local listen_for = {'game_init', 'player_disconnect', 'player_connect', 'player_changename'}
 for i=1,#listen_for do client.AllowListener(listen_for[i]) end
 
 local get_players = function()
@@ -20,8 +20,7 @@ local get_players = function()
 	if local_player == nil then return end
 	local localplayerindex = local_player:GetIndex()
 
-	local max_clients = MaxClients()
-	for i=1, max_clients do
+	for i=1, MaxClients() do
 		local player_info = GetPlayerInfo(i)
 		if player_info ~= nil and localplayerindex ~= i then
 			player_info['IsSelected'] = false
@@ -40,6 +39,9 @@ end
 
 local update_list = function(x, y, w, h, a)
 	local mX, mY = GetMousePos()
+	
+	local x = x - 16
+	local y = y - 16
 	
 	for i,v in pairs(list_of_players) do
 		local player_name = v['Name']
@@ -70,9 +72,14 @@ local update_list = function(x, y, w, h, a)
 		Color(GetValue('clr_gui_text2'))
 		Text(xMath+width, yMath, player_name)
 	end
+
+	Color(GetValue('clr_gui_groupbox_outline'))
+	OutRect(x+16,y+16,w,h-34)
 end
 
-local Custom = gui.Custom(Window, 'lua_player_list_admin_notify_custom', 0, 22, 135, 204, update_list)
+local group = gui.Groupbox(Window, 'Players', 16, 44, 168, 204)
+local Custom = gui.Custom(group, 'lua_player_list_admin_notify_custom', 0, 0, 135, 310, update_list)
+local Button = gui.Button(gui.Groupbox(Window, '', 16, 250, 168, 64), 'Refresh', get_players)
 
 Reg('Draw', function()
 	Window:SetActive(gui.Reference('MENU'):IsActive())
@@ -110,8 +117,6 @@ Reg('Draw', function()
 	end
 end)
 
-get_players()
-
 Reg('FireGameEvent', function(e)
 	local e_name = e:GetName()
 	for i=1,#listen_for do
@@ -120,3 +125,5 @@ Reg('FireGameEvent', function(e)
 		end
 	end
 end)
+
+get_players()
