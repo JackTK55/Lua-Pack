@@ -52,7 +52,7 @@ local function update_list(x, y, w, h, a)
 
 		if inside_area(mX,mY, x,yMath,w,hMath) then
 			if IsButtonPressed(1) then
-				list_of_players[s]['IsSelected'] = not v['IsSelected']
+				v['IsSelected'] = not v['IsSelected']
 			else
 				Color(GetValue('clr_gui_hover'))
 				RectFill(x, yMath, w, hMath)
