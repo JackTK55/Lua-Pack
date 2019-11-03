@@ -76,8 +76,7 @@ local function update_list(x, y, w, h, a)
 	OutRect(x,y+12,w, (y+gap+13)+(#list_of_players*gap))
 end
 
-local group = gui.Groupbox(Window, 'Players', 16, 50, 168, 180)
-local Custom = gui.Custom(group, 'lua_custom_playerlist_list', 0, 0, 135, 261, update_list)
+local Custom = gui.Custom(gui.Groupbox(Window,'Players',16,50,168,180),'lua_custom_playerlist_list',0,0,135,384,update_list)
 
 Reg('Draw', function()
 	Window:SetActive(gui.Reference('MENU'):IsActive())
@@ -97,7 +96,7 @@ Reg('Draw', function()
 	for _,v in pairs(list_of_players) do
 		if v['IsSelected'] then
 			local ent = GetByUserID(v['UserID'])
-			if ent ~= nil and in_my_game(v['SteamID']) then
+			if ent ~= nil and in_my_game(v['SteamID']) and not ent:IsAlive() then
 				local ObserverTarget = ent:GetPropEntity("m_hObserverTarget")
 				if ObserverTarget ~= nil then
 					local TargetIndex = ObserverTarget:GetIndex()
@@ -106,8 +105,12 @@ Reg('Draw', function()
 							Command('playvol '..custom_sound:GetValue()..' 1', true)
 							v['IsSpectatingMe'] = true
 						end
+					else
+						v['IsSpectatingMe'] = false
 					end
 				end
+			else
+				v['IsSpectatingMe'] = false
 			end
 		end
 	end
