@@ -16,14 +16,14 @@ local function draw_Thing(a, b, c)
 		return
 	end
 
-	local h = abs(Y2 - Y1) / 2
+	local r = abs(Y2 - Y1) * 0.5
 
 	Color(BulletImpacts_color_Local:GetValue())
 
 	if BulletImpacts_Type:GetValue() == 0 then
-		OutlinedCircle(X, Y, h)
+		OutlinedCircle(X, Y, r)
 	elseif BulletImpacts_Type:GetValue() == 1 then
-		OutlinedRect(X - h, Y - h, X + h, Y + h)
+		OutlinedRect(X - r, Y - r, X + r, Y + r)
 	end
 end
 
