@@ -96,7 +96,7 @@ local function A(z)
 		end
 	end
 
-	if y == "round_prestart" then
+	if y == 'round_prestart' then
 		if m then
 			x("cl_fullupdate", true)
 			r('s')
