@@ -8,8 +8,8 @@ local Knife_Changer = gui.Checkbox(gui.Reference("MISC", "GENERAL", "Main"), "ms
 local Knife_W = gui.Window("tb_knife", "Knife Changer", 200, 200, 200, 245)
 local knife_G = gui.Groupbox(Knife_W, "Team Knife Changer", 16, 16)
 local active = gui.Checkbox(knife_G, 'knife_active', 'Active', false)
-local knife_ct = gui.Combobox(knife_G, "knife_CT", "CT Knife", "Bayonet", 'Classic Knife', "Flip Knife", "Gut Knife", "Karambit", "M9 Bayonet", "Huntsman Knife", "Falchion Knife", "Bowie Knife", "Butterfly Knife", "Shadow Daggers", "Ursus Knife", "Navaja Knife", "Stiletto Knife", "Talon Knife")
-local knife_t = gui.Combobox(knife_G, "knife_T", "T Knife", "Bayonet", 'Classic Knife', "Flip Knife", "Gut Knife", "Karambit", "M9 Bayonet", "Huntsman Knife", "Falchion Knife", "Bowie Knife", "Butterfly Knife", "Shadow Daggers", "Ursus Knife", "Navaja Knife", "Stiletto Knife", "Talon Knife")
+local knife_ct = gui.Combobox(knife_G, "knife_CT", "CT Knife", 'Bayonet','Classic Knife','Flip Knife','Gut Knife','Karambit','M9 Bayonet','Huntsman Knife','Falchion Knife','Bowie Knife','Butterfly Knife','Shadow Daggers','Pancord Knife','Survival Knife','Ursus Knife','Navaja Knife','Nomad Knife','Stiletto Knife','Talon Knife','Skeleton Knife')
+local knife_t = gui.Combobox(knife_G, "knife_T", "T Knife", 'Bayonet','Classic Knife','Flip Knife','Gut Knife','Karambit','M9 Bayonet','Huntsman Knife','Falchion Knife','Bowie Knife','Butterfly Knife','Shadow Daggers','Pancord Knife','Survival Knife','Ursus Knife','Navaja Knife','Nomad Knife','Stiletto Knife','Talon Knife','Skeleton Knife')
 local update = gui.Button(knife_G, 'Update', function()
 	client_exec('cl_fullupdate', true)
 end)
@@ -17,7 +17,11 @@ end)
 callbacks.Register('Draw', function()
 	Knife_W:SetActive(Knife_Changer:GetValue() and gui.Reference("MENU"):IsActive())
 
-	if not active:GetValue() or GetLocalPlayer() == nil then
+	if not active:GetValue() then
+		return
+	end
+
+	if GetLocalPlayer() == nil then
 		return
 	end
 
