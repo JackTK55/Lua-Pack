@@ -14,12 +14,10 @@ local q,r,s = {'','buy"ak47"','buy"ssg08"','buy"sg556"','buy"awp"','buy"scar20"'
 f('Draw',function() i:SetActive(h:GetValue() and A('MENU'):IsActive()) end)
 
 client.AllowListener('player_spawn')
-local function w(y)
-	local t, u = y:GetName(), y:GetInt("userid")
-
-	if not k:GetValue() or c() == nil or t ~= 'player_spawn' or a(u) ~= b() then
-		return
-	end
+f("FireGameEvent", function(y)
+	if not k:GetValue() then return end
+	if y:GetName() ~= 'player_spawn' then return end
+	if a(y:GetInt("userid")) ~= b() then return end
 
 	local v, x = {}, c():GetProp('m_iAccount')
 	v[1], v[2] = q[l:GetValue()+1], r[m:GetValue()+1]
@@ -34,6 +32,4 @@ local function w(y)
 	if x >= p:GetValue()*1000 or x < 1 then
 		e(v,true)
 	end
-end
-
-f("FireGameEvent", w)
+end)
