@@ -12,24 +12,16 @@ local chickenGLOW = ui.new_checkbox("RAGE", "Other", "Chicken Glow ESP")
 local auto, stop, attack = false, true, false
 
 local function hide_on_load()
-	set_visible(silent_aim, false)
-	set_visible(autofire, false)
-	set_visible(autostop, false)
-	set_visible(autocrouch, false)
-	set_visible(target, false)
-	set_visible(chickenGLOW, false)
+	local e = ui_get(chicken_aimbot)
+	set_visible(silent_aim, e)
+	set_visible(autofire, e)
+	set_visible(autostop, e)
+	set_visible(autocrouch, e)
+	set_visible(target, e)
+	set_visible(chickenGLOW, e)
 end
 hide_on_load()
-
-ui.set_callback(chicken_aimbot, function()
-	local aimbot_enabled = ui_get(chicken_aimbot)
-	set_visible(silent_aim, aimbot_enabled)
-	set_visible(autofire, aimbot_enabled)
-	set_visible(autostop, aimbot_enabled)
-	set_visible(autocrouch, aimbot_enabled)
-	set_visible(target, aimbot_enabled)
-	set_visible(chickenGLOW, aimbot_enabled)
-end)
+ui.set_callback(chicken_aimbot, hide_on_load)
 
 local function calculateAngles(x1, y1, z1, x2, y2, z2)
 	x_delta = x1 - x2
