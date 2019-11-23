@@ -34,8 +34,8 @@ callbacks.Register('Draw', function()
 	local Y = y / 2
 
 	Color(255, 255, 255, 255)
-	Text(10, Y - 6, 'Damage Done: ', S[1])
-	Text(10, Y + 6, 'Teammates Killed: ', S[2])
+	Text(10, Y - 6, 'Damage Done: '.. S[1])
+	Text(10, Y + 6, 'Teammates Killed: '.. S[2])
 end)
 
 client.AllowListener('game_init')
