@@ -59,23 +59,15 @@ local C = {
 }
 
 local a = 255
-local function aids()
+callbacks.Register("Draw", function()
 	for i=1, #A do
 		local r, g, b = random(255), random(255), random(255)
 		SetValue(A[i], r, g, b, a)
-	end
-
-	for i=1, #B do
 		SetValue(B[i], random(1, 6))
-	end
-
-	for i=1, #C do
 		SetValue(C[i], random(1, 7))
 	end
-	
+
 	SetValue("esp_crosshair_recoil", random(1,2))
 	SetValue("vis_bullet_tracer", 1)
 	SetValue("vis_chams_weapon", random(1,17))
-end
-
-callbacks.Register("Draw", aids)
+end)
