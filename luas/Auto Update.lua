@@ -1,3 +1,5 @@
+-- Base code for auto updating.
+
 local cS = GetScriptName()
 local cV = '1.0.0'
 local gS = ' PUT LINK TO RAW LUA SCRIPT '
