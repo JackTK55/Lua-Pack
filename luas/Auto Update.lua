@@ -16,7 +16,7 @@ callbacks.Register('Draw', 'Auto Update', function()
 			print(cS, 'updated from', cV, 'to', nV)
 		else
 			print(cS, 'is up-to-date.')
-			callbacks.Unregister('Auto Update')
+			callbacks.Unregister('Draw', 'Auto Update')
 		end
 	end
 end)
