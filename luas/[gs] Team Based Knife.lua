@@ -49,6 +49,6 @@ client.set_event_callback('player_team', function(e)
 	end
 end)
 
-client.set_event_callback('shutdown', function(_)
+client.set_event_callback('shutdown', function()
 	set_visible(combo, true)
 end)
