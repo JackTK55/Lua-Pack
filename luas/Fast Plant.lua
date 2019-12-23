@@ -1,5 +1,3 @@
--- If you want it to do it automatically remove lines with -- on them
-
 local GetLocalPlayer, IsButtonDown = entities.GetLocalPlayer, input.IsButtonDown
 local r = gui.Reference('MISC', 'AUTOMATION', 'Other')
 local enabled = gui.Checkbox(r, 'fast_plant', 'Fast Plant', false)
@@ -10,10 +8,10 @@ callbacks.Register('CreateMove', function(cmd)
 		return
 	end
 
-	local key = hotkey:GetValue() --
-	if key == 0 or not IsButtonDown( key ) then --
-		return --
-	end --
+	local key = hotkey:GetValue()
+	if key == 0 or not IsButtonDown( key ) then
+		return
+	end
 
 	local lp = GetLocalPlayer()
 	local weapon = lp:GetPropEntity('m_hActiveWeapon')
