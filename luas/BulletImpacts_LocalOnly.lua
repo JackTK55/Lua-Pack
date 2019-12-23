@@ -1,4 +1,4 @@
-local LocalPlayer,PlayerIndexByUserID,LocalPlayerIndex,g_curtime,WorldToScreen,Color,OutlinedCircle,OutlinedRect,abs,Register = entities.GetLocalPlayer,client.GetPlayerIndexByUserID,client.GetLocalPlayerIndex,globals.CurTime,client.WorldToScreen,draw.Color,draw.OutlinedCircle,draw.OutlinedRect,math.abs,callbacks.Register
+local LocalPlayer,PlayerIndexByUserID,LocalPlayerIndex,g_curtime,WorldToScreen,Color,OutlinedCircle,OutlinedRect,abs,Register,pairs = entities.GetLocalPlayer,client.GetPlayerIndexByUserID,client.GetLocalPlayerIndex,globals.CurTime,client.WorldToScreen,draw.Color,draw.OutlinedCircle,draw.OutlinedRect,math.abs,callbacks.Register,pairs
 
 local ref = gui.Reference('VISUALS','MISC','Assistance')
 local BulletImpacts_Local = gui.Checkbox(ref,"vis_bullet_impact_local", "Bullet Impacts Local", false)
