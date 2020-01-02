@@ -1,6 +1,6 @@
 local GetLocalPlayer, LocalPlayerIndex, FindByClass, GetScreenSize, GetTextSize, Color, TextShadow, SetFont = entities.GetLocalPlayer, client.GetLocalPlayerIndex, entities.FindByClass, draw.GetScreenSize, draw.GetTextSize, draw.Color, draw.TextShadow, draw.SetFont
 local font = draw.CreateFont('Tahoma', 14)
-local r, g, b  = 255, 255, 255
+local r, g, b
 
 local X, Y = 1920, 1080 -- Screen Width, Height
 local X, Y = X * 0.5, (Y * 0.5) + 5
