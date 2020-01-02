@@ -29,7 +29,7 @@ local get_spectators = function()
 				local obsMode = player:GetProp('m_iObserverMode') == 4 -- 4 is first person
 				s[#s + 1] = {name, obsMode}
 
-			elseif lp:IsAlive() and iSpec ~= nil and TargetIndex == iSpec:GetIndex() then
+			elseif not lp:IsAlive() and iSpec ~= nil and TargetIndex == iSpec:GetIndex() then
 				local name = player:GetName()
 				local obsMode = player:GetProp('m_iObserverMode') == 4 -- 4 is first person
 				s[#s + 1] = {name, obsMode}
