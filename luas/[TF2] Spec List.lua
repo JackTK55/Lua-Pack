@@ -16,10 +16,11 @@ local get_spectators = function()
 		return s
 	end
 
+	local iSpec = lp:GetPropEntity('m_hObserverTarget')
+
 	for i=1, #players do
 		local player = players[i]
 		local obsTarget = player:GetPropEntity('m_hObserverTarget')
-		local iSpec = lp:GetPropEntity('m_hObserverTarget')
 
 		if obsTarget ~= nil and i ~= lpi and not player:IsAlive() then
 			local TargetIndex = obsTarget:GetIndex()	
