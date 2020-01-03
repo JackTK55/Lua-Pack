@@ -5,9 +5,11 @@ for i=1,#noises do client.AllowListener(noises[i]) end
 local made_noise, dur = {}, 1.25
 
 callbacks.Register('FireGameEvent', function(e)
+	local event_name = e:GetName()
+
 	for i=1,#noises do
 		local noise = noises[i]
-		if noise == e:GetName() then
+		if noise == event_name then
 			local player_index = PlayerIndexByUserID(e:GetInt('UserID'))
 			made_noise[player_index] = {noise, g_curtime() + dur}
 		end
