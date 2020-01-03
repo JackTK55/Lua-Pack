@@ -17,7 +17,6 @@ callbacks.Register('FireGameEvent', function(e)
 end)
 
 callbacks.Register('DrawESP', function(b)
-	local abs = GetLocalPlayer():GetAbsOrigin()
 	local ent = b:GetEntity()
 	local x,y,w,h = b:GetRect()
 
