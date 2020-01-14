@@ -90,7 +90,7 @@ local function MAIN()
 
 
 	--- PING ---
-	draw_outlined_rect(x + 153, y + 33, x + 153 + 4, y + 33 + 13)
+	draw_outlined_rect(x + 153, y + 33, x + 153 + 4, y + 33 + 13, 120, 120, 120, 255)
 	draw_rect(x + 148, y + 36, x + 148 + 4, y + 36 + 10, 120, 120, 120, 255)
 	draw_rect(x + 143, y + 39, x + 143 + 4, y + 39 + 7, 120, 120, 120, 255)
 	draw_rect(x + 138, y + 42, x + 138 + 4, y + 42 + 4, 120, 120, 120, 255)
