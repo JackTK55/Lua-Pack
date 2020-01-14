@@ -59,7 +59,7 @@ local function MAIN()
 	local time = date('%X')
 
 	if local_player then
-		ping = player_resources:GetPropInt( 'm_iPing', GetLocalPlayerIndex() )
+		ping = player_resources:GetPropInt( 'm_iPing', GetLocalPlayerIndex() ).. 'ms'
 		tick = floor( local_player:GetProp( 'localdata', 'm_nTickBase' ) + 0x40 )
 	else
 		ping, tick = '', ''
