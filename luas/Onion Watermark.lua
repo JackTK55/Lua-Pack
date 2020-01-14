@@ -21,9 +21,10 @@ local font = {
 }
 
 local ping, tick
-local tX, tY = 300, 30
 
 local MENU = gui.Reference('MENU')
+local tX, tY = 300, 30
+local offsetX, offsetY, _drag
 local drag_menu = function(x, y, w, h)
 	if not MENU:IsActive() then
 		return tX, tY
