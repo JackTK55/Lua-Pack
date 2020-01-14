@@ -16,9 +16,11 @@ callbacks.Register('CreateMove', function(cmd)
 	local lp = GetLocalPlayer()
 	local weapon = lp:GetPropEntity('m_hActiveWeapon')
 	local weapon = weapon ~= nil and weapon:GetClass() == 'CC4'
-	local in_zone = weapon and lp:GetPropInt('m_bInBombZone') == 1 
+	local in_zone = weapon and lp:GetPropInt('m_bInBombZone') == 1
+	local flag = lp:GetProp('m_fFlags')
+	local in_air = flag == 256 or flag == 262
 
-	if in_zone then 
+	if in_zone and not in_air then 
 		cmd:SetButtons( (1 << 5) )
 	end 
 end)
