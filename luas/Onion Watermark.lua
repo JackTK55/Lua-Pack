@@ -1,5 +1,5 @@
 --[[
-	Original: AnAnAn, catmanformod2019
+	Original by: AnAnAn, catmanformod2019
 	Recode by: zack
 ]]
 
