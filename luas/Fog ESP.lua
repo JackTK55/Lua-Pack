@@ -1,3 +1,9 @@
+--[[
+	Name: Fog ESP v2
+	Original by: giperfast, yarindayan12
+	Edited by: zack
+--]]
+
 local SetConVar, FindByClass, GetLocalPlayer, format = client.SetConVar, entities.FindByClass, entities.GetLocalPlayer, string.format
 local m, m2, m3 = 1 / 100, 1 / 50, 1 / 255
 
