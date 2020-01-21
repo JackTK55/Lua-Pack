@@ -1,13 +1,15 @@
-local g_curtime,PlayerIndexByUserID,pairs,remove = globals.CurTime,client.GetPlayerIndexByUserID,pairs,table.remove
+local GetLocalPlayer,g_curtime,PlayerIndexByUserID,pairs,remove = entities.GetLocalPlayer,globals.CurTime,client.GetPlayerIndexByUserID,pairs,table.remove
 
 local noises = {'weapon_fire', 'player_footstep', 'weapon_reload'}
 for i=1,#noises do client.AllowListener(noises[i]) end
 local made_noise, dur = {}, 1.25
 
 callbacks.Register('FireGameEvent', function(e)
+	local event_name = e:GetName()
+
 	for i=1,#noises do
 		local noise = noises[i]
-		if noise == e:GetName() then
+		if noise == event_name then
 			local player_index = PlayerIndexByUserID(e:GetInt('UserID'))
 			made_noise[player_index] = {noise, g_curtime() + dur}
 		end
@@ -15,7 +17,6 @@ callbacks.Register('FireGameEvent', function(e)
 end)
 
 callbacks.Register('DrawESP', function(b)
-	local abs = entities.GetLocalPlayer():GetAbsOrigin()
 	local ent = b:GetEntity()
 	local x,y,w,h = b:GetRect()
 
