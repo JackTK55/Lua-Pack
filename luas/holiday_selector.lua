@@ -2,7 +2,6 @@ local SetConVar, GetMapName = client.SetConVar, engine.GetMapName
 local new_modes = gui.Combobox(gui.Reference('VISUALS', 'MISC', 'World'), 'vis_holiday', 'Holiday Mode', 'None', 'Halloween', 'Christmas')
 local mode
 
---callbacks.Register('CreateMove', function(_)
 callbacks.Register('Draw', function()
 	local new_mode = GetMapName() ~= nil and new_modes:GetValue() or 0
 
