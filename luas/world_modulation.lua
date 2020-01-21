@@ -3,7 +3,7 @@
 -- zack edited that edit
 
 local SetConVar, FindByClass, GetLocalPlayer, pairs = client.SetConVar, entities.FindByClass, entities.GetLocalPlayer, pairs
-local m, m2 = 0.00392156863, 0.01
+local m, m2 = 1 / 255, 1 / 100
 
 local r = gui.Reference("VISUALS", "MISC", "World")
 local colors = gui.ColorEntry('clr_world_modulation', 'World Modulation', 255, 0, 0, 255)
