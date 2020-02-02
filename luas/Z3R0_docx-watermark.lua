@@ -7,7 +7,10 @@ local get_abs_fps = function() frame_rate = 0.9 * frame_rate + (1 - 0.9) * Absol
 local t_font = draw.CreateFont("Arial", 17, 10)
 local v_font = draw.CreateFont("Arial", 16, 10)
 
-local tX, tY = 300, 30
+local R = gui.Reference('MISC', 'ENHANCEMENT', 'Appearance')
+gui.Text(R, 'Watermark Position Saving')
+local pX, pY = gui.Editbox(R, 'Z3R0.docx-wm_X', '300'), gui.Editbox(R, 'Z3R0.docx-wm_Y', '30')
+
 local offsetX, offsetY, _drag
 local drag_menu = function(x, y, w, h)
 	if not MENU:IsActive() then
@@ -27,6 +30,8 @@ local drag_menu = function(x, y, w, h)
 			end
 		else
 			tX, tY = X - offsetX, Y - offsetY
+			pX:SetValue(tX)
+			pY:SetValue(tY)
 		end
 	else
 		_drag = false
@@ -97,6 +102,10 @@ local function bg_separator(x, y)
 end
 
 local function on_draw()
+	if not tX then
+		tX, tY = tonumber(pX:GetValue()), tonumber(pY:GetValue())
+	end
+
 	local x, y = drag_menu(tX, tY, 260, 25)
 
 	bg(x, y, 260, 25)
