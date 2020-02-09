@@ -54,7 +54,7 @@ local SOUNDS = {
 	['MLG Horn'] 		 = {'awcustom/mlg', 2.6},
 	['E-er'] 			 = {'awcustom/eer', 1.3},
 	['I did it RNG'] 	 = {'awcustom/didit', 1.5},
-	['Bonk']			 = {'awcustom/bonk', LENGTH_HERE},
+	['Bonk']			 = {'awcustom/bonk', 1.0},
 }
 
 local dict = {
