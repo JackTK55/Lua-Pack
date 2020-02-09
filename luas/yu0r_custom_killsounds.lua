@@ -10,7 +10,7 @@
 
 		sounds: 
 			extract zip to "\Steam\steamapps\common\Counter-Strike Global Offensive\csgo\sound" <- put awcustom folder here
-			https://www.mediafire.com/file/umg2zls4oriyb5w/awcustom.7z/file
+			http://www.mediafire.com/file/85bzyoaj7bxehwt/awcustom.rar/file
 
 	Edited by: zack
 --]]
