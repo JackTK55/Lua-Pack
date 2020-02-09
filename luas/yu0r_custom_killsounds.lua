@@ -115,10 +115,7 @@ local function on_event(e)
 		return
 	end
 
-	local local_player = GetLocalPlayerIndex()
-	local userid = e:GetInt('userid')
-	local attacker = e:GetInt('attacker')
-
+	local local_player, userid, attacker = GetLocalPlayerIndex(), e:GetInt('userid'), e:GetInt('attacker')
 	local vic, att = GetPlayerIndexByUserID(userid), GetPlayerIndexByUserID(attacker)
 	local weapon, headshot = e:GetString('weapon'), e:GetInt('headshot')
 
