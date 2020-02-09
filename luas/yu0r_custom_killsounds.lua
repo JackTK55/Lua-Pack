@@ -20,29 +20,27 @@ local RealTime, GetLocalPlayer, Reference, Combobox, Checkbox, pairs, SetConVar,
 
 local M_Ref1 = Reference("SETTINGS", "Miscellaneous")
 local f12killsound = Checkbox(M_Ref1, "f12killsound", "F12killsound", 1)
-local currentTime = 0
-local timer = 0
-local enabled = true
-local snd_time = 0-- set sound file length default f12 sound = 0.6 .
+local currentTime, timer, enabled = 0, 0, true
+local snd_time = 0 -- set sound file length default f12 sound = 0.6 .
 
 local MENU = Reference('MENU')
 local show_window = Checkbox(M_Ref1, 'lua_chickenshit_show_window', 'Show Kill Say Mic Menu', true)
 local window = gui.Window('lua_chickenshit_window', 'KillMic', 200, 200, 250, 575)
 local gb = gui.Groupbox(window, 'Kill Say Mic Spam', 16, 16)
 
-local lua_DidKill = Combobox( gb, "lua_DidKill", "Did Kill","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG")
-local lua_DidHS = Combobox( gb, "lua_DidHS", "Did HeadShot","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG")
-local lua_DidBurn = Combobox( gb, "lua_DidBurn", "Did Burn","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG")
-local lua_DidNade = Combobox( gb, "lua_DidNade", "Did Nade","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG")
-local lua_GotKilled = Combobox( gb, "lua_GotKilled", "Got Killed", "None","Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG")
-local lua_GotHS = Combobox( gb, "lua_GotHS", "Got HeadShot","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG")
-local lua_GotBurned = Combobox( gb, "lua_GotBurned", "Got Burned","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG")
-local lua_GotNaded = Combobox( gb, "lua_GotNaded", "Got Naded","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG")
-local lua_BurnedSelf = Combobox( gb, "lua_BurnedSelf", "Burned Self","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG")
-local lua_NadedSelf = Combobox( gb, "lua_NadedSelf", "Naded Self","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG")
+local lua_DidKill = Combobox( gb, "lua_DidKill", "Did Kill","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG", 'Bonk')
+local lua_DidHS = Combobox( gb, "lua_DidHS", "Did HeadShot","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG", 'Bonk')
+local lua_DidBurn = Combobox( gb, "lua_DidBurn", "Did Burn","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG", 'Bonk')
+local lua_DidNade = Combobox( gb, "lua_DidNade", "Did Nade","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG", 'Bonk')
+local lua_GotKilled = Combobox( gb, "lua_GotKilled", "Got Killed", "None","Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG", 'Bonk')
+local lua_GotHS = Combobox( gb, "lua_GotHS", "Got HeadShot","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG", 'Bonk')
+local lua_GotBurned = Combobox( gb, "lua_GotBurned", "Got Burned","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG", 'Bonk')
+local lua_GotNaded = Combobox( gb, "lua_GotNaded", "Got Naded","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG", 'Bonk')
+local lua_BurnedSelf = Combobox( gb, "lua_BurnedSelf", "Burned Self","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG", 'Bonk')
+local lua_NadedSelf = Combobox( gb, "lua_NadedSelf", "Naded Self","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG", 'Bonk')
 
 local SOUNDS = {
--- 	['name']			 = {'location', length} -- you still need to add it to the comboboxes, and add the name to the table "dict"
+-- 	['name']			 = {'location', length}
 	['Visor Q3']		 = {'awcustom/visor', 2.8},
 	['Keel Q3']			 = {'awcustom/keel', 2.2},
 	['Hunter Q3']		 = {'awcustom/hunter', 2.2},
@@ -56,6 +54,7 @@ local SOUNDS = {
 	['MLG Horn'] 		 = {'awcustom/mlg', 2.6},
 	['E-er'] 			 = {'awcustom/eer', 1.3},
 	['I did it RNG'] 	 = {'awcustom/didit', 1.5},
+	['Bonk']			 = {'awcustom/bonk', LENGTH_HERE},
 }
 
 local dict = {
@@ -72,6 +71,7 @@ local dict = {
 	'MLG Horn', 
 	'E-er', 
 	'I did it RNG',
+	'Bonk',
 }
 
 local function handler()
