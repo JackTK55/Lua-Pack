@@ -70,9 +70,9 @@ local function MAIN()
 	local tick = local_player and floor( local_player:GetProp( 'localdata', 'm_nTickBase' ) + 0x40 ) or ''
 
 	--- BACKGROUND ---
-	draw_rect(x, y + 2, x + 314, y + 55 + 2, 30, 30, 30, 150)
-	draw_outlined_rect(x, y + 2, x + 314, y + 55 + 2, 30, 30, 30, 255)
-	draw_rect(x + 5, y + 7, x + 309, y + 45 + 7, 30, 30, 30, 255)
+	draw_rect(x, y + 2, x + 318, y + 55 + 2, 30, 30, 30, 150)
+	draw_outlined_rect(x, y + 2, x + 318, y + 55 + 2, 30, 30, 30, 255)
+	draw_rect(x + 5, y + 7, x + 313, y + 45 + 7, 30, 30, 30, 255)
 
 	--- FPS ---
 	draw_outlined_rect(x + 22, y + 33, x + 21 + 22, y + 13 + 33, 120, 120, 120, 255)
@@ -110,9 +110,9 @@ local function MAIN()
 
 
 	--- AIMWARE.net ---
-	draw_text(x + 126, y + 9, 255, 255, 255, 200, font.V13, 'AIMWARE.net')
+	draw_text(x + 130, y + 9, 255, 255, 255, 200, font.V13, 'AIMWARE.net')
 	local r, g, b = get_rainbow()
-	draw_rect(x + 10, y + 25, x + 304, y + 28, r, g, b, 255)
+	draw_rect(x + 10, y + 25, x + 308, y + 28, r, g, b, 255)
 end
 
 callbacks.Register('Draw', MAIN)
