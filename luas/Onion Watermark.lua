@@ -36,6 +36,7 @@ local drag_menu = function(x, y, w, h)
 		local X, Y = GetMousePos()
 
 		if not _drag then
+			local w, h = x + w, y + h
 			if is_inside(X, Y, x, y, w, h) then
 				offsetX, offsetY = X - x, Y - y
 				_drag = true
@@ -51,20 +52,16 @@ local drag_menu = function(x, y, w, h)
 end
 
 local function MAIN()
-	local x, y = drag_menu(tX, tY, tX + 300, tY + 55)
+	local x, y = drag_menu(tX, tY, 300, 55)
 
 	local local_player = GetLocalPlayer()
 	local player_resources = GetPlayerResources()
 
 	local fps = get_fps()
-	local time = date('%X')
+	local time = date('%I:%M:%S')
 
-	if local_player then
-		ping = player_resources:GetPropInt( 'm_iPing', GetLocalPlayerIndex() ).. 'ms'
-		tick = floor( local_player:GetProp( 'localdata', 'm_nTickBase' ) + 0x40 )
-	else
-		ping, tick = '', ''
-	end
+	local ping = local_player and player_resources:GetPropInt( 'm_iPing', GetLocalPlayerIndex() ).. 'ms' or ''
+	local tick = local_player and floor( local_player:GetProp( 'localdata', 'm_nTickBase' ) + 0x40 ) or ''
 
 
 	--- FPS ---
