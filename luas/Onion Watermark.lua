@@ -5,7 +5,7 @@
 
 local IsButtonDown, GetMousePos, AbsoluteFrameTime, Color, FilledRect, OutlinedRect, RoundedRectFill, Line, Text, RealTime, sin, floor, CreateFont, GetLocalPlayer, GetLocalPlayerIndex, GetPlayerResources, GetScreenSize, date, GetConVar, SetFont = input.IsButtonDown, input.GetMousePos, globals.AbsoluteFrameTime, draw.Color, draw.FilledRect, draw.OutlinedRect, draw.RoundedRectFill, draw.Line, draw.Text, globals.RealTime, math.sin, math.floor, draw.CreateFont, entities.GetLocalPlayer, client.GetLocalPlayerIndex, entities.GetPlayerResources, draw.GetScreenSize, os.date, client.GetConVar, draw.SetFont
 
-local w=gui.Window('ow_wm_pos_wn','onion wm',-10,-10,0,0)local sX,sY=gui.Slider(w,"ow_wm_pos_x","x",300,0,7680),gui.Slider(w,"ow_wm_pos_y","y",0,0,4320)w:SetActive(0)
+local w=gui.Window('ow_wm_pos_wn','onion wm',0,0,0,0)local sX,sY=gui.Slider(w,"ow_wm_pos_x","x",300,0,7680),gui.Slider(w,"ow_wm_pos_y","y",0,0,4320)w:SetActive(0)
 
 local frame_rate = 0
 local get_fps = function(t) if t then return floor( ( 1 / AbsoluteFrameTime() ) + 0.5 ) else frame_rate = 0.9 * frame_rate + (1 - 0.9) * AbsoluteFrameTime() return floor((1 / frame_rate) + 0.5)end end
