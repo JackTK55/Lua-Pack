@@ -5,7 +5,10 @@
 
 local IsButtonDown, GetMousePos, AbsoluteFrameTime, Color, FilledRect, OutlinedRect, RoundedRectFill, Line, Text, RealTime, sin, floor, CreateFont, GetLocalPlayer, GetLocalPlayerIndex, GetPlayerResources, GetScreenSize, date, GetConVar, SetFont = input.IsButtonDown, input.GetMousePos, globals.AbsoluteFrameTime, draw.Color, draw.FilledRect, draw.OutlinedRect, draw.RoundedRectFill, draw.Line, draw.Text, globals.RealTime, math.sin, math.floor, draw.CreateFont, entities.GetLocalPlayer, client.GetLocalPlayerIndex, entities.GetPlayerResources, draw.GetScreenSize, os.date, client.GetConVar, draw.SetFont
 
-local get_fps = function() return floor( ( 1 / AbsoluteFrameTime() ) + 0.5 ) end
+local w=gui.Window('ow_wm_pos_wn','onion wm',-10,-10,0,0)local sX,sY=gui.Slider(w,"ow_wm_pos_x","x",300,0,7680),gui.Slider(w,"ow_wm_pos_y","y",0,0,4320)w:SetActive(0)
+
+local frame_rate = 0
+local get_fps = function(t) if t then return floor( ( 1 / AbsoluteFrameTime() ) + 0.5 ) else frame_rate = 0.9 * frame_rate + (1 - 0.9) * AbsoluteFrameTime() return floor((1 / frame_rate) + 0.5)end end
 local get_rainbow = function() local r, g, b = floor( sin( RealTime() ) * 127 + 128 ), floor( sin( RealTime() + 2) * 127 + 128 ), floor( sin( RealTime() + 4) * 127 + 128 ) return r, g, b end
 local is_inside = function(a, b, x, y, w, h) return a >= x and a <= w and b >= y and b <= h end
 
@@ -21,9 +24,7 @@ local font = {
 }
 
 local ping, tick
-
 local MENU = gui.Reference('MENU')
-local tX, tY = 300, 30
 local offsetX, offsetY, _drag
 local drag_menu = function(x, y, w, h)
 	if not MENU:IsActive() then
@@ -43,6 +44,7 @@ local drag_menu = function(x, y, w, h)
 			end
 		else
 			tX, tY = X - offsetX, Y - offsetY
+			sX:SetValue(tX) sY:SetValue(tY)
 		end
 	else
 		_drag = false
@@ -52,12 +54,16 @@ local drag_menu = function(x, y, w, h)
 end
 
 local function MAIN()
+	if not tX then
+		tX, tY = sX:GetValue(),sY:GetValue()
+	end
+
 	local x, y = drag_menu(tX, tY, 300, 55)
 
 	local local_player = GetLocalPlayer()
 	local player_resources = GetPlayerResources()
 
-	local fps = get_fps()
+	local fps = get_fps(true)
 	local time = date('%I:%M:%S')
 
 	local ping = local_player and player_resources:GetPropInt( 'm_iPing', GetLocalPlayerIndex() ).. 'ms' or ''
