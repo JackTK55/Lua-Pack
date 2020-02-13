@@ -13,7 +13,7 @@ local function draw_rect(x, y, w, h, r, g, b, a) Color(r, g, b, a) FilledRect(x,
 local function draw_rounded_rect(x1, y1, x2, y2, r, g, b, a) Color(r, g, b, a) RoundedRectFill(x1, y1, x2, y2) end
 local function draw_outlined_rect(x, y, w, h, r, g, b, a) Color(r, g, b, a) OutlinedRect(x, y, w, h) end
 local function draw_line(x1, y1, x2, y2, r, g, b, a) Color(r, g, b, a) Line(x1, y1, x2, y2) end
-local function draw_text(x, y, r, g, b, a, font, str) Color(r, g, b, a) SetFont(font) Text(x, y, str) end
+local function draw_text(x, y, r, g, b, a, font, str) SetFont(font) Color(r, g, b, a) Text(x, y, str) end
 
 local font = {
 	V12 = CreateFont('verdana', 12, 0),
