@@ -22,7 +22,7 @@ local get_spectators = function()
 		local player = players[i]
 		local obsTarget = player:GetPropEntity('m_hObserverTarget')
 
-		if obsTarget ~= nil and i ~= lpi and not player:IsAlive() then
+		if obsTarget ~= nil and player:GetIndex() ~= lpi and not player:IsAlive() then
 			local TargetIndex = obsTarget:GetIndex()	
 
 			if lp:IsAlive() and TargetIndex == lpi then
@@ -58,4 +58,5 @@ callbacks.Register('Draw', function()
 		Color(r, g, b, 255)
 		TextShadow(X - (tW * 0.5), Y + (tH * i), n[1])
 	end
+
 end)

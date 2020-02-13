@@ -5,7 +5,10 @@
 
 local IsButtonDown, GetMousePos, AbsoluteFrameTime, Color, FilledRect, OutlinedRect, RoundedRectFill, Line, Text, RealTime, sin, floor, CreateFont, GetLocalPlayer, GetLocalPlayerIndex, GetPlayerResources, GetScreenSize, date, GetConVar, SetFont = input.IsButtonDown, input.GetMousePos, globals.AbsoluteFrameTime, draw.Color, draw.FilledRect, draw.OutlinedRect, draw.RoundedRectFill, draw.Line, draw.Text, globals.RealTime, math.sin, math.floor, draw.CreateFont, entities.GetLocalPlayer, client.GetLocalPlayerIndex, entities.GetPlayerResources, draw.GetScreenSize, os.date, client.GetConVar, draw.SetFont
 
-local get_fps = function() return floor( ( 1 / AbsoluteFrameTime() ) + 0.5 ) end
+local w=gui.Window('ow_wm_pos_wn','onion wm',0,0,0,0)local sX,sY=gui.Slider(w,"ow_wm_pos_x","x",300,0,7680),gui.Slider(w,"ow_wm_pos_y","y",0,0,4320)w:SetActive(0)
+
+local frame_rate = 0
+local get_fps = function(t) if t then return floor( ( 1 / AbsoluteFrameTime() ) + 0.5 ) else frame_rate = 0.9 * frame_rate + (1 - 0.9) * AbsoluteFrameTime() return floor((1 / frame_rate) + 0.5)end end
 local get_rainbow = function() local r, g, b = floor( sin( RealTime() ) * 127 + 128 ), floor( sin( RealTime() + 2) * 127 + 128 ), floor( sin( RealTime() + 4) * 127 + 128 ) return r, g, b end
 local is_inside = function(a, b, x, y, w, h) return a >= x and a <= w and b >= y and b <= h end
 
@@ -21,10 +24,8 @@ local font = {
 }
 
 local ping, tick
-
 local MENU = gui.Reference('MENU')
-local tX, tY = 300, 30
-local offsetX, offsetY, _drag
+local tX, tY, offsetX, offsetY, _drag
 local drag_menu = function(x, y, w, h)
 	if not MENU:IsActive() then
 		return tX, tY
@@ -36,12 +37,14 @@ local drag_menu = function(x, y, w, h)
 		local X, Y = GetMousePos()
 
 		if not _drag then
+			local w, h = x + w, y + h
 			if is_inside(X, Y, x, y, w, h) then
 				offsetX, offsetY = X - x, Y - y
 				_drag = true
 			end
 		else
 			tX, tY = X - offsetX, Y - offsetY
+			sX:SetValue(tX) sY:SetValue(tY)
 		end
 	else
 		_drag = false
@@ -51,26 +54,27 @@ local drag_menu = function(x, y, w, h)
 end
 
 local function MAIN()
-	local x, y = drag_menu(tX, tY, tX + 300, tY + 55)
+	if not tX then
+		tX, tY = sX:GetValue(),sY:GetValue()
+	end
+
+	local x, y = drag_menu(tX, tY, 314, 55)
 
 	local local_player = GetLocalPlayer()
 	local player_resources = GetPlayerResources()
 
-	local fps = get_fps()
-	local time = date('%X')
+	local fps = get_fps(true)
+	local time = date('%I:%M:%S %p')
 
-	if local_player then
-		ping = player_resources:GetPropInt( 'm_iPing', GetLocalPlayerIndex() ).. 'ms'
-		tick = floor( local_player:GetProp( 'localdata', 'm_nTickBase' ) + 0x40 )
-	else
-		ping, tick = '', ''
-	end
+	local ping = local_player and player_resources:GetPropInt( 'm_iPing', GetLocalPlayerIndex() ).. 'ms' or ''
+	local tick = local_player and floor( local_player:GetProp( 'localdata', 'm_nTickBase' ) + 0x40 ) or ''
 
+	--- BACKGROUND ---
+	draw_rect(x, y + 2, x + 318, y + 55 + 2, 30, 30, 30, 150)
+	draw_outlined_rect(x, y + 2, x + 318, y + 55 + 2, 30, 30, 30, 255)
+	draw_rect(x + 5, y + 7, x + 313, y + 45 + 7, 30, 30, 30, 255)
 
 	--- FPS ---
-	draw_rect(x, y + 2, x + 300, y + 55 + 2, 30, 30, 30, 150)
-	draw_outlined_rect(x, y + 2, x + 300, y + 55 + 2, 30, 30, 30, 255)
-	draw_rect(x + 5, y + 7, x + 290 + 5, y + 45 + 7, 30, 30, 30, 255)
 	draw_outlined_rect(x + 22, y + 33, x + 21 + 22, y + 13 + 33, 120, 120, 120, 255)
 	draw_outlined_rect(x + 24, y + 31, x + 21 + 24, y + 13 + 31, 120, 120, 120, 255)
 	draw_rect(x + 20, y + 35, x + 21 + 20, y + 13 + 35, 30, 30, 30, 255)
@@ -91,24 +95,24 @@ local function MAIN()
 
 
 	--- PING ---
-	draw_outlined_rect(x + 153, y + 33, x + 153 + 4, y + 33 + 13, 120, 120, 120, 255)
-	draw_rect(x + 148, y + 36, x + 148 + 4, y + 36 + 10, 120, 120, 120, 255)
-	draw_rect(x + 143, y + 39, x + 143 + 4, y + 39 + 7, 120, 120, 120, 255)
-	draw_rect(x + 138, y + 42, x + 138 + 4, y + 42 + 4, 120, 120, 120, 255)
+	draw_outlined_rect(x + 153, y + 33, x + 157, y + 46, 120, 120, 120, 255)
+	draw_rect(x + 148, y + 36, x + 152, y + 46, 120, 120, 120, 255)
+	draw_rect(x + 143, y + 39, x + 147, y + 46, 120, 120, 120, 255)
+	draw_rect(x + 138, y + 42, x + 142, y + 46, 120, 120, 120, 255)
 	draw_text(x + 160, y + 33, 255, 255, 255, 200, font.V13, ping)
 
 
 	--- TIME ---
-	draw_rounded_rect(x + 206, y + 33, x + 206 + 15, y + 33 + 15, 120, 120, 120, 255)
+	draw_rounded_rect(x + 206, y + 33, x + 221, y + 48, 120, 120, 120, 255)
 	draw_text(x + 212, y + 35, 30, 30, 30, 255, font.V12, '-')
 	draw_text(x + 210, y + 30, 30, 30, 30, 255, font.V12, '|')
 	draw_text(x + 225, y + 33, 255, 255, 255, 200, font.V13, time)
 
 
 	--- AIMWARE.net ---
-	draw_text(x + 112, y + 9, 255, 255, 255, 200, font.V13, 'AIMWARE.net')
+	draw_text(x + 130, y + 9, 255, 255, 255, 200, font.V13, 'AIMWARE.net')
 	local r, g, b = get_rainbow()
-	draw_rect(x + 10, y + 25, x + 10 + 280, y + 25 + 3, r, g, b, 255)
+	draw_rect(x + 10, y + 25, x + 308, y + 28, r, g, b, 255)
 end
 
 callbacks.Register('Draw', MAIN)

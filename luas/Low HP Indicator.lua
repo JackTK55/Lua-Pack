@@ -9,12 +9,13 @@ local function drawLowHP()
 	end
 
 	local _,y = draw_GetScreenSize()
-	local y_half, pos = y/2, 0
+	local y_half, pos = y * 0.5, 0
 	local players = entities_FindByClass('CCSPlayer')
+	local my_team_num = GetLocalPlayer():GetTeamNumber()
 
 	for i=1, #players do
 		local player = players[i]
-		local is_enemy = player:GetTeamNumber() ~= GetLocalPlayer():GetTeamNumber()
+		local is_enemy = player:GetTeamNumber() ~= my_team_num
 
 		if is_enemy and player:IsAlive() then
 			local playername, hp, location = player:GetName(), player:GetPropInt('m_iHealth'), player:GetPropString('m_szLastPlaceName')
