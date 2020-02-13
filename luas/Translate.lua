@@ -1,10 +1,24 @@
-local url = 'https://translate.yandex.net/api/v1.5/tr.json/translate'
-local api_key = '' -- put your api key here
+--[[
+	How to use:
+		Go to: https://passport.yandex.com/
+		if you don't have an account, create one.
+		After that go to: https://translate.yandex.com/developers/keys
+		Click: https://i.imgur.com/hT36B17.png [Create a new key]
+		Once you've done that click: https://i.imgur.com/0TGozfg.png
+		After you've done that, paste the key into
+			local api_key = ''
+		
+		So it should look like:
+			https://i.imgur.com/giMswWQ.png
+--]]
+
+local api_key = ''
+
 if api_key=='' then return error('api_key is empty.')end
+local url = 'https://translate.yandex.net/api/v1.5/tr.json/translate'
 local translate_url = url..'?key='..api_key
 
-local format, pairs, concat, sort, ChatSay, Get, byte, tonumber, char, gsub, Command, gmatch, Text = string.format, pairs, table.concat, table.sort, client.ChatSay, http.Get, string.byte, tonumber, string.char, string.gsub, client.Command, string.gmatch, gui.Text
-local get_languages=function(l)local list,N={},1 for f,a in pairs(l)do list[N],N=format('%s -> %s',f,a),N+1 end sort(list)return list end
+local ChatSay, Get, byte, tonumber, char, gsub, gmatch, Text = client.ChatSay, http.Get, string.byte, tonumber, string.char, string.gsub, string.gmatch, gui.Text
 local cth = function(c)return format("%%%02X",c:byte())end
 local htc = function(x)return tonumber(x,16):char()end
 local encode = function(u)return u:gsub("\n","\r\n"):gsub("([^%w ])",cth):gsub(" ","+")end
@@ -16,27 +30,11 @@ local g=gui.Groupbox(w,'Console Commands',15,15,185,125)Text(g,'-languages')Text
 local g2,g3=gui.Groupbox(w,'Languages',215,15,170,345),gui.Groupbox(w,'Translate',15,150,185,210)
 Text(g3,'From')local _FROM=gui.Editbox(g3,'translate_from','')Text(g3,'To')local _TO=gui.Editbox(g3,'translate_to','')Text(g3,'Text')local _TEXT=gui.Editbox(g3,'translate_text','')
 
-local LANGUAGES = {}
-Get('https://pastebin.com/raw/rzXDicve', function(cnt)
-	local _lines = {}
-
+local langs = {}
+Get('https://pastebin.com/raw/UyHyYBPY', function(cnt)
 	for line in cnt:gmatch('([^\n]*)\n') do
-		_lines[#_lines + 1] = line
-	end
-
-	for i=1, #_lines do
-		local words = {}
-
-		for str in _lines[i]:gmatch('([^=]*)') do
-			words[#words + 1] = str
-		end
-
-		LANGUAGES[ words[1] ] = words[2]
-	end
-
-	local lang = get_languages(LANGUAGES)
-	for i=1, #lang do
-		Text(g2, lang[i])
+		langs[#langs + 1] = line
+		Text(g2, line)
 	end
 end)
 
@@ -59,8 +57,6 @@ local function OnSendStringCmd(CMD)
 	local cmd = CMD:Get()
 
 	if cmd:find('-languages') then
-		local langs = get_languages(LANGUAGES)
-
 		for i=1, #langs do
 			print(langs[i])
 		end
