@@ -15,7 +15,7 @@
 local api_key = ''
 
 ------------------------------------
------------	IGNORE BELOW -----------
+----------- IGNORE BELOW -----------
 ------------------------------------
 
 if api_key=='' then return error('api_key is empty.')end
