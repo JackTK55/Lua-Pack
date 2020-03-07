@@ -37,11 +37,15 @@ local players = {}
 local function on_player_stuff(e)
 	local attacker, victim, local_player = userid_to_entindex(e.attacker), userid_to_entindex(e.userid), get_local_player()
 
+	if attacker == victim then
+		return
+	end
+
 	local local_player_team = get_prop(local_player, 'm_iTeamNum')
 	local attacker_team = get_prop(attacker, 'm_iTeamNum')
 	local victim_team = get_prop(victim, 'm_iTeamNum')
 
-	if attacker == victim or attacker_team ~= local_player_team or victim_team ~= local_player_team then
+	if attacker_team ~= local_player_team or victim_team ~= local_player_team then
 		return
 	end
 
@@ -83,11 +87,11 @@ local function on_paint()
 		local m = stuff[2] / dmg_to_kick
 
 		text(x + 5, y + gap, R, G, B, A, '', 0, stuff[3])
-
+	
 		rectangle(x + 50, y + gap - 3, 100, gap + 3, 13, 13, 13, 230)
 		rectangle(x + 51, y + gap - 2, 102*m, gap + 2, 49, 233, 93, 255)
 		text(x + 51 + ((102*m) * 0.5), y + gap, 255, 255, 255, 255, 'c', 0, stuff[2]..'/'..dmg_to_kick)
-
+	
 		text(x + 155, y + gap, 255,255,255,255, '', 0, )
 
 		gap = gap + tH
