@@ -1,5 +1,5 @@
--- local variables for API functions. any changes to the line below will be lost on re-generation
 local key_state, userid_to_entindex, read, write, get_local_player, get_player_name, get_prop, get_steam64, measure_text, rectangle, text, format, get, is_menu_open, mouse_position, new_checkbox, pairs, set_callback, mp_td_dmgtokick = client.key_state, client.userid_to_entindex, database.read, database.write, entity.get_local_player, entity.get_player_name, entity.get_prop, entity.get_steam64, renderer.measure_text, renderer.rectangle, renderer.text, string.format, ui.get, ui.is_menu_open, ui.mouse_position, ui.new_checkbox, pairs, ui.set_callback, cvar.mp_td_dmgtokick
+local _set, _unset = client.set_event_callback, client.unset_event_callback
 local is_inside = function(a, b, x, y, w, h) return a >= x and a <= w and b >= y and b <= h end
 
 local enable = new_checkbox('lua', 'a', 'Show Teammates Damage/Kills')
@@ -41,7 +41,7 @@ local function on_player_stuff(e)
 	local attacker_team = get_prop(local_player, 'm_iTeamNum')
 	local victim_team = get_prop(local_player, 'm_iTeamNum')
 
-	if attacker == victim or attacker_team ~= victim_team or attacker_team ~= local_player_team then
+	if attacker == victim or attacker_team ~= local_player_team or victim_team ~= local_player_team then
 		return
 	end
 
@@ -61,23 +61,29 @@ local function on_player_stuff(e)
 	end
 end
 
-local gap, gap2 = 0, 0
+local gap = 0
 local function on_paint()
-	local x, y = drag_menu(tX, tY, gap2, gap)
+	local x, y = drag_menu(tX, tY, 200, 20)
 
 	if not key_state(0x09) then
 		return
 	end
 
-	rectangle(x, y, gap2, gap, 33,33,33,230)
-	local gap = 0
+	rectangle(x, y, 200, 20, 37, 37, 37, 250)
+	text(x + 100, y + 10, 255,255,255,255, 'c', 0, 'Player List')
 
+	rectangle(x, y + 21, 200, gap, 33, 33, 33, 180)
+
+	local y = y + 25
+	local x = x + 100
+
+	local gap = 0
 	for steamid, stuff in pairs(players) do
-		local str = format('%s - %i kills, %i/%i dmg', stuff[3], stuff[1], stuff[2], mp_td_dmgtokick:get_int())
-		local tW, tH = measure_text('', str)
-		text(x, y + gap, 255,255,255,255, '', 0, str)
+		local name = stuff[3]
+		local str = format('%s - %i kills, %i/%i dmg', name:len() > 16 and name:sub(1, 16)..'...' or name, stuff[1], stuff[2], mp_td_dmgtokick:get_int())
+		local _,tH = measure_text('c', str)
+		text(x, y + gap, 255,255,255,255, 'c', 0, str)
 		gap = gap + tH
-		gap2 = tW
 	end
 end
 
@@ -85,7 +91,7 @@ local function on_paint_menu() players={} end
 local function on_shutdown()write('teamdmg_pos', {tX, tY})end
 
 local function on_change(s)
-	local callback = get(s) and client.set_event_callback or client.unset_event_callback
+	local callback = get(s) and _set or _unset
 	callback('player_hurt', on_player_stuff)
 	callback('player_death', on_player_stuff)
 	callback('paint', on_paint)
