@@ -1,3 +1,4 @@
+-- local variables for API functions. any changes to the line below will be lost on re-generation
 local key_state, userid_to_entindex, read, write, get_local_player, get_player_name, get_prop, get_steam64, measure_text, rectangle, text, format, get, is_menu_open, mouse_position, new_checkbox, pairs, set_callback, mp_td_dmgtokick = client.key_state, client.userid_to_entindex, database.read, database.write, entity.get_local_player, entity.get_player_name, entity.get_prop, entity.get_steam64, renderer.measure_text, renderer.rectangle, renderer.text, string.format, ui.get, ui.is_menu_open, ui.mouse_position, ui.new_checkbox, pairs, ui.set_callback, cvar.mp_td_dmgtokick
 local _set, _unset = client.set_event_callback, client.unset_event_callback
 local is_inside = function(a, b, x, y, w, h) return a >= x and a <= w and b >= y and b <= h end
@@ -38,8 +39,8 @@ local function on_player_stuff(e)
 	local attacker, victim, local_player = userid_to_entindex(e.attacker), userid_to_entindex(e.userid), get_local_player()
 
 	local local_player_team = get_prop(local_player, 'm_iTeamNum')
-	local attacker_team = get_prop(local_player, 'm_iTeamNum')
-	local victim_team = get_prop(local_player, 'm_iTeamNum')
+	local attacker_team = get_prop(attacker, 'm_iTeamNum')
+	local victim_team = get_prop(victim, 'm_iTeamNum')
 
 	if attacker == victim or attacker_team ~= local_player_team or victim_team ~= local_player_team then
 		return
