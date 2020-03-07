@@ -92,7 +92,7 @@ local function on_paint()
 		rectangle(x + 51, y + gap - 2, 102*m, gap + 2, 49, 233, 93, 255)
 		text(x + 51 + ((102*m) * 0.5), y + gap, 255, 255, 255, 255, 'c', 0, stuff[2]..'/'..dmg_to_kick)
 
-		text(x + 155, y + gap, 255,255,255,255, '', 0, stuff[1].. ' Kills')
+		text(x + 195, y + gap, 255,255,255,255, 'r', 0, stuff[1].. ' Kills')
 
 		gap = gap + tH
 	end
