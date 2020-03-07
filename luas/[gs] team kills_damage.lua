@@ -86,12 +86,12 @@ local function on_paint()
 	for steamid, stuff in pairs(players) do
 		local m = stuff[2] / dmg_to_kick
 
-		text(x + 5, y + gap, R, G, B, A, '', 0, stuff[3])
-	
+		text(x + 5, y + gap, 255,255,255,255, '', 0, stuff[3])
+
 		rectangle(x + 50, y + gap - 3, 100, gap + 3, 13, 13, 13, 230)
 		rectangle(x + 51, y + gap - 2, 102*m, gap + 2, 49, 233, 93, 255)
 		text(x + 51 + ((102*m) * 0.5), y + gap, 255, 255, 255, 255, 'c', 0, stuff[2]..'/'..dmg_to_kick)
-	
+
 		text(x + 155, y + gap, 255,255,255,255, '', 0, stuff[1].. ' Kills')
 
 		gap = gap + tH
