@@ -69,7 +69,7 @@ local function on_paint()
 		return
 	end
 
-	rectangle(x, y, gap2, gap)
+	rectangle(x, y, gap2, gap, 33,33,33,230)
 	local gap = 0
 
 	for steamid, stuff in pairs(players) do
