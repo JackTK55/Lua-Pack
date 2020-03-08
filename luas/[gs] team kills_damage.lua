@@ -1,46 +1,21 @@
-local key_state, userid_to_entindex, read, write, get_local_player, get_player_name, get_prop, get_steam64, rectangle, text, get, is_menu_open, mouse_position, new_combobox, pairs, set_callback, mp_td_dmgtokick, get_player_resource, _set, _unset = client.key_state, client.userid_to_entindex, database.read, database.write, entity.get_local_player, entity.get_player_name, entity.get_prop, entity.get_steam64, renderer.rectangle, renderer.text, ui.get, ui.is_menu_open, ui.mouse_position, ui.new_combobox, pairs, ui.set_callback, cvar.mp_td_dmgtokick, entity.get_player_resource, client.set_event_callback, client.unset_event_callback
+local key_state, userid_to_entindex, read, write, get_local_player, get_player_name, get_prop, get_steam64, rectangle, text, get, is_menu_open, mouse_position, new_combobox, pairs, set_callback, mp_td_dmgtokick, get_player_resource, _set, _unset, min = client.key_state, client.userid_to_entindex, database.read, database.write, entity.get_local_player, entity.get_player_name, entity.get_prop, entity.get_steam64, renderer.rectangle, renderer.text, ui.get, ui.is_menu_open, ui.mouse_position, ui.new_combobox, pairs, ui.set_callback, cvar.mp_td_dmgtokick, entity.get_player_resource, client.set_event_callback, client.unset_event_callback, math.min
 local is_inside = function(a, b, x, y, w, h) return a >= x and a <= w and b >= y and b <= h end
+local pos = read('teamdmg_pos') or {300, 30}
+local tX, tY = pos[1], pos[2]
+local offsetX, offsetY, _drag
+local drag_menu = function(x,y,w,h)if not is_menu_open()then return tX,tY end local mouse_down=key_state(0x01)if mouse_down then local X,Y=mouse_position()if not _drag then local w,h=x+w,y+h if is_inside(X,Y,x,y,w,h)then oX,oY,_drag=X-x,Y-y,true end else tX,tY=X-oX,Y-oY end else _drag=false end return tX,tY end
 
 local mode = new_combobox('lua', 'a', 'Show Teammates Damage/Kills', 'Off', 'Without colors', 'Matchmaking colors')
 
 local colors = {
 	[-2]={200, 200, 200, 255}, -- bot
 	[-1]={200, 200, 200, 255}, -- gray
-	[0]={255, 255, 0, 255},	  -- yellow
-	[1]={110, 0, 255, 255},	  -- purple
-	[2]={0, 200, 0, 255},	  -- green
-	[3]={0, 75, 255, 255},	  -- blue
-	[4]={255, 145, 0, 255}	  -- orange
+	[0]={255, 255, 0, 255},	   -- yellow
+	[1]={110, 0, 255, 255},	   -- purple
+	[2]={0, 200, 0, 255},	   -- green
+	[3]={0, 75, 255, 255},	   -- blue
+	[4]={255, 145, 0, 255}	   -- orange
 }
-
-local pos = read('teamdmg_pos') or {300, 30}
-local tX, tY = pos[1], pos[2]
-local offsetX, offsetY, _drag
-local drag_menu = function(x, y, w, h)
-	if not is_menu_open() then
-		return tX, tY
-	end
-
-	local mouse_down = key_state(0x01)
-
-	if mouse_down then
-		local X, Y = mouse_position()
-
-		if not _drag then
-			local w, h = x + w, y + h
-			if is_inside(X, Y, x, y, w, h) then
-				offsetX, offsetY = X - x, Y - y
-				_drag = true
-			end
-		else
-			tX, tY = X - offsetX, Y - offsetY
-		end
-	else
-		_drag = false
-	end
-
-	return tX, tY
-end
 
 local players, num_of_players = {}, 0
 local white = {255,255,255,255}
@@ -97,15 +72,15 @@ local function on_paint()
 
 	local gap = 0
 	for steamid, stuff in pairs(players) do
-		local m = stuff[2] / dmg_to_kick
+		local m = min(stuff[2] / dmg_to_kick, 1)
 		local c = stuff[4]
 
 		text(x + 5, y + gap, c[1], c[2], c[3], c[4] , 'l', 42, stuff[3])
 
-		rectangle(x + 50, (y + gap - 3) + 10, 100, 6, 13, 13, 13, 230)
-		rectangle(x + 51, (y + gap - 2) + 10, 102*m, 4, 49, 233, 93, 255)
+		rectangle(x + 50, (y + gap - 3) + 7, 100, 6, 13, 13, 13, 230)
+		rectangle(x + 51, (y + gap - 2) + 7, 102*m, 4, 49, 233, 93, 255)
 
-		text(x + 100, y + gap, 255,255,255,255, 'c-', 0, stuff[2]..'/'..dmg_to_kick)
+		text(x + 100, y + gap + 7, 255,255,255,255, 'c-', 0, stuff[2]..'/'..dmg_to_kick)
 
 		text(x + 195, y + gap, 255,255,255,255, 'r', 0, stuff[1].. ' Kills')
 
