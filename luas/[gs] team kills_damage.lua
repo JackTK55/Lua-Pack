@@ -94,7 +94,7 @@ local function on_paint()
 
 		text(x + 195, y + gap, 255,255,255,255, 'r', 0, stuff[1].. ' Kills')
 
-		gap = gap + tH
+		gap = gap + 10
 	end
 end
 
