@@ -95,7 +95,7 @@ local function on_paint()
 	end
 end
 
-local function on_game_init(e) players,num_of_players={},0 end
+local function on_level_init(e) players,num_of_players={},0 end
 local function on_shutdown() write('teamdmg_pos', {tX, tY}) end
 
 local function on_change(s)
@@ -106,7 +106,7 @@ local function on_change(s)
 	callback('player_hurt', on_player_stuff)
 	callback('player_death', on_player_stuff)
 	callback('paint', on_paint)
-	callback('game_init', on_game_init)
+	callback('level_init', on_level_init)
 	callback('shutdown', on_shutdown)
 end
 
