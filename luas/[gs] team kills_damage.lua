@@ -76,7 +76,7 @@ local function on_paint()
 	rectangle(x, y, 200, 20, 37, 37, 37, 250)
 	text(x + 100, y + 10, 255,255,255,255, 'c', 0, 'Player List')
 
-	rectangle(x, y + 21, 200, gap, 33, 33, 33, 180)
+	rectangle(x, y, 200, gap, 33, 33, 33, 180)
 
 	local y = y + 25
 
@@ -86,11 +86,12 @@ local function on_paint()
 	for steamid, stuff in pairs(players) do
 		local m = stuff[2] / dmg_to_kick
 
-		text(x + 5, y + gap, 255,255,255,255, '', 0, stuff[3])
+		text(x + 5, y + gap, 255,255,255,255, '', 42, stuff[3])
 
-		rectangle(x + 50, y + gap - 3, 100, gap + 3, 13, 13, 13, 230)
-		rectangle(x + 51, y + gap - 2, 102*m, gap + 2, 49, 233, 93, 255)
-		text(x + 51 + ((102*m) * 0.5), y + gap, 255, 255, 255, 255, 'c', 0, stuff[2]..'/'..dmg_to_kick)
+		rectangle(x + 65, y + gap - 2, 130, 4, 13, 13, 13, 230)
+		rectangle(x + 66, y + gap - 1, 132*m, 2, 49, 233, 93, 255)
+
+		text(x + 100, y + gap, 255,255,255,255, 'c-', 0, stuff[2]..'/'..dmg_to_kick)
 
 		text(x + 195, y + gap, 255,255,255,255, 'r', 0, stuff[1].. ' Kills')
 
