@@ -2,7 +2,6 @@ local key_state, userid_to_entindex, read, write, get_local_player, get_player_n
 local is_inside = function(a, b, x, y, w, h) return a >= x and a <= w and b >= y and b <= h end
 
 local mode = new_combobox('lua', 'a', 'Show Teammates Damage/Kills', 'Off', 'Without colors', 'Matchmaking colors')
-local without_colors
 
 local colors = {
 	{200, 200, 200, 255}, -- gray
@@ -42,8 +41,9 @@ local drag_menu = function(x, y, w, h)
 	return tX, tY
 end
 
-local players = {}
-local num_of_players = 0
+local players, num_of_players = {}, 0
+local without_colors
+
 local function on_player_stuff(e)
 	local attacker, victim, local_player = userid_to_entindex(e.attacker), userid_to_entindex(e.userid), get_local_player()
 
@@ -65,7 +65,7 @@ local function on_player_stuff(e)
 	end
 
 	if players[steamID3] == nil then
-		players[steamID3] = {0, 0, get_player_name(attacker), {0,0,0,0}}
+		players[steamID3] = {0, 0, get_player_name(attacker), {0,0,0,0}, colors[get_prop(get_player_resource(), 'm_iCompTeammateColor', attacker) + 1]}
 		num_of_players = num_of_players + 1
 	end
 
@@ -75,7 +75,7 @@ local function on_player_stuff(e)
 		players[steamID3][2] = players[steamID3][2] + e.dmg_health
 	end
 
-	players[steamID3][4] = without_colors and {255,255,255,255} or colors[get_prop(get_player_resource(), 'm_iCompTeammateColor', attacker) + 1]
+	players[steamID3][4] = without_colors and {255,255,255,255} or players[steamID3][5]
 end
 
 local function on_paint()
