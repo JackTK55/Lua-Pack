@@ -42,6 +42,7 @@ local drag_menu = function(x, y, w, h)
 end
 
 local players, num_of_players = {}, 0
+local white = {255,255,255,255}
 local without_colors
 
 local function on_player_stuff(e)
@@ -65,7 +66,7 @@ local function on_player_stuff(e)
 	end
 
 	if players[steamID3] == nil then
-		players[steamID3] = {0, 0, get_player_name(attacker), {0,0,0,0}, colors[get_prop(get_player_resource(), 'm_iCompTeammateColor', attacker) + 1]}
+		players[steamID3] = {0, 0, get_player_name(attacker), white, colors[get_prop(get_player_resource(), 'm_iCompTeammateColor', attacker) + 1]}
 		num_of_players = num_of_players + 1
 	end
 
@@ -75,7 +76,7 @@ local function on_player_stuff(e)
 		players[steamID3][2] = players[steamID3][2] + e.dmg_health
 	end
 
-	players[steamID3][4] = without_colors and {255,255,255,255} or players[steamID3][5]
+	players[steamID3][4] = without_colors and white or players[steamID3][5]
 end
 
 local function on_paint()
