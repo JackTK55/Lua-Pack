@@ -76,7 +76,7 @@ local function on_paint()
 	rectangle(x, y, 200, 20, 37, 37, 37, 250)
 	text(x + 100, y + 10, 255,255,255,255, 'c', 0, 'Player List')
 
-	rectangle(x, y + 20, 200, num_in_table(players) * 10, 33, 33, 33, 180)
+	rectangle(x, y + 20, 200, (num_in_table(players) * 10) + 10, 33, 33, 33, 180)
 
 	local y = y + 25
 	local dmg_to_kick = mp_td_dmgtokick:get_int()
