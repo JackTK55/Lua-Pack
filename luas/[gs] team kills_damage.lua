@@ -4,13 +4,13 @@ local is_inside = function(a, b, x, y, w, h) return a >= x and a <= w and b >= y
 local mode = new_combobox('lua', 'a', 'Show Teammates Damage/Kills', 'Off', 'Without colors', 'Matchmaking colors')
 
 local colors = {
-	{200, 200, 200, 255}, -- bot
-	{200, 200, 200, 255}, -- gray
-	{255, 255, 0, 255},	  -- yellow
-	{110, 0, 255, 255},	  -- purple
-	{0, 200, 0, 255},	  -- green
-	{0, 75, 255, 255},	  -- blue
-	{255, 145, 0, 255}	  -- orange
+	[-2]={200, 200, 200, 255}, -- bot
+	[-1]={200, 200, 200, 255}, -- gray
+	[0]={255, 255, 0, 255},	  -- yellow
+	[1]={110, 0, 255, 255},	  -- purple
+	[2]={0, 200, 0, 255},	  -- green
+	[3]={0, 75, 255, 255},	  -- blue
+	[4]={255, 145, 0, 255}	  -- orange
 }
 
 local pos = read('teamdmg_pos') or {300, 30}
@@ -67,7 +67,7 @@ local function on_player_stuff(e)
 	end
 
 	if players[steamID3] == nil then
-		players[steamID3] = {0, 0, get_player_name(attacker), white, colors[ get_prop(get_player_resource(), 'm_iCompTeammateColor', attacker) - 3]}
+		players[steamID3] = {0, 0, get_player_name(attacker), white, colors[get_prop(get_player_resource(), 'm_iCompTeammateColor', attacker)]}
 		num_of_players = num_of_players + 1
 	end
 
