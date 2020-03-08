@@ -1,9 +1,19 @@
-local key_state, userid_to_entindex, read, write, get_local_player, get_player_name, get_prop, get_steam64, rectangle, text, get, is_menu_open, mouse_position, new_checkbox, pairs, set_callback, mp_td_dmgtokick = client.key_state, client.userid_to_entindex, database.read, database.write, entity.get_local_player, entity.get_player_name, entity.get_prop, entity.get_steam64, renderer.rectangle, renderer.text, ui.get, ui.is_menu_open, ui.mouse_position, ui.new_checkbox, pairs, ui.set_callback, cvar.mp_td_dmgtokick
+local key_state, userid_to_entindex, read, write, get_local_player, get_player_name, get_prop, get_steam64, rectangle, text, get, is_menu_open, mouse_position, new_checkbox, pairs, set_callback, mp_td_dmgtokick, get_player_resource = client.key_state, client.userid_to_entindex, database.read, database.write, entity.get_local_player, entity.get_player_name, entity.get_prop, entity.get_steam64, renderer.rectangle, renderer.text, ui.get, ui.is_menu_open, ui.mouse_position, ui.new_checkbox, pairs, ui.set_callback, cvar.mp_td_dmgtokick, entity.get_player_resource
 local _set, _unset = client.set_event_callback, client.unset_event_callback
 local is_inside = function(a, b, x, y, w, h) return a >= x and a <= w and b >= y and b <= h end
 local num_in_table = function(t)local n=0 for _ in pairs(t)do n=n+1 end return n end
 
-local enable = new_checkbox('lua', 'a', 'Show Teammates Damage/Kills')
+local mode = ui.new_combobox('lua', 'a', 'Show Teammates Damage/Kills', 'Off', 'Without colors', 'Matchmaking colors')
+local color
+
+local colors = {
+	{200, 200, 200, 255}, -- gray
+	{255, 255, 0, 255}, -- yellow
+	{110, 0, 255, 255}, -- purple
+	{0, 200, 0, 255}, -- green
+	{0, 75, 255, 255}, -- blue
+	{255, 145, 0, 255} -- orange
+}
 
 local pos = read('teamdmg_pos') or {300, 30}
 local tX, tY = pos[1], pos[2]
@@ -56,7 +66,7 @@ local function on_player_stuff(e)
 	end
 
 	if players[steamID3] == nil then
-		players[steamID3] = {0, 0, get_player_name(attacker)}
+		players[steamID3] = {0, 0, get_player_name(attacker), colors[get_prop(get_player_resource(), 'm_iCompTeammateColor', attacker) + 1]}
 	end
 
 	if e.health == nil then
@@ -84,11 +94,16 @@ local function on_paint()
 	local gap = 0
 	for steamid, stuff in pairs(players) do
 		local m = stuff[2] / dmg_to_kick
+		
+		if not color[1] then
+			local c = stuff[4]
+			color[1], color[2], color[3], color[4] = c[1], c[2], c[3], c[4] 
+		end
 
-		text(x + 5, y + gap, 255,255,255,255, '', 42, stuff[3])
+		text(x + 5, y + gap, color[1], color[2], color[3], color[4], '', 42, stuff[3])
 
-		rectangle(x + 65, y + gap - 2, 130, 4, 13, 13, 13, 230)
-		rectangle(x + 66, y + gap - 1, 132*m, 2, 49, 233, 93, 255)
+		rectangle(x + 50, y + gap - 2, 100, 4, 13, 13, 13, 230)
+		rectangle(x + 51, y + gap - 1, 102*m, 2, 49, 233, 93, 255)
 
 		text(x + 100, y + gap, 255,255,255,255, 'c-', 0, stuff[2]..'/'..dmg_to_kick)
 
@@ -102,7 +117,8 @@ local function on_player_connect_full(e) if userid_to_entindex(e.userid) ~= get_
 local function on_shutdown() write('teamdmg_pos', {tX, tY}) end
 
 local function on_change(s)
-	local callback = get(s) and _set or _unset
+	local callback = get(s) ~= 'Off' and _set or _unset
+	color = get(s) == 'Without colors' and {255, 255, 255, 255} or {}
 	callback('player_hurt', on_player_stuff)
 	callback('player_death', on_player_stuff)
 	callback('paint', on_paint)
@@ -110,5 +126,5 @@ local function on_change(s)
 	callback('shutdown', on_shutdown)
 end
 
-on_change(enable)
-set_callback(enable, on_change)
+on_change(mode)
+set_callback(mode, on_change)
