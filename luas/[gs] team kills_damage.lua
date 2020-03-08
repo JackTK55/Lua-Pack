@@ -4,15 +4,14 @@ local is_inside = function(a, b, x, y, w, h) return a >= x and a <= w and b >= y
 local num_in_table = function(t)local n=0 for _ in pairs(t)do n=n+1 end return n end
 
 local mode = ui.new_combobox('lua', 'a', 'Show Teammates Damage/Kills', 'Off', 'Without colors', 'Matchmaking colors')
-local color
 
 local colors = {
 	{200, 200, 200, 255}, -- gray
-	{255, 255, 0, 255}, -- yellow
-	{110, 0, 255, 255}, -- purple
-	{0, 200, 0, 255}, -- green
-	{0, 75, 255, 255}, -- blue
-	{255, 145, 0, 255} -- orange
+	{255, 255, 0, 255},	  -- yellow
+	{110, 0, 255, 255},	  -- purple
+	{0, 200, 0, 255},	  -- green
+	{0, 75, 255, 255},	  -- blue
+	{255, 145, 0, 255}	  -- orange
 }
 
 local pos = read('teamdmg_pos') or {300, 30}
@@ -66,7 +65,7 @@ local function on_player_stuff(e)
 	end
 
 	if players[steamID3] == nil then
-		players[steamID3] = {0, 0, get_player_name(attacker), colors[get_prop(get_player_resource(), 'm_iCompTeammateColor', attacker) + 1]}
+		players[steamID3] = {0, 0, get_player_name(attacker), get(mode) == 'Without colors' and {255,255,255,255} or colors[get_prop(get_player_resource(), 'm_iCompTeammateColor', attacker) + 1]}
 	end
 
 	if e.health == nil then
@@ -86,7 +85,7 @@ local function on_paint()
 	rectangle(x, y, 200, 20, 37, 37, 37, 250)
 	text(x + 100, y + 10, 255,255,255,255, 'c', 0, 'Player List')
 
-	rectangle(x, y + 20, 200, (num_in_table(players) * 10) + 10, 33, 33, 33, 180)
+	rectangle(x, y + 20, 200, (num_in_table(players) * 10) + 10, 33, 33, 33, 195)
 
 	local y = y + 25
 	local dmg_to_kick = mp_td_dmgtokick:get_int()
@@ -94,13 +93,9 @@ local function on_paint()
 	local gap = 0
 	for steamid, stuff in pairs(players) do
 		local m = stuff[2] / dmg_to_kick
-		
-		if not color[1] then
-			local c = stuff[4]
-			color[1], color[2], color[3], color[4] = c[1], c[2], c[3], c[4] 
-		end
+		local c = stuff[4]
 
-		text(x + 5, y + gap, color[1], color[2], color[3], color[4], '', 42, stuff[3])
+		text(x + 5, y + gap, c[1], c[2], c[3], c[4] , '', 42, stuff[3])
 
 		rectangle(x + 50, y + gap - 2, 100, 4, 13, 13, 13, 230)
 		rectangle(x + 51, y + gap - 1, 102*m, 2, 49, 233, 93, 255)
@@ -118,7 +113,6 @@ local function on_shutdown() write('teamdmg_pos', {tX, tY}) end
 
 local function on_change(s)
 	local callback = get(s) ~= 'Off' and _set or _unset
-	color = get(s) == 'Without colors' and {255, 255, 255, 255} or {}
 	callback('player_hurt', on_player_stuff)
 	callback('player_death', on_player_stuff)
 	callback('paint', on_paint)
