@@ -4,6 +4,7 @@ local is_inside = function(a, b, x, y, w, h) return a >= x and a <= w and b >= y
 local mode = new_combobox('lua', 'a', 'Show Teammates Damage/Kills', 'Off', 'Without colors', 'Matchmaking colors')
 
 local colors = {
+	{200, 200, 200, 255}, -- bot
 	{200, 200, 200, 255}, -- gray
 	{255, 255, 0, 255},	  -- yellow
 	{110, 0, 255, 255},	  -- purple
@@ -66,7 +67,7 @@ local function on_player_stuff(e)
 	end
 
 	if players[steamID3] == nil then
-		players[steamID3] = {0, 0, get_player_name(attacker), white, colors[get_prop(get_player_resource(), 'm_iCompTeammateColor', attacker) + 1]}
+		players[steamID3] = {0, 0, get_player_name(attacker), white, colors[ get_prop(get_player_resource(), 'm_iCompTeammateColor', attacker) - 3]}
 		num_of_players = num_of_players + 1
 	end
 
@@ -99,10 +100,10 @@ local function on_paint()
 		local m = stuff[2] / dmg_to_kick
 		local c = stuff[4]
 
-		text(x + 5, y + gap, c[1], c[2], c[3], c[4] , '', 42, stuff[3])
+		text(x + 5, y + gap, c[1], c[2], c[3], c[4] , 'l', 42, stuff[3])
 
-		rectangle(x + 50, y + gap - 2, 100, 4, 13, 13, 13, 230)
-		rectangle(x + 51, y + gap - 1, 102*m, 2, 49, 233, 93, 255)
+		rectangle(x + 50, (y + gap - 3) + 10, 100, 6, 13, 13, 13, 230)
+		rectangle(x + 51, (y + gap - 2) + 10, 102*m, 4, 49, 233, 93, 255)
 
 		text(x + 100, y + gap, 255,255,255,255, 'c-', 0, stuff[2]..'/'..dmg_to_kick)
 
