@@ -1,11 +1,10 @@
-local key_state, userid_to_entindex, read, write, get_local_player, get_player_name, get_prop, get_steam64, rectangle, text, get, is_menu_open, mouse_position, new_combobox, pairs, set_callback, mp_td_dmgtokick, get_player_resource, _set, _unset, min = client.key_state, client.userid_to_entindex, database.read, database.write, entity.get_local_player, entity.get_player_name, entity.get_prop, entity.get_steam64, renderer.rectangle, renderer.text, ui.get, ui.is_menu_open, ui.mouse_position, ui.new_combobox, pairs, ui.set_callback, cvar.mp_td_dmgtokick, entity.get_player_resource, client.set_event_callback, client.unset_event_callback, math.min
+local key_state, userid_to_entindex, read, write, get_local_player, get_player_name, get_prop, get_steam64, rectangle, text, get, is_menu_open, mouse_position, new_hotkey, new_checkbox, new_combobox, pairs, set_callback, mp_td_dmgtokick, get_player_resource, _set, _unset, min = client.key_state, client.userid_to_entindex, database.read, database.write, entity.get_local_player, entity.get_player_name, entity.get_prop, entity.get_steam64, renderer.rectangle, renderer.text, ui.get, ui.is_menu_open, ui.mouse_position, ui.new_hotkey, ui.new_checkbox, ui.new_combobox, pairs, ui.set_callback, cvar.mp_td_dmgtokick, entity.get_player_resource, client.set_event_callback, client.unset_event_callback, math.min
 local is_inside = function(a, b, x, y, w, h) return a >= x and a <= w and b >= y and b <= h end
-local pos = read('teamdmg_pos') or {300, 30}
-local tX, tY = pos[1], pos[2]
-local offsetX, offsetY, _drag
-local drag_menu = function(x,y,w,h)if not is_menu_open()then return tX,tY end local mouse_down=key_state(0x01)if mouse_down then local X,Y=mouse_position()if not _drag then local w,h=x+w,y+h if is_inside(X,Y,x,y,w,h)then oX,oY,_drag=X-x,Y-y,true end else tX,tY=X-oX,Y-oY end else _drag=false end return tX,tY end
+local pos = read('teamdmg_pos')or{300,30} local tX,tY=pos[1],pos[2] local oX,oY,_d local drag_menu=function(x,y,w,h)if not is_menu_open()then return tX,tY end local mouse_down=key_state(0x01)if mouse_down then local X,Y=mouse_position()if not _d then local w,h=x+w,y+h if is_inside(X,Y,x,y,w,h)then oX,oY,_d=X-x,Y-y,true end else tX,tY=X-oX,Y-oY end else _d=false end return tX,tY end
 
 local mode = new_combobox('lua', 'a', 'Show Teammates Damage/Kills', 'Off', 'Without colors', 'Matchmaking colors')
+local key = new_hotkey('lua', 'a', 'hotkey', true)
+local rem = new_checkbox('lua', 'a', 'Remove from list when over amount')
 
 local colors = {
 	{200, 200, 200, 255}, -- bot
@@ -58,7 +57,7 @@ end
 local function on_paint()
 	local x, y = drag_menu(tX, tY, 200, 20)
 
-	if not key_state(0x09) then
+	if not get(key) then
 		return
 	end
 
@@ -70,6 +69,8 @@ local function on_paint()
 	local y = y + 25
 	local dmg_to_kick = mp_td_dmgtokick:get_int()
 
+	local list_clear = get(rem)
+
 	local gap = 0
 	for steamid, stuff in pairs(players) do
 		local m = min(stuff[2] / dmg_to_kick, 1)
@@ -78,17 +79,23 @@ local function on_paint()
 		text(x + 5, y + gap, c[1], c[2], c[3], c[4] , 'l', 42, stuff[3])
 
 		rectangle(x + 50, (y + gap - 3) + 7, 100, 6, 13, 13, 13, 230)
-		rectangle(x + 51, (y + gap - 2) + 7, 102*m, 4, 49, 233, 93, 255)
+		rectangle(x + 51, (y + gap - 2) + 7, 98*m, 4, 49, 233, 93, 255)
 
 		text(x + 100, y + gap + 7, 255,255,255,255, 'c-', 0, stuff[2]..'/'..dmg_to_kick)
 
 		text(x + 195, y + gap, 255,255,255,255, 'r', 0, stuff[1].. ' Kills')
 
-		gap = gap + 10
+		gap = gap + 11
+
+		if list_clear then
+			if stuff[1] >= 3 or stuff[2] >= dmg_to_kick then
+				players[steamid] = nil
+			end
+		end
 	end
 end
 
-local function on_player_connect_full(e) if userid_to_entindex(e.userid) ~= get_local_player() then return end players,num_of_players={},0 end
+local function on_game_init(e) players,num_of_players={},0 end
 local function on_shutdown() write('teamdmg_pos', {tX, tY}) end
 
 local function on_change(s)
@@ -99,7 +106,7 @@ local function on_change(s)
 	callback('player_hurt', on_player_stuff)
 	callback('player_death', on_player_stuff)
 	callback('paint', on_paint)
-	callback('player_connect_full', on_player_connect_full)
+	callback('game_init', on_game_init)
 	callback('shutdown', on_shutdown)
 end
 
