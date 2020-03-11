@@ -34,14 +34,14 @@ local left_side = {
 }
 
 local top_right_side = {
-	{'msc.autojump', 'Auto Jump'},
-	{'msc.autostrafer.mode', 'Auto Strafe'},
-	{'msc.knifebot', 'KnifeBot'},
-	{'msc.logevents', 'Log Events'},
-	{'msc.fakelag.mode', 'Fakelag'},
-	{'msc.fakelatency.enable', 'Fakelatency'},
-	{'msc.hitmarker.enable', 'Hitmarker'},
-	{'msc.clantag', 'Clantag'}
+	{'misc.autojump', 'Auto Jump'},
+	{'misc.autostrafer.mode', 'Auto Strafe'},
+	{'misc.knifebot', 'KnifeBot'},
+	{'misc.logevents', 'Log Events'},
+	{'misc.fakelag.mode', 'Fakelag'},
+	{'misc.fakelatency.enable', 'Fakelatency'},
+	{'misc.hitmarker.enable', 'Hitmarker'},
+	{'misc.clantag', 'Clantag'}
 }
 
 local right_side = {
@@ -70,10 +70,10 @@ local var_to_mode = {
 	['vis.historyticks'] = {'Off', 'All Ticks', 'Last Tick', 'First Tick'},
 	['esp.weaponstyle'] = {'Icons', 'Names'},
 
-	['msc.autojump'] = {'Off', 'Perfect', 'Legit'},
-	['msc.autostrafer.mode'] = {'Silent', 'Normal', 'Sideways', 'W-Only', 'Mouse'},
-	['msc.knifebot'] = {'Off', 'On', 'Backstab Only', 'Trigger', 'Quick'},
-	['msc.fakelag.mode'] = {'Factor', 'Switch', 'Adaptive', 'Random', 'Peek', 'Rapid Peek'},
+	['misc.autojump'] = {'Off', 'Perfect', 'Legit'},
+	['misc.autostrafer.mode'] = {'Silent', 'Normal', 'Sideways', 'W-Only', 'Mouse'},
+	['misc.knifebot'] = {'Off', 'On', 'Backstab Only', 'Trigger', 'Quick'},
+	['misc.fakelag.mode'] = {'Factor', 'Switch', 'Adaptive', 'Random', 'Peek', 'Rapid Peek'},
 
 	['rbot.speedlimit'] = {'Off', 'On', 'Auto'},
 	['rbot.silentaim'] = {'Off', 'Client-Side', 'Server-Side'},
@@ -104,17 +104,17 @@ local function main()
 		TextShadow(320, 81 + (i * 15), typ[2]..': '.. str)
 	end
 
-	local autostrafer = GetValue('msc.autostrafer.enable')
-	local fakelag = GetValue('msc.fakelag.enable')
+	local autostrafer = GetValue('misc.autostrafer.enable')
+	local fakelag = GetValue('misc.fakelag.enable')
 
 	for i=1, #top_right_side do
 		local typ = top_right_side[i]
 		local var = typ[1]
 		local str = type( GetValue(var) ) == 'boolean' and ( GetValue(var) and 'On' or 'Off' ) or var_to_mode[var][GetValue(var) + 1]
 
-		if var == 'msc.autostrafer.mode' then
+		if var == 'misc.autostrafer.mode' then
 			str = autostrafer and str or 'Off'
-		elseif var == 'msc.fakelag.mode' then
+		elseif var == 'misc.fakelag.mode' then
 			str = fakelag and str or 'Off'
 		end
 
