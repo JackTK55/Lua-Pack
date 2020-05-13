@@ -1,6 +1,6 @@
 local FindByClass, GetLocalPlayer, Text, Color, WorldToScreen = entities.FindByClass, entities.GetLocalPlayer, draw.Text, draw.Color, client.WorldToScreen
 
-local function draw_decoys(team, index, pos)
+local function draw_decoys(team, index)
 	local decoys = FindByClass('CDecoyProjectile')
 
 	for i=1, #decoys do
