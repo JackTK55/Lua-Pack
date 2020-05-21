@@ -28,7 +28,6 @@ local decode = function(u)return u:gsub("+"," "):gsub("%%(%x%x)",htc)end
 
 local show_menu = gui.Keybox(gui.Reference('Misc', 'General', 'Extra'), 'show_translation_menu', 'Toggle Translation Menu', 0)
 local window = gui.Window('translation', 'Translate Window', 300, 300, 580, 399)
-window:SetActive(1)
 local background = gui.Listbox(window, 'translated', 268, spacing)
 background:SetPosX(17)
 background:SetPosY(87)
