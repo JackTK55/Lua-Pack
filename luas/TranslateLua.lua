@@ -85,7 +85,7 @@ local function chat_translate(text, to, from, sender)
 
 	http.Get(url..text..'&lang='..lang, function(c)
 		messages[#messages + 1] = sender.. ': '.. decode(c):match('\"text":(.*)\"'):gsub('[[]"', '')
-		background:SetOptions( spacing, unpack(messages)	)
+		background:SetOptions( spacing, unpack(messages) )
 	end)
 end
 
