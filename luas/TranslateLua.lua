@@ -10,6 +10,12 @@
 		
 		So it should look like:
 			https://i.imgur.com/giMswWQ.png
+	Found in:
+		Misc -> Translator
+
+	To avoid translating literally every message that gets logged, 
+	You must select a message in the list and press "Translate Selected".
+	https://i.imgur.com/OCeVbTG.png
 --]]
 local api_key = ''
 
@@ -20,62 +26,63 @@ local api_key = ''
 if api_key=='' then return error('api_key is empty.')end
 local url = 'https://translate.yandex.net/api/v1.5/tr.json/translate?key='..api_key
 
-local spacing = '     ------------------------------------------   Translations   ------------------------------------------'
 local cth = function(c)return string.format("%%%02X",c:byte()or'')end
 local htc = function(x)return tonumber(x,16):char()end
 local encode = function(u)return u:gsub("\n","\r\n"):gsub("([^%w ])",cth):gsub(" ","+")end
 local decode = function(u)return u:gsub("+"," "):gsub("%%(%x%x)",htc)end
 
-local show_menu = gui.Keybox(gui.Reference('Misc', 'General', 'Extra'), 'show_translation_menu', 'Toggle Translation Menu', 0)
-local window = gui.Window('translation', 'Translate Window', 300, 300, 580, 399)
-local background = gui.Listbox(window, 'translated', 268, spacing)
-background:SetPosX(17)
-background:SetPosY(87)
-background:SetWidth(546)
+local MENU = gui.Reference('MENU')
+local tab = gui.Tab(gui.Reference('Misc'), 'translator', 'Translator')
+local group = gui.Groupbox(tab, 'Translator', 16, 16)
 
-http.Get('https://pastebin.com/raw/udLBVaym', function(cnt)
-	local langs, keys = {}, {}
+local list = gui.Listbox(group, 'translated', 340, '-')
+	list:SetPosY(66)
 
-	for line in cnt:gmatch('([^\n]*)\n') do	
-		local words = {}
-		for word in line:gmatch('[A-Za-z]*') do
-			words[#words + 1] = word
-		end
+local file_exists = function(n)local e file.Enumerate(function(c)if c==n then e=1 return end end)return e end
+local function download_file(name)http.Get('https://raw.githubusercontent.com/Zack2kl/Lua-Pack/master/luas/'..name,function(c)local f=file.Open(name,'w')f:Write(c)f:Close()end)end
 
-		langs[words[1]] = words[6]
-		keys[#keys + 1] = words[1]
-	end
-
-	_G.Langs = langs
-	_G.Keys = keys
-end)
-local langs, keys = _G.Langs, _G.Keys
+local langs, keys = {}, {}
 local messages = {}
 
-local active = gui.Checkbox(window, 'active', 'Active', false)
-active:SetDescription('Log sent messages.')
-active:SetPosX(17)
-active:SetPosY(16)
+local languages = file_exists('languages.txt')
+if not languages then
+	download_file('languages.txt')
+end
 
-local from = gui.Combobox(window, 'from', 'From Language', 'Auto', unpack(keys))
-from:SetDescription('Language to translate from.')
-from:SetPosX(126)
-from:SetPosY(16)
-from:SetWidth(133)
+if languages then
+	local f = file.Open('languages.txt', 'r')
 
-local to = gui.Combobox(window, 'to', 'To Language', 'Auto', unpack(keys))
-to:SetDescription('Language to translate to.')
-to:SetPosX(275)
-to:SetPosY(16)
-to:SetWidth(133)
+	for line in f:Read():gmatch('([^\n]*)\n') do
+		langs[ line:match('([^\n]*)=') ] = line:gsub('([^\n]*)=', '')
+		keys[#keys + 1] = line:match('([^\n]*)=')
+	end
 
-local clear = gui.Button(window, 'Clear Messages', function() messages = {} background:SetOptions(spacing) end)
-clear:SetPosX(424)
-clear:SetPosY(16) 
-clear:SetHeight(16) 
+	f:Close()
+end
 
-local function chat_translate(text, to, from, sender)
-	local text = '&text='.. encode(text)
+local active = gui.Checkbox(group, 'active', 'Active', false)
+	active:SetDescription('Log sent messages.') active:SetPosX(17) active:SetPosY(-2)
+
+local from = gui.Combobox(group, 'from', 'From Language', 'Auto', unpack(keys))
+	from:SetDescription('Language to translate from.') from:SetPosX(126) from:SetPosY(-2) from:SetWidth(133) from:SetHeight(38)
+
+local to = gui.Combobox(group, 'to', 'To Language', 'Auto', unpack(keys))
+	to:SetDescription('Language to translate to.') to:SetPosX(275) to:SetPosY(-2) to:SetWidth(133) to:SetHeight(38)
+
+local function ok()
+	local opts = {}
+
+	for i=1, #messages do
+		local v = messages[i]
+		opts[i] = string.format('%s: %s', v[1], v[2])
+	end
+
+	list:SetOptions('-', unpack(opts))
+end
+
+local function update_list(skip, chat)
+	local text = '&text='.. encode( chat and chat or messages[skip][2] )
+	local to, from = langs[keys[to:GetValue()]], langs[keys[from:GetValue()]]
 	local lang = to and to or 'en'
 
 	if to and from then
@@ -83,10 +90,24 @@ local function chat_translate(text, to, from, sender)
 	end
 
 	http.Get(url..text..'&lang='..lang, function(c)
-		messages[#messages + 1] = sender.. ': '.. decode(c):match('\"text":(.*)\"'):gsub('[[]"', '')
-		background:SetOptions( spacing, unpack(messages) )
+		local msg = decode(c):match('\"text":(.*)\"'):gsub('[[]"', '')
+		if not chat then
+			messages[skip] = { messages[skip][1], msg }
+			ok()
+		else
+			client.ChatSay( msg )
+		end
 	end)
 end
+
+local custom = gui.Editbox(group, 'custom_text', '')
+	custom:SetPosY(410) custom:SetWidth(500) custom:SetHeight(20) 
+
+local send = gui.Button(group, 'Send', function() update_list(nil, custom:GetValue()) custom:SetValue('') end)
+	send:SetPosY(410) send:SetPosX(504) send:SetWidth(72) send:SetHeight(20) 
+
+local tra = gui.Button(group, 'Translate Selected', function() if list:GetValue() > 0 then update_list(list:GetValue()) end end)
+	tra:SetPosX(444) tra:SetPosY(0) tra:SetHeight(50) tra:SetWidth(133)
 
 local function main(msg)
 	if not active:GetValue() then
@@ -94,9 +115,13 @@ local function main(msg)
 	end
 
 	if msg:GetID() == 6 then
-		chat_translate( msg:GetString(4, 1), langs[keys[to:GetValue()]], langs[keys[from:GetValue()]], client.GetPlayerNameByIndex(msg:GetInt(1)) )
+		if #messages == 14 then
+			table.remove(messages, 1)
+		end
+
+		messages[#messages + 1] = { client.GetPlayerNameByIndex( msg:GetInt(1) ), msg:GetString(4, 1) }
+		ok()
 	end
 end
 
 callbacks.Register('DispatchUserMessage', main)
-callbacks.Register('CreateMove', function() window:SetOpenKey(show_menu:GetValue()) end)
