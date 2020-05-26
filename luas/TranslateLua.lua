@@ -7,14 +7,20 @@
 		Once you've done that click: https://i.imgur.com/0TGozfg.png
 		After you've done that, paste the key into
 			local api_key = ''
-		
+
 		So it should look like:
 			https://i.imgur.com/giMswWQ.png
+
 	Found in:
 		Misc -> Translator
+		https://i.imgur.com/NSWw2Wd.png
 
-	To avoid translating literally every message that gets logged, 
-	You must click on a message in the list for it to translate.
+	Info:
+		To translate a message just select the language you want it to be from/to and 
+		click on the message in the list
+
+		If you want to send a translated message just select the language you want it to be from/to and 
+		type the message in the Edit Box then press Send
 --]]
 local api_key = ''
 
@@ -78,7 +84,6 @@ local function ok()
 	for i = 1, #messages do
 		local v = messages[i]
 		opts[1 + (#messages - i) ] = string.format('%s: %s', v[1], v[2])
-		print(i, 1 + (#messages - i))
 	end
 
 	list:SetOptions(space, unpack(opts))
