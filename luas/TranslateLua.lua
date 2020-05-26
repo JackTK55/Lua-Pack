@@ -31,7 +31,8 @@ local api_key = ''
 if api_key=='' then return error('api_key is empty.')end
 local url = 'https://translate.yandex.net/api/v1.5/tr.json/translate?key='..api_key
 
-local cth = function(c)return string.format("%%%02X",c:byte()or'')end
+local GetPlayerNameByIndex, format = client.GetPlayerNameByIndex, string.format
+local cth = function(c)return format("%%%02X",c:byte()or'')end
 local htc = function(x)return tonumber(x,16):char()end
 local encode = function(u)return u:gsub("\n","\r\n"):gsub("([^%w ])",cth):gsub(" ","+")end
 local decode = function(u)return u:gsub("+"," "):gsub("%%(%x%x)",htc)end
@@ -83,7 +84,7 @@ local function ok()
 
 	for i = 1, #messages do
 		local v = messages[i]
-		opts[1 + (#messages - i) ] = string.format('%s: %s', v[1], v[2])
+		opts[1 + (#messages - i) ] = format('%s: %s', v[1], v[2])
 	end
 
 	list:SetOptions(space, unpack(opts))
@@ -132,7 +133,7 @@ end)
 
 local function main(msg)
 	if msg:GetID() == 6 then
-		messages[#messages + 1] = { client.GetPlayerNameByIndex( msg:GetInt(1) ), msg:GetString(4, 1) }
+		messages[#messages + 1] = { GetPlayerNameByIndex( msg:GetInt(1) ), msg:GetString(4, 1) }
 		ok()
 	end
 end
