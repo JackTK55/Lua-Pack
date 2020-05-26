@@ -1,8 +1,6 @@
 --[[
 	Original by: yu0r
 		info:
-			checkbox for the menu is under Settings on the right side under DPI scale and shit
-
 			fleshed out a post from script request thread https://aimware.net/forum/thread-89942-post-473509.html#pid473509
 			seems to work best if you join the game/server and unplug your mic and plug it back in, otherwise it +voicerecords and you'll probably hear yourself or background noise when the sound plays
 
