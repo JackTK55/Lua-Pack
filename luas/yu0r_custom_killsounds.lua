@@ -11,7 +11,7 @@
 			http://www.mediafire.com/file/85bzyoaj7bxehwt/awcustom.rar/file
 
 	Edited by: zack
-		Updated to V5
+		Figured I needed to update it to V5 after looking at https://aimware.net/forum/thread-135160.html
 --]]
 
 local SOUNDS = {
