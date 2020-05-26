@@ -9,35 +9,12 @@
 			make sure soundfiles are placed in  Steam/steamapps/common/Counter-Strike Global Offensive/csgo/sound/awcustom
 
 		sounds: 
-			extract zip to "\Steam\steamapps\common\Counter-Strike Global Offensive\csgo\sound" <- put awcustom folder here
+			extract zip to '\Steam\steamapps\common\Counter-Strike Global Offensive\csgo\sound' <- put awcustom folder here
 			http://www.mediafire.com/file/85bzyoaj7bxehwt/awcustom.rar/file
 
 	Edited by: zack
+		Updated to V5
 --]]
-
-
-local RealTime, GetLocalPlayer, Reference, Combobox, Checkbox, pairs, SetConVar, Command, GetLocalPlayerIndex, GetPlayerIndexByUserID, random = globals.RealTime, entities.GetLocalPlayer, gui.Reference, gui.Combobox, gui.Checkbox, pairs, client.SetConVar, client.Command, client.GetLocalPlayerIndex, client.GetPlayerIndexByUserID, math.random
-
-local M_Ref1 = Reference("SETTINGS", "Miscellaneous")
-local f12killsound = Checkbox(M_Ref1, "f12killsound", "F12killsound", 1)
-local currentTime, timer, enabled = 0, 0, true
-local snd_time = 0 -- set sound file length default f12 sound = 0.6 .
-
-local MENU = Reference('MENU')
-local show_window = Checkbox(M_Ref1, 'lua_chickenshit_show_window', 'Show Kill Say Mic Menu', true)
-local window = gui.Window('lua_chickenshit_window', 'KillMic', 200, 200, 250, 575)
-local gb = gui.Groupbox(window, 'Kill Say Mic Spam', 16, 16)
-
-local lua_DidKill = Combobox( gb, "lua_DidKill", "Did Kill","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG", 'Bonk')
-local lua_DidHS = Combobox( gb, "lua_DidHS", "Did HeadShot","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG", 'Bonk')
-local lua_DidBurn = Combobox( gb, "lua_DidBurn", "Did Burn","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG", 'Bonk')
-local lua_DidNade = Combobox( gb, "lua_DidNade", "Did Nade","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG", 'Bonk')
-local lua_GotKilled = Combobox( gb, "lua_GotKilled", "Got Killed", "None","Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG", 'Bonk')
-local lua_GotHS = Combobox( gb, "lua_GotHS", "Got HeadShot","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG", 'Bonk')
-local lua_GotBurned = Combobox( gb, "lua_GotBurned", "Got Burned","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG", 'Bonk')
-local lua_GotNaded = Combobox( gb, "lua_GotNaded", "Got Naded","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG", 'Bonk')
-local lua_BurnedSelf = Combobox( gb, "lua_BurnedSelf", "Burned Self","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG", 'Bonk')
-local lua_NadedSelf = Combobox( gb, "lua_NadedSelf", "Naded Self","None", "Visor Q3", "Keel Q3","Hunter Q3","Bitch WTF","Headshot CSGO","Boring","I did it","BOOM Headshot","Pew","What do you mean","MLG Horn","E-er", "I did it RNG", 'Bonk')
 
 local SOUNDS = {
 -- 	['name']			 = {'location', length}
@@ -57,26 +34,40 @@ local SOUNDS = {
 	['Bonk']			 = {'awcustom/bonk', 1.0},
 }
 
-local dict = {
-	'Visor Q3', 
-	'Keel Q3', 
-	'Hunter Q3', 
-	'Bitch WTF', 
-	'Headshot CSGO', 
-	'Boring', 
-	'I did it', 
-	'BOOM Headshot', 
-	'Pew', 
-	'What do you mean', 
-	'MLG Horn', 
-	'E-er', 
-	'I did it RNG',
-	'Bonk',
+
+local RealTime, GetLocalPlayer, Combobox, Checkbox, pairs, SetConVar, Command, GetLocalPlayerIndex, GetPlayerIndexByUserID, random = globals.RealTime, entities.GetLocalPlayer, gui.Combobox, gui.Checkbox, pairs, client.SetConVar, client.Command, client.GetLocalPlayerIndex, client.GetPlayerIndexByUserID, math.random
+
+local tab = gui.Tab(gui.Reference('Settings'), 'mic_say', 'Mic Kill Say')
+local group = gui.Groupbox(tab, 'Kill Say Mic Spam', 17, 17)
+local active = Checkbox(group, 'active', 'Active', false)
+local currentTime, timer, enabled, snd_time, keys = 0, 0, true, 0, {}
+for k in pairs(SOUNDS) do keys[#keys + 1] = k end
+
+local menu = {
+	DidKill = Combobox(group, 'Did_Kill', 'Did Kill', ''),
+	DidHS = Combobox(group, 'Did_HS', 'Did Headshot', ''),
+	DidBurn = Combobox(group, 'Did_Burn', 'Did Burn', ''),
+	DidNade = Combobox(group, 'Did_Nade', 'Did Nade', ''),
+	GotKilled = Combobox(group, 'Got_Killed', 'Got Killed', ''),
+	GotHS = Combobox(group, 'Got_HS', 'Got Headshot', ''),
+	GotBurned = Combobox(group, 'Got_Burned', 'Got Burned', ''),
+	GotNaded = Combobox(group, 'Got_Naded', 'Got Naded', ''),
+	BurnedSelf = Combobox(group, 'Burned_Self', 'Burned Self', ''),
+	NadedSelf = Combobox(group, 'Naded_Self', 'Naded Self', '')
 }
 
-local function handler()
-	window:SetActive(show_window:GetValue() and MENU:IsActive())
+for k, v in pairs(menu) do
+	v:SetOptions( 'None', unpack(keys) )
+	v:SetWidth(133)
+end
+menu.GotKilled:SetPosX(149) menu.GotKilled:SetPosY(36)
+menu.GotHS:SetPosX(149) menu.GotHS:SetPosY(92)
+menu.GotBurned:SetPosX(149) menu.GotBurned:SetPosY(148)
+menu.GotNaded:SetPosX(149) menu.GotNaded:SetPosY(204)
+menu.BurnedSelf:SetPosX(298) menu.BurnedSelf:SetPosY(148)
+menu.NadedSelf:SetPosX(298) menu.NadedSelf:SetPosY(204)
 
+local function handler()
 	local currentTime = RealTime()
 	if currentTime >= timer then
 		timer = currentTime + snd_time
@@ -90,16 +81,17 @@ local function handler()
 end
 
 local function play_sound(val)
-	if val:GetValue() == 0 then
+	local val2 = val and val:GetValue() or 0
+	local sound = SOUNDS[ keys[val2] ]
+	if not sound then
 		return
 	end
 
-	SetConVar('voice_loopback', 1, true)
-	SetConVar('voice_inputfromfile', 1, true)
-
-	local sound = SOUNDS[ dict[val:GetValue()] ]
 	local file = sound[1]
 	snd_time = sound[2]
+
+	SetConVar('voice_loopback', 1, true)
+	SetConVar('voice_inputfromfile', 1, true)
 
 	if file == 'awcustom/didit' then
 		file = file.. random(1, 7)
@@ -110,37 +102,25 @@ local function play_sound(val)
 	timer, enabled = RealTime() + snd_time, true
 end
 
+local tbl = { 
+	inferno = {menu.DidBurn, menu.GotBurned, menu.BurnedSelf}, 
+	hegrenade = {menu.DidNade, menu.GotNaded, menu.NadedSelf}, 
+	[0] = {menu.DidKill, menu.GotKilled}, 
+	[1] = {menu.DidHS, menu.GotHS}
+}
+
 local function on_event(e)
-	if not f12killsound:GetValue() or e:GetName() ~= 'player_death' then
+	if not active:GetValue() or e:GetName() ~= 'player_death' then
 		return
 	end
 
-	local local_player, userid, attacker = GetLocalPlayerIndex(), e:GetInt('userid'), e:GetInt('attacker')
-	local vic, att = GetPlayerIndexByUserID(userid), GetPlayerIndexByUserID(attacker)
-	local weapon, headshot = e:GetString('weapon'), e:GetInt('headshot')
+	local lp = GetLocalPlayerIndex()
+	local v, a, weapon = GetPlayerIndexByUserID(e:GetInt('userid')), GetPlayerIndexByUserID(e:GetInt('attacker')), e:GetString('weapon')
+	local id = (a == lp and v ~= lp and 1) or (a ~= lp and v == lp and 2) or (a == lp and v == lp and 3)
 
-	if att == local_player and vic ~= local_player then
-		if weapon ~= 'hegrenade' and weapon ~= 'inferno' then
-			play_sound( (headshot < 1 and lua_DidKill) or (headshot > 0 and lua_DidHS) )
-		elseif weapon == 'inferno' or weapon == 'hegrenade' then
-			play_sound( (weapon == 'inferno' and lua_DidBurn) or (weapon == 'hegrenade' and lua_DidNade) ) 
-		end
-
-	elseif att ~= local_player and vic == local_player then
-		if weapon ~= 'hegrenade' and weapon ~= 'inferno' then
-			play_sound( (headshot < 1 and lua_GotKilled) or (headshot > 0 and lua_GotHS) )
-		elseif weapon == 'inferno' or weapon == 'hegrenade' then
-			play_sound( (weapon == 'inferno' and lua_GotBurned) or (weapon == 'hegrenade' and lua_GotNaded) ) 
-		end
-
-	elseif att == local_player and vic == local_player then
-		if weapon == 'inferno' or weapon == 'hegrenade' then
-			play_sound( (weapon == 'inferno' and lua_BurnedSelf) or (weapon == 'hegrenade' and lua_NadedSelf) ) 
-		end
-	end
-
+	play_sound( tbl[weapon] and tbl[weapon][id] or tbl[e:GetInt('headshot')][id] )
 end
 
-client.AllowListener("player_death")
+client.AllowListener('player_death')
 callbacks.Register('FireGameEvent', on_event)
-callbacks.Register("Draw", handler)
+callbacks.Register('Draw', handler)
