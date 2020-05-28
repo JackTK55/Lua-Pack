@@ -1,35 +1,34 @@
-local get_spectators = function()
-	local spectators, N = {}, 1
-	local lp = entities.GetLocalPlayer()
+local GetLocalPlayer, GetPlayerResources, FindByClass = entities.GetLocalPlayer, entities.GetPlayerResources, entities.FindByClass
 
-	if not lp then
+local get_spectators = function()
+	local spectators = {}
+	local local_player = GetLocalPlayer()
+
+	if not local_player then
 		return spectators
 	end
 
-	local lp_index = client.GetLocalPlayerIndex()
-	local lp_alive = lp:IsAlive()
-	local lp_obs_target = lp:GetPropEntity('m_hObserverTarget')
-	local players = entities.FindByClass('CCSPlayer')
-	local player_resources = entities.GetPlayerResources()
+	local alive = local_player:IsAlive()
+	local index = GetLocalPlayerIndex()
+	local target = local_player:GetPropEntity('m_hObserverTarget')
+	local resources = GetPlayerResources()
+	local players = FindByClass('CCSPlayer')
 
 	for i=1, #players do
 		local ent = players[i]
 		local ent_index = ent:GetIndex()
-		local obs_target = ent:GetPropEntity('m_hObserverTarget')
 
-		if obs_target and player_resources:GetPropInt('m_iPing', ent_index) > 0 and ent_index ~= lp_index then
-			local target_index = obs_target:GetIndex()
+		if not ent:IsAlive() and resources:GetPropInt('m_iPing', ent_index) ~= 0 and ent_index ~= index then
+			local ent_target = ent:GetPropEntity('m_hObserverTarget'):GetIndex()
 
-			if lp_alive then
-				if not ent:IsAlive() and target_index == lp_index then
-					spectators[N] = ent
-					N = N + 1
+			if alive then
+				if ent_target == index then
+					spectators[#spectators + 1] = ent:GetName()
 				end
 			else
-				if ent:IsAlive() and lp_obs_target then
-					if target_index == lp_obs_target:GetIndex() then
-						spectators[N] = ent
-						N = N + 1
+				if target then
+					if target:GetIndex() == ent_target then
+						spectators[#spectators + 1] = ent:GetName()
 					end
 				end
 			end
