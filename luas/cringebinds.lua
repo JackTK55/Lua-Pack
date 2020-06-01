@@ -1,22 +1,23 @@
+local IsButtonDown, GetTextSize, Color, RoundedRectFill, RoundedRect, SetFont, Text, GetLocalPlayer, GetScreenSize = input.IsButtonDown, draw.GetTextSize, draw.Color, draw.RoundedRectFill, draw.RoundedRect, draw.SetFont, draw.Text, entities.GetLocalPlayer, draw.GetScreenSize
 local font = draw.CreateFont('Times New Roman', 36)
 
 local function add_key(x, y, k, k2)
 	local r, g, b
 
-	if input.IsButtonDown(k) then
+	if IsButtonDown(k) then
 		r, g, b = 63, 200, 63
 	else
 		r, g, b = 200, 63, 63
 	end
 
 	local k = k2 and k2 or k
-	local tW, tH = draw.GetTextSize(k)
+	local tW, tH = GetTextSize(k)
 
-	draw.Color(r, g, b, 180)
-	draw.RoundedRectFill(x-18, y-18, x+18, y+18)
+	Color(r, g, b, 180)
+	RoundedRectFill(x-18, y-18, x+18, y+18)
 
-	draw.Color(255, 255, 255, 180)
-	draw.RoundedRect(x-19, y-19, x+19, y+19) 
+	Color(255, 255, 255, 180)
+	RoundedRect(x-19, y-19, x+19, y+19) 
 
 	if k == 'W' then
 		x, y = x - 9, y - 6
@@ -26,17 +27,17 @@ local function add_key(x, y, k, k2)
 		y = y - 4
 	end
 
-	draw.SetFont(font)
-	draw.Color(255, 255, 255, 200)
-	draw.Text(x - (tW*0.5), y - (tH*0.5), k)
+	SetFont(font)
+	Color(255, 255, 255, 200)
+	Text(x - (tW*0.5), y - (tH*0.5), k)
 end
 
 local function on_draw()
-	if not entities.GetLocalPlayer() then
+	if not GetLocalPlayer() then
 		return
 	end
 
-	local W, H = draw.GetScreenSize()
+	local W, H = GetScreenSize()
 	local X, Y = W * 0.5, H * 0.7
 
 	add_key(X, Y, 'W')
