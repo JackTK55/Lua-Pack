@@ -19,6 +19,10 @@ local SOUNDS = {
 	['Hammer'] 			 = dir.. 'hammer',
 }
 
+------------------------------------------------
+--------- DO NOT CHANGE ANYTHING BELOW ---------
+------------------------------------------------
+
 local Combobox, Checkbox, pairs, Command, GetLocalPlayerIndex, GetPlayerIndexByUserID = gui.Combobox, gui.Checkbox, pairs, client.Command, client.GetLocalPlayerIndex, client.GetPlayerIndexByUserID
 
 local tab = gui.Tab(gui.Reference('Settings'), 'bruh_sounds', 'Hit/Kill Sounds')
