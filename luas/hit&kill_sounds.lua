@@ -9,7 +9,7 @@
 local dir = 'custom/'
 
 local SOUNDS = {
--- 	['name']			 = dir.. 'name'
+-- 	['custom name']		 = dir.. 'name'
 	['COD']			 	 = dir.. 'cod',
 	['QBeep']			 = dir.. 'qbeep',
 	['Windows Xp Error'] = dir.. 'windows xp error',
