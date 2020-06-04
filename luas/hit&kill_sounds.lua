@@ -9,14 +9,14 @@
 local dir = 'custom/'
 
 local SOUNDS = {
--- 	['name']			 = 'location'
-	['COD']			 	 = dir..'cod',
-	['QBeep']			 = dir..'qbeep',
-	['Windows Xp Error'] = dir..'windows xp error',
-	['4'] 				 = dir..'4',
-	['Bameware'] 		 = dir..'bameware',
-	['Bubble'] 			 = dir..'Bubble',
-	['Hammer'] 			 = dir..'hammer',
+-- 	['name']			 = dir.. 'name'
+	['COD']			 	 = dir.. 'cod',
+	['QBeep']			 = dir.. 'qbeep',
+	['Windows Xp Error'] = dir.. 'windows xp error',
+	['4'] 				 = dir.. '4',
+	['Bameware'] 		 = dir.. 'bameware',
+	['Bubble'] 			 = dir.. 'Bubble',
+	['Hammer'] 			 = dir.. 'hammer',
 }
 
 local Combobox, Checkbox, pairs, Command, GetLocalPlayerIndex, GetPlayerIndexByUserID = gui.Combobox, gui.Checkbox, pairs, client.Command, client.GetLocalPlayerIndex, client.GetPlayerIndexByUserID
