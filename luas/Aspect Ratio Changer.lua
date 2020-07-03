@@ -1,4 +1,4 @@
-local ref = gui.Reference('Misc', 'General')
+local ref = gui.Reference('Misc', 'General', 'Extra')
 local active = gui.Checkbox(ref, 'aspect_ratio_active', 'Aspect Ratio Changer', false)
 local ratio = gui.Slider(ref, 'aspect_ratio_value', 'Aspect Ratio', 100, 1, 199)
 local GetScreenSize, SetConVar = draw.GetScreenSize, client.SetConVar
