@@ -1,4 +1,7 @@
 --[[
+	New Stat-Trak Counter -> https://github.com/Zack2kl/Team-Based-Skins/
+
+	OUTDATED
 	To make it work look at image below:
 		https://i.imgur.com/GTinFTk.png
 --]]
