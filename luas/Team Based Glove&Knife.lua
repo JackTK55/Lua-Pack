@@ -1,5 +1,5 @@
 --[[
-	Team Based Skins has many more options -> https://github.com/Zack2kl/Team-Based-Skins/blob/master/team_based_skins.lua
+	Team Based Skins has many more options -> https://github.com/Zack2kl/Team-Based-Skins/
 ]]
 
 local GetLocalPlayer, client_exec, GetValue, SetValue, LocalPlayerIndex, PlayerIndexByUserID, MENU = entities.GetLocalPlayer, client.Command, gui.GetValue, gui.SetValue, client.GetLocalPlayerIndex, client.GetPlayerIndexByUserID, gui.Reference("MENU")
