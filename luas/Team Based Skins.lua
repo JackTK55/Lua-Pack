@@ -1,5 +1,5 @@
 --[[
-	Updated Version -> https://github.com/Zack2kl/Team-Based-Skins/blob/master/team_based_skins.lua
+	Updated Version -> https://github.com/Zack2kl/Team-Based-Skins/
 ]]
 
 local LocalPlayer,GetValue,SetValue,f,C,LPI,PIbyUID,exec,G,Register,R,Checkbox,Window,Button,sK,sG=entities.GetLocalPlayer,gui.GetValue,gui.SetValue,string.format,gui.Combobox,client.GetLocalPlayerIndex,client.GetPlayerIndexByUserID,client.Command,gui.Groupbox,callbacks.Register,gui.Reference,gui.Checkbox,gui.Window,gui.Button,'skin_knife','skin_gloves'
