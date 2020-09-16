@@ -26,5 +26,5 @@ end)
 
 --[[
     -- Minified
-    local a={}client.set_callback=function(b,c,d)a[c]={b,d,b:GetValue()}end;client.unset_callback=function(c)a[c]=nil end;callbacks.Register('Draw',function()for e,f in next,a do local g,h,i,j=f[1]:GetValue()if g==nil then a[e]=nil else if g~=f[3]or h~=f[4]or i~=f[5]or j~=f[6]then f[2](f[1])a[e]={f[1],f[2],g,h,i,j}end end end end)
+    local a={}client.set_callback=function(b,c,d)a[c]={b,d,b:GetValue()}end;client.unset_callback=function(c)a[c]=nil end;callbacks.Register('Draw',function()for e,f in pairs(a)do local g,h,i,j=f[1]:GetValue()if g==nil then a[e]=nil else if g~=f[3]or h~=f[4]or i~=f[5]or j~=f[6]then f[2](f[1])a[e]={f[1],f[2],g,h,i,j}end end end end)
 ]]
