@@ -1,7 +1,5 @@
-if not loadstring_old then
-    loadstring_old = loadstring
-
-    loadstring = function( lua )
+if not aw_loadstring then
+    aw_loadstring = function( lua )
         local random_name = (function()
             local str = ''
 
@@ -19,11 +17,11 @@ if not loadstring_old then
 end
 
 -- Example 1; obfuscated
-http.Get( 'https://pastebin.com/raw/SZLF0Db1', loadstring )
+http.Get( 'https://pastebin.com/raw/SZLF0Db1', aw_loadstring )
 
 
 -- Example 2
-loadstring([[
+aw_loadstring([[
     callbacks.Register( 'Draw', function()
         draw.Color(33, 33, 33, 190)
         draw.FilledRect(0, 30, 267, 54)
