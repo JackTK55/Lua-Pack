@@ -1,6 +1,6 @@
 local str = http.Get( 'https://pastebin.com/raw/sS9AM34A' ) -- random config
-
 local vars = {}
+
 for line in str:gmatch('([^\n]*)\n') do
 	local var = line:match('[a-z0-9.]* [^.?]')
 	if var then
