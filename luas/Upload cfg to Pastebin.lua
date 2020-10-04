@@ -1,3 +1,5 @@
+local api_key = '' -- https://pastebin.com/doc_api#1
+
 local str = http.Get( 'https://pastebin.com/raw/sS9AM34A' ) -- random config
 local vars = {}
 
@@ -11,27 +13,35 @@ end
 local but = gui.Button( gui.Reference('Settings', 'Configurations', 'Manage configurations'), 'Config to Ghostbin', function()
 	local cfg = ''
 
+	-- Still doesn't work 100% correctly
 	for i=1, #vars do
 		local v = vars[i]
 		local vs = { gui.GetValue(v) }
 		local value = ''
 
 		for a=1, #vs do
-			value = value .. ' ' .. tostring( vs[a] )
+			local val = tostring( vs[a] )
+			value = value .. ' ' .. ( (val == 'false' and '"Off"') or (val == 'true' and '"On"') or val )
 		end
 
 		cfg = cfg .. ( v .. value .. '\\n' )
 	end
 
 	panorama.RunScript([[
-		$.AsyncWebRequest( 'https://ghostbin.co/paste/new', {
+		$.AsyncWebRequest('https://pastebin.com/api/api_post.php', {
 			type: 'POST',
-			data: { "text": ']].. cfg ..[[' },
+			headers: {
+				"Content-Type": 'application/x-www-form-urlencoded'
+			},
+			data: {
+				api_option: 'paste',
+				api_dev_key: ']].. api_key ..[[',
+				api_paste_code: ']].. cfg ..[['
+			},
 			success: ( body ) => {
-				var title = body.search( '<title>' ) + 7
-				var title2 = body.search( ' - Ghostbin</title>' )
-				var id = body.slice( title, title2 )
-				SteamOverlayAPI.CopyTextToClipboard( 'https://ghostbin.co/paste/' + id )
+				var link = 'https://pastebin.com/raw/' + body.split('/')[3]
+				$.Msg( link )
+				SteamOverlayAPI.CopyTextToClipboard( link )
 			}
 		})
 	]])
